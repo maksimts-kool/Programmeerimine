@@ -84,61 +84,19 @@ public class Ulesanne1
             string sugu = Console.ReadLine();
             Console.WriteLine("Siseta teie pikkus cm");
             int pikk2 = int.Parse(Console.ReadLine());
-            if (sugu.ToLower() == "naine")
-            {
-                if (pikk2 < 160)
-                {
-                    Console.WriteLine("Naine - Sa oled lühikese pikkus");
-                }
-                else if (pikk2 >= 160 && pikk2 <= 175)
-                {
-                    Console.WriteLine("Naine - Sa oled keskmise pikkus");
-                }
-                else if (pikk2 > 175)
-                {
-                    Console.WriteLine("Naine - Sa oled pikk pikkus");
-                }
-            }
-            else if (sugu.ToLower() == "mees")
-            {
-                if (pikk2 < 170)
-                {
-                    Console.WriteLine("Mees - Sa oled lühikese pikkus");
-                }
-                else if (pikk2 >= 170 && pikk2 <= 185)
-                {
-                    Console.WriteLine("Mees - Sa oled keskmise pikkus");
-                }
-                else if (pikk2 > 185)
-                {
-                    Console.WriteLine("Mees - Sa oled pikk pikkus");
-                }
-            }
-            else
-            {
-                Console.WriteLine("Vale valik");
-            }
+            Console.WriteLine(osa2.SuguPikkus(sugu.ToLower(), pikk2));
 
             // Ül 8
-            Console.WriteLine("Tere, tahad osta leiba?");
+            Console.WriteLine("Tere, kas tahad leiba?");
             string leib = Console.ReadLine();
-            float koguhind = 0;
-            if (leib.ToLower() == "jah")
-            {
-                koguhind += 1.2f;
-            }
-            Console.WriteLine("Tere, tahad osta saia?");
-            string saia = Console.ReadLine();
-            if (saia.ToLower() == "jah")
-            {
-                koguhind += 0.9f;
-            }
-            Console.WriteLine("Tere, tahad osta piima?");
+            double koguhind = 0;
+            koguhind += osa2.Ostukorv("leib", leib.ToLower());
+            Console.WriteLine("Kas tahad piima?");
             string piim = Console.ReadLine();
-            if (piim.ToLower() == "jah")
-            {
-                koguhind += 1.7f;
-            }
+            koguhind += osa2.Ostukorv("piim", piim.ToLower());
+            Console.WriteLine("Kas tahad saia?");
+            string saia = Console.ReadLine();
+            koguhind += osa2.Ostukorv("sai", saia.ToLower());
             Console.WriteLine($"Teie ostukorvi hind on {koguhind} eurot");
         }
     }

@@ -107,7 +107,68 @@ public class osa2
         return hinnatyyp;
     }
     public static string Pinginaaber(string nimi1, string nimi2)
+
     {
         return $"{nimi1} ja {nimi2} on täna pinginaabrid.";
+    }
+    public static string SuguPikkus(string sugu, int pikkus)
+    {
+        string vastus = "";
+        if (sugu == "naine")
+        {
+            if (pikkus < 160)
+            {
+                vastus = "Naine - Sa oled lühikese pikkus";
+            }
+            else if (pikkus >= 160 && pikkus <= 175)
+            {
+                vastus = "Naine - Sa oled keskmise pikkus";
+            }
+            else if (pikkus > 175)
+            {
+                vastus = "Naine - Sa oled pikk pikkus";
+            }
+        }
+        else if (sugu == "mees")
+        {
+            if (pikkus < 170)
+            {
+                vastus = "Mees - Sa oled lühikese pikkus";
+            }
+            else if (pikkus >= 170 && pikkus <= 185)
+            {
+                vastus = "Mees - Sa oled keskmise pikkus";
+            }
+            else if (pikkus > 185)
+            {
+                vastus = "Mees - Sa oled pikk pikkus";
+            }
+        }
+        else
+        {
+            vastus = "Vale valik";
+        }
+        return vastus;
+    }
+    public static double Ostukorv(string tyyp, string mida)
+    {
+        double hind = 0;
+        if (mida == "jah")
+        {
+            if (tyyp == "leib")
+            {
+                hind += 1.2;
+            }
+            else if (tyyp == "sai")
+            {
+                hind += 0.9;
+            }
+            else if (tyyp == "piim")
+            {
+                hind += 1.7;
+            }
+        }
+        
+        return hind;
     }
 }
