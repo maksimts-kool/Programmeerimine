@@ -84,7 +84,7 @@ public class osa2
     public static string Piletihind(int vanus)
     {
         string hinnatyyp = "";
-        if (vanus < 6)
+        if (vanus > 0 && vanus < 6)
         {
             hinnatyyp = "Tasuta";
         }
@@ -96,7 +96,7 @@ public class osa2
         {
             hinnatyyp = "Täispilet";
         }
-        else if (vanus > 65)
+        else if (vanus > 65 && vanus <= 100)
         {
             hinnatyyp = "Sooduspilet";
         }

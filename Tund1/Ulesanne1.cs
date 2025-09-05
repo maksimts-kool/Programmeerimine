@@ -7,10 +7,19 @@ public class Ulesanne1
         public static void Main(string[] args)
         {
             // Ül 1
-            Console.WriteLine("Tere, kui vana sa oled?");
-            int vanus = int.Parse(Console.ReadLine());
-            Console.WriteLine($"Teie pileti tüüp on: {osa2.Piletihind(vanus)}");
-
+            Console.WriteLine("Tere, mis on sinu nimi?");
+            string nimi = Console.ReadLine();
+            if (nimi.ToLower() == "juku")
+            {
+                Console.WriteLine("Lähme sinuga kinno");
+                Console.WriteLine("Kui vana sa oled?");
+                int vanus = int.Parse(Console.ReadLine());
+                Console.WriteLine($"Teie pileti tüüp on: {osa2.Piletihind(vanus)}");
+            }
+            else
+            {
+                Console.WriteLine("Head aega");
+            }
             // Ül 2
             Console.WriteLine("Tere, siseta esimese nime");
             string vastus1 = Console.ReadLine();
