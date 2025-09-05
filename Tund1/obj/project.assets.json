@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\opilane\\source\\repos\\Programmeerimine\\Tund1\\Tund1.csproj",
+      "projectUniqueName": "C:\\Users\\opilane\\source\\repos\\ProgrammeerimineTARpv24\\Tund1\\Tund1.csproj",
       "projectName": "Tund1",
-      "projectPath": "C:\\Users\\opilane\\source\\repos\\Programmeerimine\\Tund1\\Tund1.csproj",
+      "projectPath": "C:\\Users\\opilane\\source\\repos\\ProgrammeerimineTARpv24\\Tund1\\Tund1.csproj",
       "packagesPath": "C:\\Users\\opilane\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\opilane\\source\\repos\\Programmeerimine\\Tund1\\obj\\",
+      "outputPath": "C:\\Users\\opilane\\source\\repos\\ProgrammeerimineTARpv24\\Tund1\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

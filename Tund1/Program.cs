@@ -13,7 +13,7 @@ namespace Programmeerimine
             Console.BackgroundColor = ConsoleColor.DarkBlue;
             Console.ForegroundColor = ConsoleColor.White;
             int a = 1000;
-            /* Console.WriteLine("Tere tulemast!");
+            Console.WriteLine("Tere tulemast!");
             string tekst = Console.ReadLine();
             Console.WriteLine($"Teie sisestatud tekst on: {tekst}");
             char taht = 'A';
@@ -24,7 +24,7 @@ namespace Programmeerimine
             double d = double.Parse(Console.ReadLine());
             Console.WriteLine(d);
             float f = float.Parse(Console.ReadLine());
-            Console.WriteLine(f); */
+            Console.WriteLine(f);
 
             bool t = true;
             Random rnd = new Random();

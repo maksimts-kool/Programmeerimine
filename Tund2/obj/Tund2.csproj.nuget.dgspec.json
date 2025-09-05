@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\opilane\\source\\repos\\Programmeerimine\\Tund2\\Tund2.csproj": {}
+    "C:\\Users\\opilane\\source\\repos\\ProgrammeerimineTARpv24\\Tund2\\Tund2.csproj": {}
   },
   "projects": {
-    "C:\\Users\\opilane\\source\\repos\\Programmeerimine\\Tund2\\Tund2.csproj": {
+    "C:\\Users\\opilane\\source\\repos\\ProgrammeerimineTARpv24\\Tund2\\Tund2.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\opilane\\source\\repos\\Programmeerimine\\Tund2\\Tund2.csproj",
+        "projectUniqueName": "C:\\Users\\opilane\\source\\repos\\ProgrammeerimineTARpv24\\Tund2\\Tund2.csproj",
         "projectName": "Tund2",
-        "projectPath": "C:\\Users\\opilane\\source\\repos\\Programmeerimine\\Tund2\\Tund2.csproj",
+        "projectPath": "C:\\Users\\opilane\\source\\repos\\ProgrammeerimineTARpv24\\Tund2\\Tund2.csproj",
         "packagesPath": "C:\\Users\\opilane\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\opilane\\source\\repos\\Programmeerimine\\Tund2\\obj\\",
+        "outputPath": "C:\\Users\\opilane\\source\\repos\\ProgrammeerimineTARpv24\\Tund2\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
