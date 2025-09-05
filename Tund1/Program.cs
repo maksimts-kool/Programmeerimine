@@ -1,9 +1,6 @@
-﻿using System.Diagnostics;
-using Tund1;
-
-namespace Programmeerimine
+﻿namespace Programmeerimine
 {
-    internal class StartClass
+    /*internal class StartClass
     {
 
         public static void Main(string[] args)
@@ -34,5 +31,5 @@ namespace Programmeerimine
             float vastus = osa2.Kalkulaator(5, 2);
             Console.WriteLine($"Kalkulaatori vastus: {vastus}");
         }
-    }
+    }*/
 }
