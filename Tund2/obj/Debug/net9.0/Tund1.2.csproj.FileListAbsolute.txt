@@ -1,4 +1,0 @@
-C:\Users\opilane\source\repos\Programmeerimine\Tund2\obj\Debug\net9.0\Tund1.2.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\opilane\source\repos\Programmeerimine\Tund2\obj\Debug\net9.0\Tund1.2.AssemblyInfoInputs.cache
-C:\Users\opilane\source\repos\Programmeerimine\Tund2\obj\Debug\net9.0\Tund1.2.AssemblyInfo.cs
-C:\Users\opilane\source\repos\Programmeerimine\Tund2\obj\Debug\net9.0\Tund1.2.csproj.CoreCompileInputs.cache
