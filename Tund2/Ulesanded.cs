@@ -19,6 +19,21 @@ public class Ulesanded
         Console.WriteLine($"Summa: {tulemus.Item1:f2}, Keskmine: {tulemus.Item2:f2}, Korrutis: {tulemus.Item3:f2}");
 
         // Ül 3
-        
+        List<Inimene> inimesed = new List<Inimene>();
+        for (int i = 0; i < 5; i++)
+        {
+            Console.WriteLine($"{i + 1}. Inimene:");
+            Console.Write("Nimi: ");
+            string nimi = Console.ReadLine();
+            Console.Write("Vanus: ");
+            int vanus = int.Parse(Console.ReadLine());
+            inimesed.Add(new Inimene(nimi, vanus));
+        }
+        var stat = funktsioonid1.Statistika(inimesed);
+        Console.WriteLine($"Vanuse summa: {stat.Item1}, Keskmine vanus: {stat.Item2:f2}");
+        Console.WriteLine("Noorim inimene:");
+        stat.Item3.PrindiAndmed();
+        Console.WriteLine("Vanem inimene:");
+        stat.Item4.PrindiAndmed();
     }
 }

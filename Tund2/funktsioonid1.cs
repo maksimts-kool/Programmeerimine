@@ -49,5 +49,23 @@ public class funktsioonid1
         }
         return Tuple.Create(summa, keskmine, korrutis);
     }
-    
+    public static Tuple<int, double, Inimene, Inimene> Statistika(List<Inimene> inimesed)
+    {
+        int summa = inimesed.Sum(x => x.Vanus);
+        double keskmine = inimesed.Average(x => x.Vanus);
+        Inimene vanim = inimesed[0];
+        Inimene noorim = inimesed[0];
+        foreach (Inimene inimene in inimesed)
+        {
+            if (inimene.Vanus > vanim.Vanus)
+            {
+                vanim = inimene;
+            }
+            if (inimene.Vanus < noorim.Vanus)
+            {
+                noorim = inimene;
+            }
+        }
+        return Tuple.Create(summa, keskmine, noorim, vanim);
+    }
 }
