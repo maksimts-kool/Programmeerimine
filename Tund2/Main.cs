@@ -6,6 +6,9 @@ public class Main
     {
         public static void Main(string[] args)
         {
+            // execute Tund2/ulesanded.cs
+            Ulesanded.Run();
+            return;
             // Massiviid, List, Kordused
             for (int i = 0; i < 10; i++)
             {
@@ -66,8 +69,10 @@ public class Main
             Console.WriteLine($"Kolmas on {isikud[2].eesnimi} {isikud[2].perenimi} isik");
             foreach (Isik isik in isikud)
             {
-            isik.PrindiAndmed();
+                isik.PrindiAndmed();
             }
+
+            
         }
     }
 }
