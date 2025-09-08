@@ -36,7 +36,7 @@ public class Main
             }
 
             int[] arvud = new int[10];
-            int j = 0;
+            j = 0;
             while (j < 10)
             {
                 Console.WriteLine($"{j + 1}. Arv: ");
@@ -46,6 +46,27 @@ public class Main
             foreach (int arv in arvud)
             {
                 Console.WriteLine(arv);
+            }
+
+            List<Isik> isikud = new List<Isik>();
+            j = 0;
+            do
+            {
+                Console.WriteLine(j + 1);
+                Isik isik = new Isik();
+                Console.Write("Eesnimi: ");
+                isik.eesnimi = Console.ReadLine();
+                Console.Write("Perenimi: ");
+                isik.perenimi = Console.ReadLine();
+                isikud.Add(isik);
+                j++;
+            } while (j < 10);
+            isikud.Sort((x, y) => x.eesnimi.CompareTo(y.eesnimi));
+            Console.WriteLine($"Kokku on {isikud.Count} isikud");
+            Console.WriteLine($"Kolmas on {isikud[2].eesnimi} {isikud[2].perenimi} isik");
+            foreach (Isik isik in isikud)
+            {
+            isik.PrindiAndmed();
             }
         }
     }
