@@ -1,3 +1,5 @@
+using System.Runtime.Serialization;
+
 namespace Tund2;
 
 public class funktsioonid1
@@ -67,5 +69,50 @@ public class funktsioonid1
             }
         }
         return Tuple.Create(summa, keskmine, noorim, vanim);
+    }
+    public static string KuniMarksonani(string märksõna)
+    {
+        string fraas = "";
+        do
+        {
+            Console.WriteLine("Arva ära");
+            fraas = Console.ReadLine();
+        } while (fraas.ToLower() != märksõna.ToLower());
+        return fraas;
+    }
+    public static string ArvaArv()
+    {
+        int oigenumber = Random.Shared.Next(1, 100);
+        int maxkatseid = 5;
+        for (int i = 0; i < maxkatseid; i++)
+        {
+            Console.WriteLine("Arva ära arv 1-100");
+            int arv = int.Parse(Console.ReadLine());
+            if (arv < oigenumber)
+            {
+                Console.WriteLine("Arv on liiga väike");
+            }
+            else if (arv > oigenumber)
+            {
+                Console.WriteLine("Arv on liiga suur");
+            }
+            else
+            {
+                return "Õige";
+            }
+        }
+        return $"Õige number oli {oigenumber}";
+    }
+    public static int SuurimNeljarv(int[] arvud)
+    {
+        Array.Sort(arvud);
+        Array.Reverse(arvud);
+
+        int tulemus = 0;
+        for (int i = 0; i < 4; i++)
+        {
+            tulemus = tulemus * 10 + arvud[i];
+        }
+        return tulemus;
     }
 }

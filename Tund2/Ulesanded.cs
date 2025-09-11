@@ -7,7 +7,7 @@ public class Ulesanded
     public static void Run()
     {
         // Ül 1
-        int[] ruudud = funktsioonid1.GenereeriRuudud(-10, 10);
+        /*int[] ruudud = funktsioonid1.GenereeriRuudud(-10, 10);
         foreach (int ruut in ruudud)
         {
             Console.WriteLine(ruut);
@@ -35,5 +35,44 @@ public class Ulesanded
         stat.Item3.PrindiAndmed();
         Console.WriteLine("Vanem inimene:");
         stat.Item4.PrindiAndmed();
+
+        // Ül 4
+        Console.WriteLine("Sisesta märksõna:");
+        string märksõna = Console.ReadLine();
+        string tulemus2 = funktsioonid1.KuniMarksonani(märksõna);
+        Console.WriteLine(tulemus2);
+
+        // Ül 5
+        while (true)
+        {
+            string tulemus4 = funktsioonid1.ArvaArv();
+            Console.WriteLine(tulemus4);
+
+            Console.WriteLine("Kas tahad veel mängida? (jah/ei)");
+            string vastus = Console.ReadLine();
+
+            if (vastus != "jah")
+            {
+                Console.WriteLine("Head aega!");
+                break;
+            }
+        }*/
+
+        // Ül 6
+        int[] arvud = new int[4];
+
+        for (int i = 0; i < 4; i++)
+        {
+            Console.Write($"Sisesta {i + 1}. number: ");
+            string sisend = Console.ReadLine();
+            while (sisend.Length != 1)
+            {
+                Console.Write($"Viga! Sisesta {i + 1}. number: ");
+                sisend = Console.ReadLine();
+            }
+            arvud[i] = sisend[0] - '0';
+        }
+        int suurimNeljarv = funktsioonid1.SuurimNeljarv(arvud);
+        Console.WriteLine($"Suurim neljakohaline arv: {suurimNeljarv}");
     }
 }
