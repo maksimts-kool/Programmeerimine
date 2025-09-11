@@ -63,16 +63,33 @@ public class Ulesanded
 
         for (int i = 0; i < 4; i++)
         {
-            Console.Write($"Sisesta {i + 1}. number: ");
-            string sisend = Console.ReadLine();
-            while (sisend.Length != 1)
+            while (true)
             {
-                Console.Write($"Viga! Sisesta {i + 1}. number: ");
-                sisend = Console.ReadLine();
+                Console.Write($"Sisesta {i + 1}. number: ");
+                string sisend = Console.ReadLine();
+                int number = int.Parse(sisend);
+
+                if (number < 0 || number > 9)
+                {
+                    Console.WriteLine("Viga!");
+                }
+                else
+                {
+                    arvud[i] = number;
+                    break;
+                }
             }
-            arvud[i] = sisend[0] - '0';
         }
         int suurimNeljarv = funktsioonid1.SuurimNeljarv(arvud);
         Console.WriteLine($"Suurim neljakohaline arv: {suurimNeljarv}");
+
+        // Ül 7
+        int[,] tabel = funktsioonid1.GenereeriKorrutustabel(10, 10);
+        Console.WriteLine("Sisesta esimene arv:");
+        int a = int.Parse(Console.ReadLine());
+        Console.WriteLine("Sisesta teine arv:");
+        int b = int.Parse(Console.ReadLine());
+        int tulemus = tabel[a - 1, b - 1]; // sest algab 0
+        Console.WriteLine($"Mis arv on {a} x {b}? Vastus: {tulemus}");
     }
 }

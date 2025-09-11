@@ -105,14 +105,29 @@ public class funktsioonid1
     }
     public static int SuurimNeljarv(int[] arvud)
     {
-        Array.Sort(arvud);
-        Array.Reverse(arvud);
+        Array.Sort(arvud);         // [3,4,1,2] -> [1,2,3,4]
+        Array.Reverse(arvud);      // [1,2,3,4] -> [4,3,2,1]
 
         int tulemus = 0;
         for (int i = 0; i < 4; i++)
         {
-            tulemus = tulemus * 10 + arvud[i];
+            tulemus = tulemus * 10 + arvud[i]; // [4,3,2,1] -> 4321
         }
         return tulemus;
+    }
+    public static int[,] GenereeriKorrutustabel(int ridadeArv, int veergudeArv)
+    {
+        int[,] tabel = new int[ridadeArv, veergudeArv];
+        for (int i = 1; i <= ridadeArv; i++)
+        {
+            for (int j = 1; j <= veergudeArv; j++)
+            {
+                tabel[i - 1, j - 1] = i * j; // massiivid algavad 0
+                Console.Write(string.Format("{0,4}", tabel[i - 1, j - 1]));
+            }
+            Console.WriteLine();
+            Console.WriteLine();
+        }
+        return tabel;
     }
 }
