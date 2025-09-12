@@ -1,0 +1,5 @@
+Banaan,89
+Õun,52
+Tatar,130
+Kana,165
+Õlu,400
