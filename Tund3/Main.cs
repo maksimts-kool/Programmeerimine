@@ -29,5 +29,36 @@ internal class StartClass
                 Console.WriteLine($"{toode.Nimi}: {kogusGrammi:f0}g päevas");
             }
         }
+
+        // Ül 2
+        var maakonnad = Funktsioonid.LoeMaakonnadFailist();
+        while (true)
+        {
+            Console.WriteLine("\n--- MENÜÜ ---");
+            Console.WriteLine("1. Leia maakond pealinna järgi");
+            Console.WriteLine("2. Leia pealinn maakonna järgi");
+            Console.WriteLine("3. Alusta mängu");
+            Console.WriteLine("0. Välju");
+            Console.Write("Valik: ");
+            int valik = int.Parse(Console.ReadLine());
+
+            switch (valik)
+            {
+                case 1:
+                    Funktsioonid.OtsiMaakond(maakonnad);
+                    break;
+                case 2:
+                    Funktsioonid.OtsiPealinn(maakonnad);
+                    break;
+                case 3:
+                    Funktsioonid.ManguReziim(maakonnad);
+                    break;
+                case 0:
+                    return;
+                default:
+                    Console.WriteLine("Tundmatu valik!");
+                    break;
+            }
+        }
     }
 }

@@ -39,6 +39,21 @@ internal class Funktsioonid
             Console.WriteLine("Mingi viga failiga");
         }
     }
+    public static void FailikirjutamineV2(string sisu)
+    {
+        try
+        {
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\Maakonnad.txt");
+            using (StreamWriter text = new StreamWriter(path, true))
+            {
+                text.WriteLine(sisu);
+            }
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("Mingi viga failiga");
+        }
+    }
     public static void Faililugemine()
     {
         try
@@ -142,5 +157,128 @@ internal class Funktsioonid
         double aktiivsustase = double.Parse(Console.ReadLine());
 
         return new Inimene(nimi, vanus, sugu, pikkus, kaal, aktiivsustase);
+    }
+    public static Dictionary<string, string> LoeMaakonnadFailist()
+    {
+        Dictionary<string, string> maakonnad = new Dictionary<string, string>();
+        try
+        {
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\Maakonnad.txt");
+            foreach (string rida in File.ReadAllLines(path))
+            {
+                string[] osad = rida.Split(',');
+                string kood = osad[0]; // Harjumaa
+                string nimi = osad[1]; // Tallinn
+                maakonnad[kood] = nimi;
+            }
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("Viga failiga!");
+        }
+        return maakonnad;
+    }
+    public static void OtsiMaakond(Dictionary<string, string> dict)
+    {
+        var values = dict.Values.ToList(); // pealinnad
+        var keys = dict.Keys.ToList(); // maakonnad
+        Console.Write("Sisesta pealinna nimi: ");
+        string linn = Console.ReadLine();
+        int index = values.IndexOf(linn); 
+
+        if (index != -1) // kui leidis
+        {
+            Console.WriteLine($"{linn} asub {keys[index]}");
+        }
+        else
+        {
+            Console.WriteLine("Linna ei leitud. Siis lisame.");
+            Console.Write("Sisesta maakonna nimi: ");
+            string maakond = Console.ReadLine();
+            dict.Add(maakond, linn);
+            FailikirjutamineV2($"{maakond},{linn}");
+            Console.WriteLine("Lisatud");
+        }
+    }
+    public static void OtsiPealinn(Dictionary<string, string> dict)
+    {
+        Console.Write("Sisesta maakonna nimi: ");
+        string maakond = Console.ReadLine();
+
+        if (dict.ContainsKey(maakond))
+        {
+            Console.WriteLine($"{maakond} pealinn on {dict[maakond]}");
+        }
+        else
+        {
+            Console.WriteLine("Maakonda ei leitud. Siis lisame.");
+            Console.Write("Sisesta pealinna nimi: ");
+            string linn = Console.ReadLine();
+            dict.Add(maakond, linn);
+            FailikirjutamineV2($"{maakond},{linn}");
+            Console.WriteLine("Lisatud");
+        }
+    }
+    public static void ManguReziim(Dictionary<string, string> dict)
+    {
+        Random rnd = new Random();
+        int kokku = 0;
+        int oiged = 0;
+
+        Console.WriteLine("Mäng algas (ENTER, et lõpetada)");
+
+        while (true)
+        {
+            var keys = dict.Keys.ToList(); // maakonnad
+            var RKey = keys[rnd.Next(keys.Count)]; // pealinn   
+            var RValue = dict[RKey]; // maakond
+
+            if (rnd.Next(2) == 0) // 0,1 => 50/50
+            {
+                Console.Write($"Mis on maakonna {RKey} pealinn? ");
+                string sisestus = Console.ReadLine();
+
+                if (sisestus == "") break;
+
+                kokku++;
+                if (sisestus.ToLower() == RValue.ToLower())
+                {
+                    oiged++;
+                    Console.WriteLine("Õige!");
+                }
+                else
+                {
+                    Console.WriteLine($"Vale! Õige vastus: {RValue}");
+                }
+            }
+            else
+            {
+                Console.Write($"Millises maakonnas asub {RValue}? ");
+                string sisestus = Console.ReadLine();
+
+                if (sisestus == "") break;
+
+                kokku++;
+                if (sisestus.ToLower() == RKey.ToLower())
+                {
+                    oiged++;
+                    Console.WriteLine("Õige!");
+                }
+                else
+                {
+                    Console.WriteLine($"Vale! Õige vastus: {RKey}");
+                }
+            }
+        }
+
+        if (kokku > 0)
+        {
+            double protsent = (double)oiged / kokku * 100; // (double) sest ei ole täisarv
+            Console.WriteLine($"\nTulemus: {oiged}/{kokku} ({protsent:f0}%)");
+        }
+        else
+        {
+            Console.WriteLine("\nMäng lõpetatud.");
+        }
     }
 }

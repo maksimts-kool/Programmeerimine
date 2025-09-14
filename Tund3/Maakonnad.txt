@@ -1,0 +1,4 @@
+Harjumaa,Tallinn
+Tartumaa,Tartu
+Pärnumaa,Pärnu
+Ida-Virumaa,Narva
