@@ -2,7 +2,7 @@ namespace Tund1;
 
 public class Program2
 {
-    /*internal class StartClass
+    internal class StartClass
     {
         public static void Main(string[] args)
         {
@@ -36,5 +36,5 @@ public class Program2
                 }
             }
         }
-    }*/
+    }
 }
