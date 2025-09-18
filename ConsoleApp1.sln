@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tund1 (osa 1,2)", "Tund1\Tund1 (osa 1,2).csproj", "{EDE9D994-68B4-485B-89B4-F3C6FBA87420}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tund1 (osa 1,2)", "Tund1 (osa 1,2)\Tund1 (osa 1,2).csproj", "{EDE9D994-68B4-485B-89B4-F3C6FBA87420}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tund2 (osa 3)", "Tund2\Tund2 (osa 3).csproj", "{B9A62414-B2F7-4BA9-88C9-8E2AEA48BB8B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tund2 (osa 3)", "Tund2 (osa 3)\Tund2 (osa 3).csproj", "{B9A62414-B2F7-4BA9-88C9-8E2AEA48BB8B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tund3 (osa 4,5)", "Tund3\Tund3 (osa 4,5).csproj", "{FBA2D562-8D7A-4BAF-9634-0E1FEB2A4065}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tund3 (osa 4,5)", "Tund3 (osa 4,5)\Tund3 (osa 4,5).csproj", "{FBA2D562-8D7A-4BAF-9634-0E1FEB2A4065}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tund4", "Tund4\Tund4.csproj", "{F1C6B42F-3342-4B79-863B-46DEAEB90976}"
 EndProject
