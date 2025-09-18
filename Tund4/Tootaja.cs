@@ -9,4 +9,8 @@ public class Tootaja : Inimene
     {
         Console.WriteLine($"{Nimi} töötab {Ametikoht}");
     }
+    public override void midaTeeb()
+    {
+        Console.WriteLine($"{Nimi} töötab ametikohal");
+    }
 }
