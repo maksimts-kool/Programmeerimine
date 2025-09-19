@@ -16,8 +16,4 @@ public class Inimene
     {
         Console.WriteLine($"Tere {Nimi} sa oled {Vanus} aastat vana");
     }
-    public abstract void midaTeeb()
-    {
-        
-    }
 }

@@ -26,6 +26,22 @@
             dokument1.õigustööle = true;
             dokument1.Tervita();
             dokument1.Kontrolli();
+
+            Kass loom1 = new Kass();
+            loom1.Nimi = "Huss";
+            loom1.Vanus = 4;
+            loom1.Tyyp = "Kass";
+            loom1.Toit = "Vili";
+            loom1.Varv = "Pruun";
+            loom1.Tervita();
+            loom1.Kirjeldus();
+
+            Karu loom2 = new Karu();
+            loom2.Nimi = "Huss2";
+            loom2.Vanus = 12;
+            loom2.Tyyp = "Karu";
+            loom2.Tervita();
+            loom2.Info();
         }
     }
 }
