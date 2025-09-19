@@ -1,0 +1,5 @@
+Auto,8,150
+Jalgratas,30
+Buss,25,200,20
+Mootorratas,5,120
+Mootorratas,8,100
