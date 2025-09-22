@@ -4,6 +4,8 @@ namespace Tund5;
 
 class Point
 {
+    // Punkt, mis määrab objekti asukoha ja sümboli konsoolis.
+    // Kasutatakse mao osade, seinte ja toidu kirjeldamiseks.
     public int X;
     public int Y;
     public char Sym;

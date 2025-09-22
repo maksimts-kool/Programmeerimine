@@ -5,6 +5,8 @@ namespace Tund5;
 
 class Figure
 {
+    // Abstraktne kujundi klass – sisaldab punktide loendit.
+    // Seda pärivad jooned ja madu.
     protected List<Point> points;
 
     public virtual void Draw()

@@ -5,6 +5,8 @@ namespace Tund5;
 
 public class Program
 {
+    // Mängu põhiprogramm – siin käivitatakse mäng.
+    // Loob seina, mao, toidu ning haldab mängutsüklit.
     public static void Main(string[] args)
     {
         try

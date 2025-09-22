@@ -6,6 +6,8 @@ namespace Tund5;
 
 class Snake : Figure
 {
+    // Madu – koosneb punktidest ning liigub kindlas suunas.
+    // Haldab liikumist, söömist ja kokkupõrkeid.
     private Direction direction;
 
     public Snake(Point tail, int length, Direction _direction)

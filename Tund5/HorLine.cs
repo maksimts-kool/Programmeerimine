@@ -5,6 +5,7 @@ namespace Tund5;
 
 class HorLine : Figure
 {
+    // Horisontaalse joone (seina) kujutis.
     public HorLine(int xLeft, int xRight, int y, char sym)
     {
         points = new List<Point>();

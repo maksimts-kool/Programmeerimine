@@ -4,6 +4,7 @@ namespace Tund5;
 
 class FoodCreator
 {
+    // Klass, mis tekitab uusi toidupunkte (mida madu sööb).
     private int mapWidth;
     private int mapHeight;
     private char sym;

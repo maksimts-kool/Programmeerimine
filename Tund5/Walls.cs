@@ -5,6 +5,7 @@ namespace Tund5;
 
 class Walls
 {
+    // Seinte klass – tekitab ja haldab mänguala piire.
     private List<Figure> wallList;
 
     public Walls(int mapWidth, int mapHeight)

@@ -5,6 +5,7 @@ namespace Tund5;
 
 class VerLine : Figure
 {
+    // Vertikaalne joon – kujutab seina külgmist osa.
     public VerLine(int yUp, int yDown, int x, char sym)
     {
         points = new List<Point>();
