@@ -1,58 +1,105 @@
 using System;
-using System.Media;
+using NAudio.Wave;
 
-namespace Tund5;
-
-class HeliTegija
+namespace Tund5
 {
-    private SoundPlayer bgMusic;
-    private SoundPlayer eatSound;
-    private SoundPlayer gameOverSound;
-
-    public HeliTegija()
+    public class LoopStream : WaveStream
     {
-        try
+        private readonly WaveStream sourceStream;
+        public LoopStream(WaveStream source) { sourceStream = source; }
+        public override WaveFormat WaveFormat => sourceStream.WaveFormat;
+        public override long Length => long.MaxValue;
+        public override long Position
         {
-            bgMusic = new SoundPlayer("../../../sounds/bg.wav");
-            eatSound = new SoundPlayer("../../../sounds/eat.wav");
-            gameOverSound = new SoundPlayer("../../../sounds/gameover.wav");
+            get => sourceStream.Position;
+            set => sourceStream.Position = value;
         }
-        catch { }
+        public override int Read(byte[] buffer, int offset, int count)
+        {
+            int read = sourceStream.Read(buffer, offset, count);
+            if (read == 0)
+            {
+                sourceStream.Position = 0;
+                read = sourceStream.Read(buffer, offset, count);
+            }
+            return read;
+        }
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) sourceStream.Dispose();
+            base.Dispose(disposing);
+        }
     }
 
-    public void PlayBackground()
+    class HeliTegija : IDisposable
     {
-        try
+        private IWavePlayer bgPlayer;
+        private LoopStream bgLoop;
+        public HeliTegija()
         {
-            bgMusic.PlayLooping();
+            try
+            {
+                var bgReader = new AudioFileReader("../../../sounds/bg.wav");
+                bgLoop = new LoopStream(bgReader);
+                bgPlayer = new WaveOutEvent();
+                bgPlayer.Init(bgLoop);
+            }
+            catch (Exception)
+            {
+            }
         }
-        catch { }
-    }
 
-    public void StopBackground()
-    {
-        try
+        public void PlayBackground()
         {
-            bgMusic.Stop();
+            try { bgPlayer?.Play(); }
+            catch { }
         }
-        catch { }
-    }
 
-    public void PlayEat()
-    {
-        try
+        public void StopBackground()
         {
-            eatSound.Play();
+            try { bgPlayer?.Stop(); }
+            catch { }
         }
-        catch { }
-    }
 
-    public void PlayGameOver()
-    {
-        try
+        public void PlayEat()
         {
-            gameOverSound.Play();
+            try
+            {
+                var reader = new AudioFileReader("../../../sounds/eat.wav");
+                var player = new WaveOutEvent();
+                player.Init(reader);
+                player.PlaybackStopped += (s, e) =>
+                {
+                    player.Dispose();
+                    reader.Dispose();
+                };
+                player.Play();
+            }
+            catch { }
         }
-        catch { }
+
+        public void PlayGameOver()
+        {
+            try
+            {
+                var reader = new AudioFileReader("../../../sounds/gameover.wav");
+                var player = new WaveOutEvent();
+                player.Init(reader);
+                player.PlaybackStopped += (s, e) =>
+                {
+                    player.Dispose();
+                    reader.Dispose();
+                };
+                player.Play();
+            }
+            catch { }
+        }
+
+        public void Dispose()
+        {
+            bgPlayer?.Stop();
+            bgPlayer?.Dispose();
+            bgLoop?.Dispose();
+        }
     }
 }

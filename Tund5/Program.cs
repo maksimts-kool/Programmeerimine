@@ -1,6 +1,7 @@
 using System;
 using System.Reflection.Metadata.Ecma335;
 using System.Threading;
+using System.Linq;
 
 namespace Tund5;
 
@@ -8,6 +9,7 @@ public class Program
 {
     // Mängu põhiprogramm – siin käivitatakse mäng.
     // Loob seina, mao, toidu ning haldab mängutsüklit.
+    // Uued võimalused: takistused, raskusaste, helid, vastuste salvestus, erinevad toidupunktid.
     public static void Main(string[] args)
     {
         while (true)
@@ -60,11 +62,23 @@ public class Program
         Walls walls = new Walls(80, 25);
         walls.Draw();
 
-        List<Takistused> obst = new List<Takistused>();
-        Takistused o1 = new Takistused(20, 8, 30, 9, '#');
-        Takistused o2 = new Takistused(50, 15, 55, 16, '#');
-        obst.Add(o1);
-        obst.Add(o2);
+        int snakeStartX = 4;
+        int snakeStartY = 5;
+        int snakeStartLen = 4;
+        int snakeStartX2 = snakeStartX + snakeStartLen - 1;
+        var forbidden = new List<(int x1, int y1, int x2, int y2)>
+        { (snakeStartX, snakeStartY, snakeStartX2, snakeStartY) };
+
+
+        List<Takistused> obst = Takistused.GenerateObstacles(
+            80, 25,
+            3,
+            margin: 2,
+            minW: 3, maxW: 10,
+            minH: 2, maxH: 6,
+            forbidden: forbidden
+        );
+
         foreach (var o in obst)
             o.Draw();
 
@@ -86,10 +100,11 @@ public class Program
 
         int skoor = 0;
         HeliTegija sm = new HeliTegija();
+        sm.PlayBackground();
 
         while (true)
         {
-            if (walls.IsHit(s) || s.IsHitTail() || o1.IsHit(s) || o2.IsHit(s))
+            if (walls.IsHit(s) || s.IsHitTail() || obst.Any(o => o.IsHit(s)))
                 break;
 
             bool ateSomething = false;
@@ -102,6 +117,7 @@ public class Program
                     skoor += foodValues[f];
                     eatenFood = f;
                     ateSomething = true;
+                    sm.PlayEat();
                     break;
                 }
             }
@@ -129,6 +145,9 @@ public class Program
                 s.HandleKey(key.Key);
             }
         }
+
+        sm.StopBackground();
+        sm.PlayGameOver();
 
         Console.SetCursorPosition(30, 12);
         Console.ForegroundColor = ConsoleColor.Red;
