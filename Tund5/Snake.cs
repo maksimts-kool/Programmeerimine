@@ -9,7 +9,7 @@ class Snake : Figure
     // Madu – koosneb punktidest ning liigub kindlas suunas.
     // Haldab liikumist, söömist ja kokkupõrkeid.
     private Direction direction;
-
+    private int grow = 0; // сколько сегментов нужно ещё вырастить
     public Snake(Point tail, int length, Direction _direction)
     {
         direction = _direction;
@@ -24,13 +24,22 @@ class Snake : Figure
 
     internal void Move()
     {
-        Point tail = points.First();
-        points.Remove(tail);
         Point head = GetNextPoint();
         points.Add(head);
-
-        tail.Clear();
         head.Draw();
+
+        if (grow > 0)
+        {
+            // если нужно расти — не удаляем хвост
+            grow--;
+        }
+        else
+        {
+            // обычный ход: удаляем хвост
+            Point tail = points.First();
+            points.Remove(tail);
+            tail.Clear();
+        }
     }
 
     public Point GetNextPoint()
@@ -64,13 +73,27 @@ class Snake : Figure
             direction = Direction.DOWN;
     }
 
-    internal bool Eat(Point food)
+    internal bool Eat(Point food, int foodPoints)
     {
         Point head = GetNextPoint();
         if (head.IsHit(food))
         {
-            food.Sym = head.Sym;
-            points.Add(food);
+            // подсчёт роста: например, $=1, %=3, != -2
+            if (foodPoints > 0)
+            {
+                grow += foodPoints; // змейка вырастет "сама" на следующих шагах
+            }
+            else if (foodPoints < 0)
+            {
+                // уменьшаем длину
+                int removeCount = Math.Min(points.Count - 1, Math.Abs(foodPoints));
+                for (int i = 0; i < removeCount; i++)
+                {
+                    Point tail = points.First();
+                    points.Remove(tail);
+                    tail.Clear();
+                }
+            }
             return true;
         }
         return false;
