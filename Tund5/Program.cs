@@ -87,15 +87,12 @@ public class Program
         s.Draw();
 
         FoodCreator fc = new FoodCreator(80, 25);
-        List<Point> foods = new List<Point>();
-        Dictionary<Point, int> foodValues = new Dictionary<Point, int>();
+        List<FoodItem> foods = new List<FoodItem>();
         for (int i = 0; i < 3; i++)
         {
-            int fpoints;
-            Point f = fc.CreateFood(out fpoints);
-            foods.Add(f);
-            foodValues[f] = fpoints;
-            f.Draw();
+            var fi = fc.CreateFood(obst, foods, s);
+            foods.Add(fi);
+            fi.Draw();
         }
 
         int skoor = 0;
@@ -104,18 +101,46 @@ public class Program
 
         while (true)
         {
-            if (walls.IsHit(s) || s.IsHitTail() || obst.Any(o => o.IsHit(s)))
+            bool hitObstacle = false;
+            foreach (var o in obst)
+            {
+                if (o.IsHit(s))
+                {
+                    hitObstacle = true;
+                    break;
+                }
+            }
+            if (walls.IsHit(s) || s.IsHitTail() || hitObstacle)
                 break;
 
-            bool ateSomething = false;
-            Point eatenFood = null;
-
-            foreach (Point f in foods)
+            List<FoodItem> expired = new List<FoodItem>();
+            foreach (var fi in foods)
             {
-                if (s.Eat(f, foodValues[f]))
+                bool nowExpired = fi.Tick();
+                if (nowExpired)
+                    expired.Add(fi);
+            }
+
+            foreach (var ex in expired)
+            {
+
+                ex.P.Clear();
+                foods.Remove(ex);
+
+                var newFi = fc.CreateFood(obst, foods, s);
+                foods.Add(newFi);
+                newFi.Draw();
+            }
+
+            bool ateSomething = false;
+            FoodItem eatenFood = null;
+
+            foreach (var fi in foods)
+            {
+                if (s.Eat(fi.P, fi.Value))
                 {
-                    skoor += foodValues[f];
-                    eatenFood = f;
+                    skoor += fi.Value;
+                    eatenFood = fi;
                     ateSomething = true;
                     sm.PlayEat();
                     break;
@@ -124,13 +149,14 @@ public class Program
 
             if (ateSomething && eatenFood != null)
             {
+                eatenFood.P.Clear();
                 foods.Remove(eatenFood);
-                foodValues.Remove(eatenFood);
-                int fpoints;
-                Point f = fc.CreateFood(out fpoints);
-                foods.Add(f);
-                foodValues[f] = fpoints;
-                f.Draw();
+
+                s.Move();
+
+                var newFi = fc.CreateFood(obst, foods, s);
+                foods.Add(newFi);
+                newFi.Draw();
             }
             else
             {
