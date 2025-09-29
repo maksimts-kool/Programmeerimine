@@ -1,77 +1,59 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 
-namespace Tund5;
-
-class VastuseTegija
+namespace Tund5
 {
-    string filePath = "vastused.txt";
-
-    public void Save(string playerName, int score)
+    class VastuseTegija
     {
-        StreamWriter writer = new StreamWriter(filePath, true);
-        writer.WriteLine(playerName + ";" + score + ";" + DateTime.Now);
-        writer.Close();
-    }
+        string filePath = "vastused.txt";
 
-    public List<string> Load()
-    {
-        List<string> scores = new List<string>();
-        if (File.Exists(filePath))
+        public void Save(string playerName, int score, string difficulty)
         {
-            StreamReader reader = new StreamReader(filePath);
-            string line;
-            while ((line = reader.ReadLine()) != null)
+            using (var w = new StreamWriter(filePath, true))
             {
-                scores.Add(line);
+                w.WriteLine(playerName + ";" + score + ";" + difficulty + ";" + DateTime.Now);
             }
-            reader.Close();
-        }
-        return scores;
-    }
-
-    public void Show()
-    {
-        Console.Clear();
-        Console.WriteLine("--- Vastused ---");
-        Console.WriteLine();
-
-        List<string> scores = Load();
-        List<string[]> parts = new List<string[]>();
-        foreach (string s in scores)
-        {
-            string[] arr = s.Split(';');
-            if (arr.Length >= 2) parts.Add(arr);
         }
 
-        for (int i = 0; i < parts.Count; i++)
+        public List<string[]> Load()
         {
-            for (int j = i + 1; j < parts.Count; j++)
+            var scores = new List<string[]>();
+            if (File.Exists(filePath))
             {
-                int score1 = int.Parse(parts[i][1]);
-                int score2 = int.Parse(parts[j][1]);
-                if (score2 > score1)
+                foreach (var line in File.ReadAllLines(filePath))
                 {
-                    string[] temp = parts[i];
-                    parts[i] = parts[j];
-                    parts[j] = temp;
+                    var parts = line.Split(';');
+                    if (parts.Length >= 3) scores.Add(parts);
                 }
             }
+            return scores;
         }
 
-        int place = 1;
-        foreach (var p in parts)
+        public void Show()
         {
-            Console.WriteLine(place + ". " + p[0] + " - " + p[1] + " punkti (" + p[2] + ")");
-            place++;
-        }
+            Console.Clear();
+            Console.WriteLine("--- Tulemustabel ---\n");
 
-        if (parts.Count == 0)
-        {
-            Console.WriteLine("Veel pole tulemusi.");
-        }
+            var scores = Load();
+            scores.Sort((a, b) => int.Parse(b[1]).CompareTo(int.Parse(a[1])));
 
-        Console.WriteLine();
-        Console.WriteLine("Vajuta klahvi...");
-        Console.ReadKey();
+            if (scores.Count == 0)
+            {
+                Console.WriteLine("Veel pole tulemusi.");
+            }
+            else
+            {
+                int place = 1;
+                foreach (var s in scores)
+                {
+                    Console.WriteLine($"{place}. {s[0]} - {s[1]} punkti ({s[2]}, {s[3]})");
+                    place++;
+                }
+            }
+
+            Console.WriteLine("\nVajuta klahvi...");
+            Console.ReadKey();
+        }
     }
 }
