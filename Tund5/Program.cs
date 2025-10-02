@@ -12,6 +12,7 @@ public class Program
     // Uued võimalused: takistused, raskusaste, helid, vastuste salvestus, erinevad toidupunktid.
     public static void Main(string[] args)
     {
+        Console.OutputEncoding = System.Text.Encoding.UTF8;
         while (true)
         {
             Console.Clear();
@@ -166,20 +167,14 @@ public class Program
 
         sm.StopBackground();
         sm.PlayGameOver();
-
-        Console.SetCursorPosition(30, 12);
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("MÄNG LÄBI! Skoor: " + skoor);
-        Console.ResetColor();
+        ShowGameOver(skoor);
 
         string nimi = "";
         while (true)
         {
-            Console.Write("\nSisesta oma nimi: ");
             nimi = Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(nimi) && nimi.Length >= 3)
-                break;
-            Console.WriteLine("Viga: nimi peab olema 3 sümbolist!");
+            if (!string.IsNullOrWhiteSpace(nimi) && nimi.Length >= 3) break;
+            Console.WriteLine("Viga: nimi peab sisaldama vähemalt 3 sümbolit!");
         }
 
         VastuseTegija vt = new VastuseTegija();
@@ -189,5 +184,50 @@ public class Program
         Console.WriteLine("Tulemus on salvestatud!");
         Console.WriteLine("Vajuta mingit klahvi...");
         Console.ReadKey();
+    }
+    private static void ShowGameOver(int score)
+    {
+        Console.Clear();
+        int width = 40;
+        int height = 5;
+        int startX = (80 - width) / 2;
+        int startY = (25 - height) / 2;
+
+        Console.ForegroundColor = ConsoleColor.Yellow;
+
+        for (int x = startX; x < startX + width; x++)
+        {
+            Console.SetCursorPosition(x, startY);
+            Console.Write("═");
+            Console.SetCursorPosition(x, startY + height - 1);
+            Console.Write("═");
+        }
+
+        for (int y = startY; y < startY + height; y++)
+        {
+            Console.SetCursorPosition(startX, y);
+            Console.Write("║");
+            Console.SetCursorPosition(startX + width - 1, y);
+            Console.Write("║");
+        }
+
+        Console.SetCursorPosition(startX, startY);
+        Console.Write("╔");
+        Console.SetCursorPosition(startX + width - 1, startY);
+        Console.Write("╗");
+        Console.SetCursorPosition(startX, startY + height - 1);
+        Console.Write("╚");
+        Console.SetCursorPosition(startX + width - 1, startY + height - 1);
+        Console.Write("╝");
+
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.SetCursorPosition(startX + 8, startY + 2);
+        Console.Write($"MÄNG LÄBI!  Skoor: {score}");
+        Console.ResetColor();
+
+        Console.SetCursorPosition(0, 16);
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.Write("Sisesta oma nimi: ");
+        Console.ResetColor();
     }
 }

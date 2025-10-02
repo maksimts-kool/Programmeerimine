@@ -32,24 +32,33 @@ namespace Tund5
                 if (random.NextDouble() < poisonChance)
                 {
                     Point p = new Point(x, y, '!');
-                    return new FoodItem(p, -2);
+                    if (IsValid(p, snake, existingFoods, obstacles))
+                        return new FoodItem(p, -2);
                 }
+                else
+                {
+                    int value = random.Next(minPoints, maxPoints + 1);
+                    char sym = (value > minPoints) ? '%' : '$';
+                    Point p = new Point(x, y, sym);
 
-                int points = random.Next(minPoints, maxPoints + 1);
-                char sym = (points > minPoints) ? '%' : '$';
-
-                Point good = new Point(x, y, sym);
-
-                bool bad = false;
-                if (snake.IsHit(good)) bad = true;
-                foreach (var f in existingFoods)
-                    if (f.P.IsHit(good)) bad = true;
-                foreach (var o in obstacles)
-                    if (o.IsHit(good)) bad = true;
-
-                if (!bad)
-                    return new FoodItem(good, points);
+                    if (IsValid(p, snake, existingFoods, obstacles))
+                        return new FoodItem(p, value);
+                }
             }
+        }
+        private bool IsValid(Point p, Snake snake, List<FoodItem> foods, List<Takistused> obstacles)
+        {
+            if (snake.IsHit(p)) return false;
+
+            if (foods != null)
+                foreach (var f in foods)
+                    if (f.P.IsHit(p)) return false;
+
+            if (obstacles != null)
+                foreach (var o in obstacles)
+                    if (o.IsHit(p)) return false;
+
+            return true;
         }
     }
 }
