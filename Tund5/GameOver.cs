@@ -21,7 +21,6 @@ namespace Tund5
                 Console.SetCursorPosition(x, startY + height - 1);
                 Console.Write("═");
             }
-
             for (int y = startY; y < startY + height; y++)
             {
                 Console.SetCursorPosition(startX, y);
@@ -44,16 +43,33 @@ namespace Tund5
             Console.Write($"MÄNG LÄBI!  Skoor: {score}");
             Console.ResetColor();
 
-            Console.SetCursorPosition(startX, startY + height + 1);
-            Console.Write("Sisesta oma nimi (vähemalt 3 tähte): ");
+            int bottomY = Console.WindowHeight - 3;
 
             string nimi = "";
             while (true)
             {
+                Console.SetCursorPosition(0, bottomY);
+                Console.Write(new string(' ', Console.WindowWidth));
+                Console.SetCursorPosition(0, bottomY);
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write("Sisesta oma nimi (vähemalt 3 tähte): ");
+                Console.ResetColor();
+
                 nimi = Console.ReadLine();
-                if (!string.IsNullOrWhiteSpace(nimi) && nimi.Length >= 3) break;
-                Console.WriteLine("Viga: nimi peab sisaldama vähemalt 3 sümbolit!");
+
+                if (!string.IsNullOrWhiteSpace(nimi) && nimi.Length >= 3)
+                    break;
+
+                Console.SetCursorPosition(0, bottomY + 1);
+                Console.Write(new string(' ', Console.WindowWidth));
+                Console.SetCursorPosition(0, bottomY + 1);
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write("Viga: nimi peab sisaldama vähemalt 3 sümbolit!");
+                Console.ResetColor();
             }
+
+            Console.SetCursorPosition(0, bottomY + 1);
+            Console.Write(new string(' ', Console.WindowWidth));
 
             return nimi;
         }

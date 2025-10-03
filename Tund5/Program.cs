@@ -83,6 +83,10 @@ public class Program
         HeliTegija sm = new HeliTegija();
         sm.PlayBackground();
 
+        ScoreBoard board = new ScoreBoard();
+        board.ShowScore(0, diff.Name);
+
+        Console.CursorVisible = false;
         while (true)
         {
             // Kontroll kas madu sõi seina, sabaga või takistust
@@ -104,6 +108,7 @@ public class Program
                 if (snake.Eat(f.P, f.Value))
                 {
                     skoor += f.Value;
+                    board.ShowScore(skoor, diff.Name);
                     eaten = f;
                     break;
                 }
@@ -122,6 +127,9 @@ public class Program
             }
 
             snake.Move();
+            board.ShowScore(skoor, diff.Name);
+
+
 
             Thread.Sleep(diff.Speed);
 

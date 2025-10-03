@@ -20,7 +20,6 @@ namespace Tund5
                 points.Add(p);
             }
         }
-
         internal void Move()
         {
             Point head = GetNextPoint();
