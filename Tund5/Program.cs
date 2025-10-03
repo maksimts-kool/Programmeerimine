@@ -13,7 +13,7 @@ public class Program
     public static void Main(string[] args)
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
-        while (true)
+        while (true) //tsükkel
         {
             Console.Clear();
             Console.WriteLine("Madu mäng");
@@ -46,44 +46,11 @@ public class Program
         Console.WriteLine("Vali raskusaste: (1) Lihtne, (2) Keskmine, (3) Raske");
         ConsoleKey k = Console.ReadKey(true).Key;
 
-        int speed = 100;
-        int foodCount = 3;
-        int minPoints = 1;
-        int maxPoints = 2;
-        double poisonChance = 0.1;
-        int obstaclesCount = 2;
-        string difficulty = "Lihtne";
-
-        if (k == ConsoleKey.D1) // lihtne
-        {
-            speed = 150;
-            foodCount = 3;
-            minPoints = 1;
-            maxPoints = 2;
-            poisonChance = 0.1;
-            obstaclesCount = 2;
-            difficulty = "Lihtne";
-        }
-        else if (k == ConsoleKey.D2) // keskmine
-        {
-            speed = 100;
-            foodCount = 4;
-            minPoints = 1;
-            maxPoints = 3;
-            poisonChance = 0.25;
-            obstaclesCount = 4;
-            difficulty = "Keskmine";
-        }
-        else if (k == ConsoleKey.D3) // raske
-        {
-            speed = 60;
-            foodCount = 6;
-            minPoints = 2;
-            maxPoints = 5;
-            poisonChance = 0.4;
-            obstaclesCount = 6;
-            difficulty = "Raske";
-        }
+        Difficult diff = Difficult.Easy;
+        if (k == ConsoleKey.D2)
+            diff = Difficult.Medium;
+        else if (k == ConsoleKey.D3)
+            diff = Difficult.Hard;
 
         try
         {
@@ -95,7 +62,7 @@ public class Program
         Walls walls = new Walls(80, 25);
         walls.Draw();
 
-        List<Takistused> obst = Takistused.GenerateObstacles(80, 25, obstaclesCount);
+        List<Takistused> obst = Takistused.GenerateObstacles(80, 25, diff.Obstacles);
         foreach (var o in obst)
             o.Draw();
 
@@ -103,9 +70,9 @@ public class Program
         Snake snake = new Snake(start, 4, Direction.RIGHT);
         snake.Draw();
 
-        FoodCreator fc = new FoodCreator(80, 25, minPoints, maxPoints, poisonChance);
+        FoodCreator fc = new FoodCreator(80, 25, diff.MinPoints, diff.MaxPoints, diff.PoisonChance);
         List<FoodItem> foods = new List<FoodItem>();
-        for (int i = 0; i < foodCount; i++)
+        for (int i = 0; i < diff.FoodCount; i++)
         {
             var f = fc.CreateFood(snake, foods, obst);
             foods.Add(f);
@@ -156,7 +123,7 @@ public class Program
 
             snake.Move();
 
-            Thread.Sleep(speed);
+            Thread.Sleep(diff.Speed);
 
             if (Console.KeyAvailable)
             {
@@ -167,67 +134,14 @@ public class Program
 
         sm.StopBackground();
         sm.PlayGameOver();
-        ShowGameOver(skoor);
-
-        string nimi = "";
-        while (true)
-        {
-            nimi = Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(nimi) && nimi.Length >= 3) break;
-            Console.WriteLine("Viga: nimi peab sisaldama vähemalt 3 sümbolit!");
-        }
+        string playerName = GameOver.Show(skoor);
 
         VastuseTegija vt = new VastuseTegija();
-        vt.Save(nimi, skoor, difficulty);
+        vt.Save(playerName, skoor, diff.Name);
 
         Console.WriteLine();
         Console.WriteLine("Tulemus on salvestatud!");
         Console.WriteLine("Vajuta mingit klahvi...");
         Console.ReadKey();
-    }
-    private static void ShowGameOver(int score)
-    {
-        Console.Clear();
-        int width = 40;
-        int height = 5;
-        int startX = (80 - width) / 2;
-        int startY = (25 - height) / 2;
-
-        Console.ForegroundColor = ConsoleColor.Yellow;
-
-        for (int x = startX; x < startX + width; x++)
-        {
-            Console.SetCursorPosition(x, startY);
-            Console.Write("═");
-            Console.SetCursorPosition(x, startY + height - 1);
-            Console.Write("═");
-        }
-
-        for (int y = startY; y < startY + height; y++)
-        {
-            Console.SetCursorPosition(startX, y);
-            Console.Write("║");
-            Console.SetCursorPosition(startX + width - 1, y);
-            Console.Write("║");
-        }
-
-        Console.SetCursorPosition(startX, startY);
-        Console.Write("╔");
-        Console.SetCursorPosition(startX + width - 1, startY);
-        Console.Write("╗");
-        Console.SetCursorPosition(startX, startY + height - 1);
-        Console.Write("╚");
-        Console.SetCursorPosition(startX + width - 1, startY + height - 1);
-        Console.Write("╝");
-
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.SetCursorPosition(startX + 8, startY + 2);
-        Console.Write($"MÄNG LÄBI!  Skoor: {score}");
-        Console.ResetColor();
-
-        Console.SetCursorPosition(0, 16);
-        Console.ForegroundColor = ConsoleColor.White;
-        Console.Write("Sisesta oma nimi: ");
-        Console.ResetColor();
     }
 }
