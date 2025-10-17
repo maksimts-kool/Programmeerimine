@@ -205,7 +205,8 @@ namespace Tund6._2
                 { "Hall", Color.LightGray },
                 { "Sinine", Color.SkyBlue },
                 { "Roheline", Color.LightGreen },
-                { "Roosa", Color.LightPink }
+                { "Roosa", Color.LightPink },
+                { "Kollane", Color.LightYellow }
             };
             foreach (var c in colorMap.Keys)
                 listColors.Items.Add(c);
