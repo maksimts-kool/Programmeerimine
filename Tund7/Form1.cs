@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 
 namespace Tund7
 {
@@ -27,15 +28,15 @@ namespace Tund7
 
         private void InitUI()
         {
-            // === Form setup ===
+            // Form setup
             this.Text = "Picture Viewer";
-            this.Size = new Size(800, 600);
+            this.Size = new Size(1000, 600);
 
-            // === Create dialogs ===
+            // Create dialogs
             openFileDialog = new OpenFileDialog();
             colorDialog = new ColorDialog();
 
-            // === TableLayoutPanel setup ===
+            // TableLayoutPanel
             tableLayoutPanel = new TableLayoutPanel();
             tableLayoutPanel.Dock = DockStyle.Fill;
             tableLayoutPanel.RowCount = 2;
@@ -45,13 +46,13 @@ namespace Tund7
             tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30));
             tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70));
 
-            // === PictureBox setup ===
+            // PictureBox
             pictureBox = new PictureBox();
             pictureBox.Dock = DockStyle.Fill;
             pictureBox.BorderStyle = BorderStyle.Fixed3D;
             tableLayoutPanel.SetColumnSpan(pictureBox, 2);
 
-            // === FlowLayoutPanels setup ===
+            // FlowLayoutPanels
             flowLayoutPanelCheckBoxes = new FlowLayoutPanel();
             flowLayoutPanelCheckBoxes.Dock = DockStyle.Fill;
             flowLayoutPanelCheckBoxes.AutoSize = true;
@@ -61,7 +62,7 @@ namespace Tund7
             flowLayoutPanelButtons.Dock = DockStyle.Fill;
             flowLayoutPanelButtons.FlowDirection = FlowDirection.RightToLeft;
 
-            // === CheckBoxes setup ===
+            // СheckBoxes
 
             chkStretch = new CheckBox
             {
@@ -82,23 +83,65 @@ namespace Tund7
             flowLayoutPanelCheckBoxes.Controls.Add(chkStretch);
             flowLayoutPanelCheckBoxes.Controls.Add(chkFitToPicture);
 
-            // === Buttons setup ===
-            btnShow = new Button { Text = "Näita pilti", AutoSize = true };
+            Image CreateRoundedGradientImage(Color startColor, Color endColor, int width, int height, int borderRadius)
+            {
+                Bitmap bmp = new Bitmap(width, height);
+                using (Graphics g = Graphics.FromImage(bmp))
+                {
+                    g.SmoothingMode = SmoothingMode.AntiAlias;
+
+                    GraphicsPath path = new GraphicsPath();
+                    path.AddArc(0, 0, borderRadius * 2, borderRadius * 2, 180, 90);
+                    path.AddArc(width - borderRadius * 2, 0, borderRadius * 2, borderRadius * 2, 270, 90);
+                    path.AddArc(width - borderRadius * 2, height - borderRadius * 2, borderRadius * 2, borderRadius * 2, 0, 90);
+                    path.AddArc(0, height - borderRadius * 2, borderRadius * 2, borderRadius * 2, 90, 90);
+                    path.CloseAllFigures();
+
+                    using (LinearGradientBrush brush = new LinearGradientBrush(
+                        new Point(0, 0),
+                        new Point(width, height),
+                        startColor,
+                        endColor))
+                    {
+                        g.FillPath(brush, path);
+                    }
+                }
+                return bmp;
+            }
+
+            Button SetupStyledButton(string text, Image backgroundImage, Color foreColor)
+            {
+                Button btn = new Button
+                {
+                    Text = text,
+                    Size = new Size(120, 40), 
+                    FlatStyle = FlatStyle.Flat,
+                    FlatAppearance = { BorderSize = 0 },
+                    BackgroundImage = backgroundImage,
+                    BackgroundImageLayout = ImageLayout.Stretch, 
+                    TextAlign = ContentAlignment.MiddleCenter,
+                    Font = new Font("Segoe UI", 10F, FontStyle.Bold),
+                    ForeColor = foreColor,
+                };
+                return btn;
+            }
+            
+            int commonBorderRadius = 15; 
+
+            btnShow = SetupStyledButton("Näita pilti", CreateRoundedGradientImage(Color.LightBlue, Color.DeepSkyBlue, 120, 40, commonBorderRadius), Color.Black);
             btnShow.Click += BtnShowPicture_Click;
 
-            btnClear = new Button { Text = "Puhasta pilt", AutoSize = true };
+            btnClear = SetupStyledButton("Puhasta pilt", CreateRoundedGradientImage(Color.LightCoral, Color.IndianRed, 120, 40, commonBorderRadius), Color.Black);
             btnClear.Click += BtnClearPicture_Click;
 
-            btnClose = new Button { Text = "Sule", AutoSize = true };
+            btnClose = SetupStyledButton("Sule", CreateRoundedGradientImage(Color.LightGray, Color.DimGray, 120, 40, commonBorderRadius), Color.Black);
             btnClose.Click += BtnClose_Click;
 
-            btnEffects = new Button { Text = "Efektid", AutoSize = true };
+            btnEffects = SetupStyledButton("Efektid", CreateRoundedGradientImage(Color.LightGreen, Color.SeaGreen, 120, 40, commonBorderRadius), Color.Black);
             btnEffects.Click += BtnEffects_Click;
-            flowLayoutPanelButtons.Controls.Add(btnEffects);
 
-            btnSave = new Button { Text = "Salvesta kui...", AutoSize = true };
+            btnSave = SetupStyledButton("Salvesta kui...", CreateRoundedGradientImage(Color.LightGoldenrodYellow, Color.Goldenrod, 120, 40, commonBorderRadius), Color.Black);
             btnSave.Click += BtnSave_Click;
-
 
             flowLayoutPanelButtons.Controls.Add(btnClose);
             flowLayoutPanelButtons.Controls.Add(btnEffects);
@@ -106,15 +149,15 @@ namespace Tund7
             flowLayoutPanelButtons.Controls.Add(btnClear);
             flowLayoutPanelButtons.Controls.Add(btnShow);
 
-            // === Add controls to layout ===
+            // controls to layout
             tableLayoutPanel.Controls.Add(pictureBox, 0, 0);
             tableLayoutPanel.Controls.Add(flowLayoutPanelCheckBoxes, 0, 1);
             tableLayoutPanel.Controls.Add(flowLayoutPanelButtons, 1, 1);
 
-            // === Add layout to the form ===
+            // layout to the form
             this.Controls.Add(tableLayoutPanel);
 
-            // === OpenFileDialog setup ===
+            // OpenFileDialog
             openFileDialog.Filter =
                 "JPEG failid (*.jpg)|*.jpg|PNG failid (*.png)|*.png|BMP failid (*.bmp)|*.bmp|Kõik failid (*.*)|*.*";
             openFileDialog.Title = "Valige pildifail";
@@ -270,22 +313,22 @@ namespace Tund7
                 {
                     string path = saveDialog.FileName;
                     string ext = System.IO.Path.GetExtension(path).ToLowerInvariant();
-                    var format = System.Drawing.Imaging.ImageFormat.Png; // default
+                    var format = ImageFormat.Png;
 
                     switch (ext)
                     {
                         case ".jpg":
                         case ".jpeg":
-                            format = System.Drawing.Imaging.ImageFormat.Jpeg;
+                            format = ImageFormat.Jpeg;
                             break;
                         case ".bmp":
-                            format = System.Drawing.Imaging.ImageFormat.Bmp;
+                            format = ImageFormat.Bmp;
                             break;
                         case ".gif":
-                            format = System.Drawing.Imaging.ImageFormat.Gif;
+                            format = ImageFormat.Gif;
                             break;
                         case ".png":
-                            format = System.Drawing.Imaging.ImageFormat.Png;
+                            format = ImageFormat.Png;
                             break;
                         default:
                             path += ".png";
