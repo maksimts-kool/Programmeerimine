@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
+﻿
 
 namespace Tund7
 {
@@ -12,9 +8,6 @@ namespace Tund7
 
         Difficulty currentDifficulty = Difficulty.Keskmine;
         Random random = new Random();
-
-        int[] leftValues = new int[4];
-        int[] rightValues = new int[4];
         char[] operators = new char[4];
 
         int sectionCount = 1;
@@ -50,9 +43,9 @@ namespace Tund7
             Font = new Font("Segoe UI", 13F);
 
             menuStrip = new MenuStrip();
-            // Меню "Mäng"
+            // Menüü "Mäng"
             var gameMenu = new ToolStripMenuItem("Mäng");
-            pauseMenuItem = new ToolStripMenuItem("Paus"); // <-- сохраняем в поле класса!
+            pauseMenuItem = new ToolStripMenuItem("Paus");
             pauseMenuItem.Enabled = false;
             pauseMenuItem.Click += (_, _) => TogglePauseMenu(pauseMenuItem);
             gameMenu.DropDownItems.Add(pauseMenuItem);
@@ -149,8 +142,7 @@ namespace Tund7
                 ForeColor = Color.MediumSeaGreen
             };
 
-            // Отображение текущей секции
-            // Текст Sektsioon X / Y
+            // Sektsioon X / Y
             sectionTitle = new Label
             {
                 Text = "Sektsioon 0 / 0",
@@ -297,7 +289,7 @@ namespace Tund7
         private void NextButton_Click(object sender, EventArgs e)
         {
             if (isPaused)
-                return; // нельзя переходить во время паузы
+                return;
 
             SaveCurrentSection();
             currentSection++;
@@ -305,7 +297,7 @@ namespace Tund7
             if (currentSection <= sectionCount)
             {
                 LoadSection(currentSection);
-                UpdateSectionTitle(); // обновляем
+                UpdateSectionTitle();
             }
             else
             {
@@ -320,10 +312,9 @@ namespace Tund7
 
             if (!isPaused)
             {
-                // Поставить на паузу
                 timer.Stop();
                 isPaused = true;
-                nextButton.Enabled = false; // чтобы не листали
+                nextButton.Enabled = false;
                 SetAnswerInputsEnabled(false);
 
                 progressBar.ForeColor = Color.Gray;
@@ -331,13 +322,11 @@ namespace Tund7
             }
             else
             {
-                // Возобновить игру
                 timer.Start();
                 isPaused = false;
                 nextButton.Enabled = true;
                 SetAnswerInputsEnabled(true);
 
-                // Вернуть цвет
                 if (timeLeft < progressBar.Maximum * 0.25)
                     progressBar.ForeColor = Color.IndianRed;
                 else if (timeLeft < progressBar.Maximum * 0.5)
@@ -357,7 +346,7 @@ namespace Tund7
             {
                 var ex = res.Items[i];
                 ex.answer = (int)resultInputs[i].Value;
-                res.Items[i] = ex; // uuendame tuple listis
+                res.Items[i] = ex;
             }
             sections[currentSection - 1] = res;
         }
@@ -447,10 +436,9 @@ namespace Tund7
 
             if (!isPaused)
             {
-                // Поставить на паузу
                 timer.Stop();
                 isPaused = true;
-                item.Text = "Jätka"; // изменить пункт меню
+                item.Text = "Jätka";
                 nextButton.Enabled = false;
                 SetAnswerInputsEnabled(false);
 
@@ -459,7 +447,6 @@ namespace Tund7
             }
             else
             {
-                // Возобновить
                 timer.Start();
                 isPaused = false;
                 item.Text = "Paus";
