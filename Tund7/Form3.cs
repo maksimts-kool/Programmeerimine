@@ -10,19 +10,19 @@ namespace Tund7
     public partial class Form3 : Form
     {
         TableLayoutPanel tableLayout;
-        PictureBox firstClicked = null;
-        PictureBox secondClicked = null;
-        bool inputLocked = false;
         Random random = new Random();
         System.Windows.Forms.Timer revealTimer, colorTimer;
         MenuStrip menuStrip;
         ToolStripMenuItem gameMenu, addIconsItem;
-        string iconDir = @"../../../ikoonid";
         Label timeLabel;
         System.Windows.Forms.Timer gameTimer;
+        PictureBox firstClicked = null;
+        PictureBox secondClicked = null;
         int timeLeft = 60;
         int successStreak = 0;
         int failStreak = 0;
+        string iconDir = @"../../../ikoonid";
+        bool inputLocked = false;
 
         public Form3()
         {
@@ -72,17 +72,16 @@ namespace Tund7
             }
 
             menuStrip = new MenuStrip();
-
             gameMenu = new ToolStripMenuItem("Mäng");
             addIconsItem = new ToolStripMenuItem("Lisa ikoone...");
-            addIconsItem.Click += AddIconsItem_Click;
+
             gameMenu.DropDownItems.Add(addIconsItem);
             menuStrip.Items.Add(gameMenu);
-
             Controls.Add(menuStrip);
-            MainMenuStrip = menuStrip;
-
             Controls.Add(tableLayout);
+
+            addIconsItem.Click += AddIconsItem_Click;
+            MainMenuStrip = menuStrip;
 
             timeLabel = new Label
             {
@@ -96,7 +95,6 @@ namespace Tund7
             };
             Controls.Add(timeLabel);
 
-            // Игровой таймер
             gameTimer = new System.Windows.Forms.Timer { Interval = 1000 };
             gameTimer.Tick += GameTimer_Tick;
             gameTimer.Start();
@@ -147,7 +145,6 @@ namespace Tund7
             successStreak = 0;
             failStreak = 0;
 
-            // ⚙️ Сбрасываем таймер
             timeLeft = 60;
             timeLabel.Text = $"Aeg: {timeLeft} s";
         }
@@ -338,29 +335,26 @@ namespace Tund7
             if (inputLocked)
                 return;
 
-            // проверяем, остались ли ещё активные карточки
             foreach (Control c in tableLayout.Controls)
             {
                 if (c is PictureBox box && box.Enabled)
-                    return; // ещё есть незакрытые пары
+                    return;
             }
 
-            // 🏆 Победа — останавливаем игровой таймер
             gameTimer.Stop();
 
             DialogResult res = MessageBox.Show(
-                "🎉 Suurepärane! Kõik paarid leitud!\nKas soovid uut mängu?",
+                "Suurepärane! Kõik paarid leitud!\nKas soovid uut mängu?",
                 "Võit!",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Information);
 
             if (res == DialogResult.Yes)
             {
-                // сбрасываем время и перезапускаем игру
                 timeLeft = 60;
                 timeLabel.Text = $"Aeg: {timeLeft} s";
                 AssignIconsToSquares();
-                gameTimer.Start(); // снова включаем таймер
+                gameTimer.Start();
             }
             else
             {

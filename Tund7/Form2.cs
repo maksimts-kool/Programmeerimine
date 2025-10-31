@@ -43,23 +43,25 @@ namespace Tund7
             Font = new Font("Segoe UI", 13F);
 
             menuStrip = new MenuStrip();
-            // Menüü "Mäng"
             var gameMenu = new ToolStripMenuItem("Mäng");
             pauseMenuItem = new ToolStripMenuItem("Paus");
-            pauseMenuItem.Enabled = false;
-            pauseMenuItem.Click += (_, _) => TogglePauseMenu(pauseMenuItem);
-            gameMenu.DropDownItems.Add(pauseMenuItem);
-            menuStrip.Items.Add(gameMenu);
             difficultyMenu = new ToolStripMenuItem("Raskusaste");
             easyItem = new ToolStripMenuItem("Lihtne");
             mediumItem = new ToolStripMenuItem("Keskmine");
             hardItem = new ToolStripMenuItem("Raske");
+
+            difficultyMenu.DropDownItems.AddRange(new ToolStripItem[] { easyItem, mediumItem, hardItem });
+            pauseMenuItem.Enabled = false;
+
             easyItem.Click += (_, _) => SetDifficulty(Difficulty.Lihtne);
             mediumItem.Click += (_, _) => SetDifficulty(Difficulty.Keskmine);
             hardItem.Click += (_, _) => SetDifficulty(Difficulty.Raske);
-            difficultyMenu.DropDownItems.AddRange(new ToolStripItem[] { easyItem, mediumItem, hardItem });
+            pauseMenuItem.Click += (_, _) => TogglePauseMenu(pauseMenuItem);
+
             menuStrip.Items.Add(difficultyMenu);
             Controls.Add(menuStrip);
+            gameMenu.DropDownItems.Add(pauseMenuItem);
+            menuStrip.Items.Add(gameMenu);
 
             // Ülesannete elemendid
             leftLabels = new Label[4];
@@ -151,8 +153,8 @@ namespace Tund7
                 Location = new Point(50, 330),
                 AutoSize = true
             };
-            Controls.Add(sectionTitle);
 
+            Controls.Add(sectionTitle);
             Controls.Add(lblSections);
             Controls.Add(sectionBox);
             Controls.Add(startButton);
