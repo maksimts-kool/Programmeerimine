@@ -1,15 +1,15 @@
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace Tund8;
 
 public partial class Form1 : Form
 {
-    private SqlCommand _command;
+    private SqlCommand? _command;
     private SqlConnection _connect = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;
       AttachDbFilename=C:\Users\maksi\Documents\GitHub\Programmeerimine\Tund8\ShopDB.mdf;
       Integrated Security=True;");
-    private SqlDataAdapter _adapterProduct, _adapterProductCategory;
+    private SqlDataAdapter? _adapterProduct;
     public Form1()
     {
         InitializeComponent();
@@ -65,7 +65,7 @@ public partial class Form1 : Form
         if (KategooriadBox.SelectedItem != null)
         {
             _connect.Open();
-            string value = KategooriadBox.SelectedItem.ToString();
+            string value = KategooriadBox.SelectedItem.ToString() ?? string.Empty;
             _command = new SqlCommand("DELETE FROM KatTabel WHERE Kategooria_nim=@cat", _connect);
             _command.Parameters.AddWithValue("@cat", value);
             _command.ExecuteNonQuery();
@@ -75,8 +75,8 @@ public partial class Form1 : Form
         }
     }
 
-    private SaveFileDialog _saveFileDialog;
-    private OpenFileDialog _openFileDialog;
+    private SaveFileDialog? _saveFileDialog;
+    private OpenFileDialog? _openFileDialog;
 
     private void Otsi_Click(System.Object? sender, System.EventArgs e)
     {
