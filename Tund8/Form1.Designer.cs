@@ -138,12 +138,15 @@ namespace Tund8
             this.DataGridView.Location = new System.Drawing.Point(20,260);
             this.DataGridView.Size = new System.Drawing.Size(650,150);
             this.DataGridView.TabIndex = 22;
+            this.DataGridView.CellMouseLeave += new System.Windows.Forms.DataGridViewCellEventHandler(DataGridView_CellMouseLeave);
+            this.DataGridView.CellMouseEnter += new System.Windows.Forms.DataGridViewCellEventHandler(DataGridView_CellMouseEnter);
             //
             // Lisa
             //
             this.Lisa.Text =  "Lisa";
             this.Lisa.Location = new System.Drawing.Point(20,212);
             this.Lisa.TabIndex = 23;
+            this.Lisa.Click += new System.EventHandler(Lisa_Click);
             //
             // Uuenda
             //
@@ -275,6 +278,21 @@ namespace Tund8
 // }
 
 // private void KustutaKat_Click(System.Object? sender, System.EventArgs e)
+// {
+// 
+// }
+
+// private void DataGridView_CellMouseLeave(System.Object? sender, System.Windows.Forms.DataGridViewCellEventArgs e)
+// {
+// 
+// }
+
+// private void DataGridView_CellMouseEnter(System.Object? sender, System.Windows.Forms.DataGridViewCellEventArgs e)
+// {
+// 
+// }
+
+// private void Lisa_Click(System.Object? sender, System.EventArgs e)
 // {
 // 
 // }
