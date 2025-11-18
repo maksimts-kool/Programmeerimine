@@ -1,0 +1,476 @@
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
+using Microsoft.Data.SqlClient;
+
+namespace Tund8
+{
+    public partial class FormCustomer : Form
+    {
+        private readonly SqlConnection _connect = new SqlConnection(
+            @"Data Source=(LocalDB)\MSSQLLocalDB;
+              AttachDbFilename=C:\Users\opilane\source\repos\ProgrammeerimineTARpv24\Tund8\ShopDB.mdf;
+              Integrated Security=True;"
+        );
+
+        private FlowLayoutPanel panelProducts;
+        private ListBox listBoxCategories;
+        private ListView cartList;
+        private Label lblTotal;
+        private Label lblBalance;
+        private Dictionary<string, (int qty, decimal price)> cart = new();
+
+        private decimal balance = 200.00m;
+
+        public FormCustomer()
+        {
+            //InitializeComponent();
+            BuildLayout();
+            LoadCategories();
+        }
+
+        private void BuildLayout()
+        {
+            Text = "E-pood — Klient (FormCustomer)";
+            WindowState = FormWindowState.Normal;
+            Size = new Size(1200, 800);
+
+            // Layout proportions
+            const double CATEGORY_RATIO = 0.20;
+            const double PRODUCT_RATIO = 0.60;
+            const double CART_RATIO = 0.20; // Kept and used in Resize logic
+
+            var split = new SplitContainer
+            {
+                Dock = DockStyle.Fill,
+                Orientation = Orientation.Vertical
+            };
+
+            var rightSplit = new SplitContainer
+            {
+                Dock = DockStyle.Fill,
+                Orientation = Orientation.Vertical,
+                IsSplitterFixed = false
+            };
+
+            var categoryPanel = new Panel { Dock = DockStyle.Fill };
+
+            lblBalance = new Label
+            {
+                Text = $"💰 Saldo: {balance:N2} €",
+                Dock = DockStyle.Bottom,
+                Height = 30,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                BackColor = Color.LightYellow
+            };
+
+            listBoxCategories = new ListBox
+            {
+                Dock = DockStyle.Fill,
+                Font = new Font("Segoe UI", 11)
+            };
+            listBoxCategories.SelectedIndexChanged += ListBoxCategories_SelectedIndexChanged;
+
+            categoryPanel.Controls.Add(listBoxCategories);
+            categoryPanel.Controls.Add(lblBalance);
+
+            split.Panel1.Controls.Add(categoryPanel);
+
+            // Products (middle)
+            panelProducts = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                AutoScroll = true,
+                Padding = new Padding(10),
+                BackColor = Color.WhiteSmoke
+            };
+            rightSplit.Panel1.Controls.Add(panelProducts);
+
+            // Cart (right)
+            var cartPanel = new Panel { Dock = DockStyle.Fill };
+            var lblCart = new Label
+            {
+                Text = "🛒 Ostukorv",
+                Dock = DockStyle.Top,
+                Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                Height = 30,
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+
+            cartList = new ListView
+            {
+                Dock = DockStyle.Fill,
+                View = View.Details,
+                FullRowSelect = true,
+                GridLines = true,
+                AllowColumnReorder = false
+            };
+            cartList.Columns.Add("Toode", 100);
+            cartList.Columns.Add("Kogus", 60);
+            cartList.Columns.Add("Kokku (€)", 80);
+
+            lblTotal = new Label
+            {
+                Text = "Kokku: 0.00 €",
+                Dock = DockStyle.Bottom,
+                Height = 30,
+                TextAlign = ContentAlignment.MiddleRight,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                Padding = new Padding(0, 0, 10, 0)
+            };
+
+            var btnBuy = new Button
+            {
+                Text = "🛍️ Ostan",
+                Dock = DockStyle.Bottom,
+                Height = 40,
+                BackColor = Color.MediumSeaGreen,
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold)
+            };
+            btnBuy.Click += BtnBuy_Click;
+
+            cartPanel.Controls.Add(cartList);
+            cartPanel.Controls.Add(lblTotal);
+            cartPanel.Controls.Add(btnBuy);
+            cartPanel.Controls.Add(lblCart);
+
+            rightSplit.Panel2.Controls.Add(cartPanel);
+            split.Panel2.Controls.Add(rightSplit);
+            Controls.Add(split);
+
+            Resize += (s, e) =>
+            {
+                int totalWidth = ClientSize.Width;
+                int categoryWidth = (int)(totalWidth * CATEGORY_RATIO);
+
+                int rightSplitTotalWidth = totalWidth - categoryWidth;
+
+                double productSplitRatio = PRODUCT_RATIO / (PRODUCT_RATIO + CART_RATIO);
+
+                int rightSplitDistance = (int)(rightSplitTotalWidth * productSplitRatio);
+
+                split.SplitterDistance = categoryWidth;
+                rightSplit.SplitterDistance = rightSplitDistance;
+            };
+
+            PerformLayout();
+            var eventArgs = new EventArgs();
+            GetType().GetMethod("OnResize",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance
+            )?.Invoke(this, new object[] { eventArgs });
+        }
+
+        // --- Laeb kategooriad vasakusse listi ---
+        private void LoadCategories()
+        {
+            try
+            {
+                _connect.Open();
+                var adapter = new SqlDataAdapter("SELECT Id, Kategooria_nim FROM KatTabel", _connect);
+                DataTable dt = new();
+                adapter.Fill(dt);
+
+                _connect.Close();
+
+                listBoxCategories.DisplayMember = "Kategooria_nim";
+                listBoxCategories.ValueMember = "Id";
+                listBoxCategories.DataSource = dt;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Viga: " + ex.Message);
+            }
+        }
+
+        private void ListBoxCategories_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listBoxCategories.SelectedValue == null) return;
+
+            if (listBoxCategories.SelectedValue is DataRowView) return;
+
+            if (int.TryParse(listBoxCategories.SelectedValue.ToString(), out int catId))
+            {
+                LoadProducts(catId);
+            }
+        }
+
+        // --- Laeb kategooria tooted ---
+        private void LoadProducts(int catId)
+        {
+            panelProducts.Controls.Clear();
+
+            try
+            {
+                _connect.Open();
+                var cmd = new SqlCommand(
+                    "SELECT Toode_nim, Hind, Kogus, Pilt FROM ToodeTabel WHERE Kategooriad=@id",
+                    _connect
+                );
+                cmd.Parameters.AddWithValue("@id", catId);
+                SqlDataAdapter adp = new(cmd);
+                DataTable dt = new();
+                adp.Fill(dt);
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    panelProducts.Controls.Add(CreateProductCard(row));
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Viga toodete kuvamisel: " + ex.Message);
+            }
+            finally
+            {
+                _connect.Close();
+            }
+        }
+
+        // --- Loob visuaalse "kaardi" tootest ---
+        private Panel CreateProductCard(DataRow row)
+        {
+            string name = row["Toode_nim"].ToString() ?? "??";
+            decimal price = Convert.ToDecimal(row["Hind"]);
+            int stock = Convert.ToInt32(row["Kogus"]); // Initial available stock from DB
+
+            // Get the quantity of this product currently reserved in the cart
+            int currentCartQty = cart.ContainsKey(name) ? cart[name].qty : 0;
+
+            // Calculate the remaining stock available for new selection
+            int remainingStock = stock - currentCartQty;
+
+            var card = new Panel
+            {
+                Width = 200,
+                Height = 280,
+                BorderStyle = BorderStyle.FixedSingle,
+                Margin = new Padding(10)
+            };
+
+            // Pilt
+            string imgPath = Path.Combine(Path.GetFullPath(@"..\..\..\Pildid"),
+                row["Pilt"]?.ToString() ?? "epood.png");
+            PictureBox pb = new PictureBox
+            {
+                Image = File.Exists(imgPath)
+                    ? Image.FromFile(imgPath)
+                    : Image.FromFile(Path.Combine(Path.GetFullPath(@"..\..\..\Pildid"), "epood.png")),
+                Width = 180,
+                Height = 140,
+                Dock = DockStyle.Top,
+                SizeMode = PictureBoxSizeMode.Zoom
+            };
+
+            // Tootenimi
+            Label lblName = new Label
+            {
+                Text = name,
+                Dock = DockStyle.Top,
+                Height = 25,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Font = new Font("Segoe UI", 10, FontStyle.Bold)
+            };
+
+            // Staatus (UPDATED)
+            Label lblStock = new Label
+            {
+                Text = remainingStock > 0 ? "Laos" : "Otsas", // Reflects remaining stock
+                ForeColor = remainingStock > 0 ? Color.LimeGreen : Color.Red,
+                Dock = DockStyle.Top,
+                Height = 22,
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+
+            // Hind + nupud
+            int qty = 0; // Quantity selected on *this* product card
+
+            Label lblQty = new Label
+            {
+                Text = qty.ToString(),
+                Width = 30,
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+
+            Button btnMinus = new() { Text = "-", Width = 30 };
+            Button btnPlus = new() { Text = "+", Width = 30 };
+
+            // Limits the selection on the card itself based on remaining stock.
+            btnPlus.Click += (s, ev) =>
+            {
+                int cartQtyCheck = cart.ContainsKey(name) ? cart[name].qty : 0; // Re-check in case the cart was updated elsewhere
+                int available = stock - cartQtyCheck;
+
+                if (available > 0 && qty < available)
+                {
+                    qty++;
+                    lblQty.Text = qty.ToString();
+                }
+            };
+            btnMinus.Click += (s, ev) => { if (qty > 0) { qty--; lblQty.Text = qty.ToString(); } };
+
+            FlowLayoutPanel qtyPanel = new()
+            {
+                Dock = DockStyle.Top,
+                Height = 30
+            };
+            qtyPanel.Controls.Add(btnMinus);
+            qtyPanel.Controls.Add(lblQty);
+            qtyPanel.Controls.Add(btnPlus);
+
+            Label lblPrice = new()
+            {
+                Text = $"{price:N2} €",
+                Dock = DockStyle.Top,
+                Height = 20,
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+
+            // Lisa ostukorvi
+            Button btnAdd = new()
+            {
+                Text = "Lisa ostukorvi",
+                Dock = DockStyle.Bottom,
+                Height = 30,
+                BackColor = Color.SkyBlue,
+                Enabled = remainingStock > 0 // Enable only if there's stock left
+            };
+
+            // --- Add to Cart Logic with Stock Check and UI Update ---
+            btnAdd.Click += (s, ev) =>
+            {
+                if (qty == 0)
+                {
+                    MessageBox.Show("Vali kogus!");
+                    return;
+                }
+
+                // 1. Get current quantity already in cart
+                int cartQty = cart.ContainsKey(name) ? cart[name].qty : 0;
+                int newTotalQty = cartQty + qty;
+
+                // 2. Final check 
+                if (newTotalQty > stock)
+                {
+                    return;
+                }
+
+                // 3. Update the cart
+                if (cart.ContainsKey(name))
+                    cart[name] = (newTotalQty, price);
+                else
+                    cart.Add(name, (qty, price));
+
+                // 4. Reset the card quantity
+                qty = 0;
+                lblQty.Text = qty.ToString();
+
+                // 5. Update the remaining stock variable and UI controls
+                int updatedRemainingStock = stock - newTotalQty;
+                lblStock.Text = updatedRemainingStock > 0 ? "Laos" : "Otsas";
+                lblStock.ForeColor = updatedRemainingStock > 0 ? Color.LimeGreen : Color.Red;
+                btnAdd.Enabled = updatedRemainingStock > 0;
+
+                RefreshCart();
+            };
+
+            card.Controls.Add(btnAdd);
+            card.Controls.Add(lblPrice);
+            card.Controls.Add(qtyPanel);
+            card.Controls.Add(lblStock);
+            card.Controls.Add(lblName);
+            card.Controls.Add(pb);
+
+            return card;
+        }
+
+        // --- Ostukorvi värskendamine ---
+        private void RefreshCart()
+        {
+            cartList.Items.Clear();
+            decimal total = 0;
+            foreach (var item in cart)
+            {
+                decimal subtotal = item.Value.qty * item.Value.price;
+                total += subtotal;
+                var lvi = new ListViewItem(new[]
+                {
+                    item.Key,
+                    item.Value.qty.ToString(),
+                    subtotal.ToString("N2")
+                });
+                cartList.Items.Add(lvi);
+            }
+
+            lblTotal.Text = $"Kokku: {total:N2} €";
+        }
+
+        // --- Kinnita ost (MODIFIED) ---
+        private void BtnBuy_Click(object sender, EventArgs e)
+        {
+            if (cart.Count == 0)
+            {
+                MessageBox.Show("Ostukorv on tühi!");
+                return;
+            }
+
+            // Calculate Total
+            decimal total = 0;
+            foreach (var item in cart)
+            {
+                total += item.Value.qty * item.Value.price;
+            }
+
+            // --- NEW: Check Balance ---
+            if (total > balance)
+            {
+                MessageBox.Show($"Makse ebaõnnestus! Summa {total:N2} € ületab teie raha {balance:N2} €.");
+                return;
+            }
+
+            try
+            {
+                _connect.Open();
+
+                foreach (var item in cart)
+                {
+                    var cmd = new SqlCommand(
+                        "UPDATE ToodeTabel SET Kogus = Kogus - @kogus WHERE Toode_nim = @nim",
+                        _connect
+                    );
+                    cmd.Parameters.AddWithValue("@kogus", item.Value.qty);
+                    cmd.Parameters.AddWithValue("@nim", item.Key);
+                    cmd.ExecuteNonQuery();
+                }
+
+                balance -= total;
+                lblBalance.Text = $"💰 Raha: {balance:N2} €";
+
+                _connect.Close();
+
+                MessageBox.Show("Ost sooritatud! Aitäh.");
+                cart.Clear();
+                RefreshCart();
+
+                // Reload products to reflect stock changes
+                if (listBoxCategories.SelectedValue != null)
+                {
+                    int id = Convert.ToInt32(listBoxCategories.SelectedValue);
+                    LoadProducts(id);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Viga ostu kinnitamisel: " + ex.Message);
+            }
+            finally
+            {
+                _connect.Close();
+            }
+        }
+    }
+}
