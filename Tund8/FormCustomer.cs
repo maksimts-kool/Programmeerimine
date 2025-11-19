@@ -1,10 +1,7 @@
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Windows.Forms;
 using Microsoft.Data.SqlClient;
+using System.Net;
+using System.Net.Mail;
 
 namespace Tund8
 {
@@ -60,7 +57,7 @@ namespace Tund8
 
             lblBalance = new Label
             {
-                Text = $"💰 Saldo: {balance:N2} €",
+                Text = $"💰 Raha: {balance:N2} €",
                 Dock = DockStyle.Bottom,
                 Height = 30,
                 TextAlign = ContentAlignment.MiddleCenter,
@@ -453,9 +450,21 @@ namespace Tund8
                 _connect.Close();
 
                 MessageBox.Show("Ost sooritatud! Aitäh.");
+
+
+                // Küsi e-post
+                string email = AskEmailForReceipt();
+
+                if (!string.IsNullOrWhiteSpace(email))
+                {
+                    SendReceiptEmail(email, total);
+                }
+                else
+                {
+                    MessageBox.Show("Kviitungi saatmine tühistati.");
+                }
                 cart.Clear();
                 RefreshCart();
-
                 // Reload products to reflect stock changes
                 if (listBoxCategories.SelectedValue != null)
                 {
@@ -470,6 +479,101 @@ namespace Tund8
             finally
             {
                 _connect.Close();
+            }
+        }
+        private string AskEmailForReceipt()
+        {
+            Form prompt = new Form
+            {
+                Width = 350,
+                Height = 150,
+                Text = "Kviitungi saatmine",
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                StartPosition = FormStartPosition.CenterParent,
+                MaximizeBox = false,
+                MinimizeBox = false
+            };
+
+            Label lbl = new Label
+            {
+                Text = "Sisestage oma e-post:",
+                Dock = DockStyle.Top,
+                Height = 25,
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+
+            TextBox txtEmail = new TextBox
+            {
+                Dock = DockStyle.Top,
+                Margin = new Padding(10)
+            };
+
+            FlowLayoutPanel buttons = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Bottom,
+                Height = 40,
+                FlowDirection = FlowDirection.RightToLeft
+            };
+
+            Button btnSaada = new Button { Text = "Saada", Width = 80 };
+            Button btnLoobu = new Button { Text = "Loobu", Width = 80 };
+
+            btnSaada.Click += (s, e) =>
+            {
+                prompt.DialogResult = DialogResult.OK;
+                prompt.Close();
+            };
+
+            btnLoobu.Click += (s, e) =>
+            {
+                prompt.DialogResult = DialogResult.Cancel;
+                prompt.Close();
+            };
+
+            buttons.Controls.Add(btnSaada);
+            buttons.Controls.Add(btnLoobu);
+
+            prompt.Controls.Add(buttons);
+            prompt.Controls.Add(txtEmail);
+            prompt.Controls.Add(lbl);
+
+            return prompt.ShowDialog(this) == DialogResult.OK
+                ? txtEmail.Text.Trim()
+                : "";
+        }
+        private void SendReceiptEmail(string toEmail, decimal total)
+        {
+            try
+            {
+                string body = "Aitäh ostu eest!\n\n";
+                body += "Ostetud tooted:\n";
+
+                foreach (var item in cart)
+                {
+                    body += $"- {item.Key} x {item.Value.qty} = {item.Value.qty * item.Value.price:N2} €\n";
+                }
+
+                body += "\nKokku makstud: " + total.ToString("N2") + " €\n\n";
+                body += "Head päeva!\nE‑pood";
+
+                var smtp = new SmtpClient("smtp.gmail.com", 587)
+                {
+                    EnableSsl = true,
+                    Credentials = new NetworkCredential("maksimtsitkool@gmail.com", "app-pass")
+                };
+
+                var mail = new MailMessage();
+                mail.From = new MailAddress("maksimtsitkool@gmail.com", "E‑pood");
+                mail.To.Add(toEmail);
+                mail.Subject = "Teie ostu kviitung";
+                mail.Body = body;
+
+                smtp.Send(mail);
+                MessageBox.Show("Kviitung saadeti aadressile: " + toEmail);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("E-kirja saatmine ebaõnnestus: " + ex.Message);
             }
         }
     }
