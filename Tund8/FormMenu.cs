@@ -7,7 +7,7 @@ namespace Tund8
     {
         public FormMenu()
         {
-            Text = "Shopping App — Menu";
+            Text = "Pood — Menüü";
             Width = 400;
             Height = 250;
 

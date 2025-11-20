@@ -13,11 +13,11 @@ namespace Tund8
               Integrated Security=True;"
         );
 
-        private FlowLayoutPanel panelProducts;
-        private ListBox listBoxCategories;
-        private ListView cartList;
-        private Label lblTotal;
-        private Label lblBalance;
+        private FlowLayoutPanel? panelProducts;
+        private ListBox? listBoxCategories;
+        private ListView? cartList;
+        private Label? lblTotal;
+        private Label? lblBalance;
         private Dictionary<string, (int qty, decimal price)> cart = new();
 
         private decimal balance = 200.00m;
@@ -31,14 +31,13 @@ namespace Tund8
 
         private void BuildLayout()
         {
-            Text = "E-pood — Klient (FormCustomer)";
+            Text = "Pood — Klient";
             WindowState = FormWindowState.Normal;
             Size = new Size(1200, 800);
 
-            // Layout proportions
             const double CATEGORY_RATIO = 0.20;
             const double PRODUCT_RATIO = 0.60;
-            const double CART_RATIO = 0.20; // Kept and used in Resize logic
+            const double CART_RATIO = 0.20;
 
             var split = new SplitContainer
             {
@@ -77,7 +76,6 @@ namespace Tund8
 
             split.Panel1.Controls.Add(categoryPanel);
 
-            // Products (middle)
             panelProducts = new FlowLayoutPanel
             {
                 Dock = DockStyle.Fill,
@@ -87,7 +85,6 @@ namespace Tund8
             };
             rightSplit.Panel1.Controls.Add(panelProducts);
 
-            // Cart (right)
             var cartPanel = new Panel { Dock = DockStyle.Fill };
             var lblCart = new Label
             {
@@ -162,7 +159,6 @@ namespace Tund8
             )?.Invoke(this, new object[] { eventArgs });
         }
 
-        // --- Laeb kategooriad vasakusse listi ---
         private void LoadCategories()
         {
             try
@@ -174,9 +170,12 @@ namespace Tund8
 
                 _connect.Close();
 
-                listBoxCategories.DisplayMember = "Kategooria_nim";
-                listBoxCategories.ValueMember = "Id";
-                listBoxCategories.DataSource = dt;
+                if (listBoxCategories != null)
+                {
+                    listBoxCategories.DisplayMember = "Kategooria_nim";
+                    listBoxCategories.ValueMember = "Id";
+                    listBoxCategories.DataSource = dt;
+                }
             }
             catch (Exception ex)
             {
@@ -184,9 +183,9 @@ namespace Tund8
             }
         }
 
-        private void ListBoxCategories_SelectedIndexChanged(object sender, EventArgs e)
+        private void ListBoxCategories_SelectedIndexChanged(object? sender, EventArgs? e)
         {
-            if (listBoxCategories.SelectedValue == null) return;
+            if (listBoxCategories?.SelectedValue == null) return;
 
             if (listBoxCategories.SelectedValue is DataRowView) return;
 
@@ -196,10 +195,12 @@ namespace Tund8
             }
         }
 
-        // --- Laeb kategooria tooted ---
         private void LoadProducts(int catId)
         {
-            panelProducts.Controls.Clear();
+            if (panelProducts != null)
+            {
+                panelProducts.Controls.Clear();
+            }
 
             try
             {
@@ -215,7 +216,10 @@ namespace Tund8
 
                 foreach (DataRow row in dt.Rows)
                 {
-                    panelProducts.Controls.Add(CreateProductCard(row));
+                    if (panelProducts != null)
+                    {
+                        panelProducts.Controls.Add(CreateProductCard(row));
+                    }
                 }
             }
             catch (Exception ex)
@@ -228,17 +232,14 @@ namespace Tund8
             }
         }
 
-        // --- Loob visuaalse "kaardi" tootest ---
         private Panel CreateProductCard(DataRow row)
         {
             string name = row["Toode_nim"].ToString() ?? "??";
             decimal price = Convert.ToDecimal(row["Hind"]);
-            int stock = Convert.ToInt32(row["Kogus"]); // Initial available stock from DB
+            int stock = Convert.ToInt32(row["Kogus"]);
 
-            // Get the quantity of this product currently reserved in the cart
             int currentCartQty = cart.ContainsKey(name) ? cart[name].qty : 0;
 
-            // Calculate the remaining stock available for new selection
             int remainingStock = stock - currentCartQty;
 
             var card = new Panel
@@ -249,7 +250,6 @@ namespace Tund8
                 Margin = new Padding(10)
             };
 
-            // Pilt
             string imgPath = Path.Combine(Path.GetFullPath(@"..\..\..\Pildid"),
                 row["Pilt"]?.ToString() ?? "epood.png");
             PictureBox pb = new PictureBox
@@ -263,7 +263,6 @@ namespace Tund8
                 SizeMode = PictureBoxSizeMode.Zoom
             };
 
-            // Tootenimi
             Label lblName = new Label
             {
                 Text = name,
@@ -273,18 +272,16 @@ namespace Tund8
                 Font = new Font("Segoe UI", 10, FontStyle.Bold)
             };
 
-            // Staatus (UPDATED)
             Label lblStock = new Label
             {
-                Text = remainingStock > 0 ? "Laos" : "Otsas", // Reflects remaining stock
+                Text = remainingStock > 0 ? "Laos" : "Otsas",
                 ForeColor = remainingStock > 0 ? Color.LimeGreen : Color.Red,
                 Dock = DockStyle.Top,
                 Height = 22,
                 TextAlign = ContentAlignment.MiddleCenter
             };
 
-            // Hind + nupud
-            int qty = 0; // Quantity selected on *this* product card
+            int qty = 0;
 
             Label lblQty = new Label
             {
@@ -296,10 +293,9 @@ namespace Tund8
             Button btnMinus = new() { Text = "-", Width = 30 };
             Button btnPlus = new() { Text = "+", Width = 30 };
 
-            // Limits the selection on the card itself based on remaining stock.
             btnPlus.Click += (s, ev) =>
             {
-                int cartQtyCheck = cart.ContainsKey(name) ? cart[name].qty : 0; // Re-check in case the cart was updated elsewhere
+                int cartQtyCheck = cart.ContainsKey(name) ? cart[name].qty : 0;
                 int available = stock - cartQtyCheck;
 
                 if (available > 0 && qty < available)
@@ -327,17 +323,15 @@ namespace Tund8
                 TextAlign = ContentAlignment.MiddleCenter
             };
 
-            // Lisa ostukorvi
             Button btnAdd = new()
             {
                 Text = "Lisa ostukorvi",
                 Dock = DockStyle.Bottom,
                 Height = 30,
                 BackColor = Color.SkyBlue,
-                Enabled = remainingStock > 0 // Enable only if there's stock left
+                Enabled = remainingStock > 0
             };
 
-            // --- Add to Cart Logic with Stock Check and UI Update ---
             btnAdd.Click += (s, ev) =>
             {
                 if (qty == 0)
@@ -346,27 +340,22 @@ namespace Tund8
                     return;
                 }
 
-                // 1. Get current quantity already in cart
                 int cartQty = cart.ContainsKey(name) ? cart[name].qty : 0;
                 int newTotalQty = cartQty + qty;
 
-                // 2. Final check 
                 if (newTotalQty > stock)
                 {
                     return;
                 }
 
-                // 3. Update the cart
                 if (cart.ContainsKey(name))
                     cart[name] = (newTotalQty, price);
                 else
                     cart.Add(name, (qty, price));
 
-                // 4. Reset the card quantity
                 qty = 0;
                 lblQty.Text = qty.ToString();
 
-                // 5. Update the remaining stock variable and UI controls
                 int updatedRemainingStock = stock - newTotalQty;
                 lblStock.Text = updatedRemainingStock > 0 ? "Laos" : "Otsas";
                 lblStock.ForeColor = updatedRemainingStock > 0 ? Color.LimeGreen : Color.Red;
@@ -385,9 +374,9 @@ namespace Tund8
             return card;
         }
 
-        // --- Ostukorvi värskendamine ---
         private void RefreshCart()
         {
+            if (cartList == null) return;
             cartList.Items.Clear();
             decimal total = 0;
             foreach (var item in cart)
@@ -403,11 +392,13 @@ namespace Tund8
                 cartList.Items.Add(lvi);
             }
 
-            lblTotal.Text = $"Kokku: {total:N2} €";
+            if (lblTotal != null)
+            {
+                lblTotal.Text = $"Kokku: {total:N2} €";
+            }
         }
 
-        // --- Kinnita ost (MODIFIED) ---
-        private void BtnBuy_Click(object sender, EventArgs e)
+        private void BtnBuy_Click(object? sender, EventArgs e)
         {
             if (cart.Count == 0)
             {
@@ -415,14 +406,12 @@ namespace Tund8
                 return;
             }
 
-            // Calculate Total
             decimal total = 0;
             foreach (var item in cart)
             {
                 total += item.Value.qty * item.Value.price;
             }
 
-            // --- NEW: Check Balance ---
             if (total > balance)
             {
                 MessageBox.Show($"Makse ebaõnnestus! Summa {total:N2} € ületab teie raha {balance:N2} €.");
@@ -445,7 +434,10 @@ namespace Tund8
                 }
 
                 balance -= total;
-                lblBalance.Text = $"💰 Raha: {balance:N2} €";
+                if (lblBalance != null)
+                {
+                    lblBalance.Text = $"💰 Raha: {balance:N2} €";
+                }
 
                 _connect.Close();
 
@@ -465,8 +457,7 @@ namespace Tund8
                 }
                 cart.Clear();
                 RefreshCart();
-                // Reload products to reflect stock changes
-                if (listBoxCategories.SelectedValue != null)
+                if (listBoxCategories != null && listBoxCategories.SelectedValue != null)
                 {
                     int id = Convert.ToInt32(listBoxCategories.SelectedValue);
                     LoadProducts(id);
