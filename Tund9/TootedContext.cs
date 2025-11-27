@@ -10,7 +10,20 @@ public class TootedContext : DbContext
     public DbSet<Kategooria> Kategooriad { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=TootedDB;Trusted_Connection=True;");
+        string projectDir = Path.GetFullPath(
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..")
+        );
+
+        string dbPath = Path.Combine(projectDir, "TootedDB.mdf");
+
+        string connectionString =
+            $@"Data Source=(LocalDB)\MSSQLLocalDB;
+           AttachDbFilename={dbPath};
+           Integrated Security=True;
+           Initial Catalog=TootedDB_File;
+           Connect Timeout=30;";
+
+        optionsBuilder.UseSqlServer(connectionString);
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
