@@ -93,11 +93,21 @@ public partial class MainForm : Form
 
     void addOwnerBtn_Click(object sender, EventArgs e)
     {
-        // Validate input
         if (string.IsNullOrWhiteSpace(ownerName.Text) ||
             string.IsNullOrWhiteSpace(ownerPhone.Text))
         {
             MessageBox.Show("Please fill in both Full Name and Phone.");
+            return;
+        }
+
+        // Check duplicates
+        var exists = _db.Owners.Any(o =>
+            o.FullName.ToLower() == ownerName.Text.Trim().ToLower() &&
+            o.Phone.Trim() == ownerPhone.Text.Trim());
+
+        if (exists)
+        {
+            MessageBox.Show("This owner already exists.");
             return;
         }
 
@@ -190,11 +200,19 @@ public partial class MainForm : Form
             return;
         }
 
+        string reg = carReg.Text.Trim().ToUpper();
+
+        if (_db.Cars.Any(c => c.RegistrationNumber.ToUpper() == reg))
+        {
+            MessageBox.Show("A car with this registration number already exists.");
+            return;
+        }
+
         _db.Cars.Add(new Car
         {
             Brand = carBrand.Text.Trim(),
             Model = carModel.Text.Trim(),
-            RegistrationNumber = carReg.Text.Trim(),
+            RegistrationNumber = reg,
             OwnerId = (int)ownerCombo.SelectedValue
         });
         _db.SaveChanges();
@@ -292,7 +310,15 @@ public partial class MainForm : Form
 
         if (!decimal.TryParse(servicePrice.Text, out decimal price) || price <= 0)
         {
-            MessageBox.Show("Please enter a valid positive price.");
+            MessageBox.Show("Please enter a valid price.");
+            return;
+        }
+
+        var name = serviceName.Text.Trim().ToLower();
+
+        if (_db.Services.Any(s => s.Name.ToLower() == name))
+        {
+            MessageBox.Show("This service already exists.");
             return;
         }
 
@@ -385,16 +411,31 @@ public partial class MainForm : Form
 
         if (!int.TryParse(mileageInput.Text, out int mileage) || mileage <= 0)
         {
-            MessageBox.Show("Please enter a valid positive mileage.");
+            MessageBox.Show("Please enter a valid mileage.");
+            return;
+        }
+
+        int carId = (int)carSelect.SelectedValue;
+        int serviceId = (int)serviceSelect.SelectedValue;
+        DateTime date = serviceDate.Value.Date;
+
+        bool exists = _db.CarServices.Any(cs =>
+            cs.CarId == carId &&
+            cs.ServiceId == serviceId &&
+            cs.DateOfService.Date == date);
+
+        if (exists)
+        {
+            MessageBox.Show("A maintenance record for this car and service on this date already exists.");
             return;
         }
 
         _db.CarServices.Add(new CarService
         {
-            CarId = (int)carSelect.SelectedValue,
-            ServiceId = (int)serviceSelect.SelectedValue,
+            CarId = carId,
+            ServiceId = serviceId,
             Mileage = mileage,
-            DateOfService = serviceDate.Value
+            DateOfService = date
         });
         _db.SaveChanges();
         LoadCarServices();
