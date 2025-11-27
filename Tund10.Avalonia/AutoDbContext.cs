@@ -1,5 +1,8 @@
 using Tund10.Avalonia.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.InteropServices;
+using System;
+using System.IO;
 
 namespace Tund10.Avalonia;
 
@@ -12,8 +15,18 @@ public class AutoDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        options.UseSqlServer(
-    "Server=(localdb)\\MSSQLLocalDB;Database=AutoAppDb;Integrated Security=True;Trusted_Connection=True;");
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            options.UseSqlServer(
+                "Server=(localdb)\\MSSQLLocalDB;Database=AutoAppDb;Integrated Security=True;");
+        }
+        else
+        {
+            var dbPath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "AutoAppDb_mac.db");
+            options.UseSqlite($"Data Source={dbPath}");
+        }
     }
 
     protected override void OnModelCreating(ModelBuilder mb)
