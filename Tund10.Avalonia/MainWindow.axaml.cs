@@ -4,8 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using Tund10.Avalonia.Models;
-using MsBox.Avalonia;
-using MsBox.Avalonia.Enums;
+using Avalonia;
+using Avalonia.Layout;
+using Avalonia.Media;
 
 namespace Tund10.Avalonia;
 
@@ -484,14 +485,51 @@ public partial class MainWindow : Window
 
     // -------------------- UTILITY --------------------
 
-    private async void ShowAlert(string message, string title = "Info")
+    private async void ShowAlert(string message)
     {
-        var box = MessageBoxManager.GetMessageBoxStandard(
-        title,
-        message,
-        ButtonEnum.Ok
-    );
+        // Create a dialog window
+        var dlg = new Window
+        {
+            Width = 300,
+            Height = 180,
+            Title = "Message",
+            WindowStartupLocation = WindowStartupLocation.CenterOwner
+        };
 
-        await box.ShowAsync();
+        // Create layout
+        var stack = new StackPanel
+        {
+            Orientation = Orientation.Vertical,
+            VerticalAlignment = VerticalAlignment.Center,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            Spacing = 20,
+            Margin = new Thickness(20)
+        };
+
+        var text = new TextBlock
+        {
+            Text = message,
+            TextWrapping = TextWrapping.Wrap,
+            TextAlignment = TextAlignment.Center,
+            HorizontalAlignment = HorizontalAlignment.Center
+        };
+
+        var okButton = new Button
+        {
+            Content = "OK",
+            Width = 80,
+            HorizontalAlignment = HorizontalAlignment.Center
+        };
+
+        // Close the dialog when OK is clicked
+        okButton.Click += (_, _) => dlg.Close();
+
+        // Add controls
+        stack.Children.Add(text);
+        stack.Children.Add(okButton);
+        dlg.Content = stack;
+
+        // Show modal dialog (waits for close)
+        await dlg.ShowDialog(this);
     }
 }
