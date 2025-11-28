@@ -64,33 +64,34 @@
 
         <!-- SERVICES TAB -->
         <TabItem Header="TEENUSED &amp; LOGID">
-            <Grid RowDefinitions="Auto, Auto, *, Auto" Margin="10">
+        <ScrollViewer HorizontalScrollBarVisibility="Auto">
+            <Grid Width="970" RowDefinitions="Auto, Auto, *, Auto" Margin="10">
                 
                 <!-- Services List -->
                 <DataGrid Name="ServicesGrid" Height="150" AutoGenerateColumns="False" IsReadOnly="True" Grid.Row="0">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
-                        <DataGridTextColumn Header="Service Name" Binding="{Binding Name}" Width="*"/>
-                        <DataGridTextColumn Header="Price" Binding="{Binding Price}" Width="100"/>
+                        <DataGridTextColumn Header="Teenus Nimi" Binding="{Binding Name}" Width="*"/>
+                        <DataGridTextColumn Header="Hind" Binding="{Binding Price}" Width="100"/>
                     </DataGrid.Columns>
                 </DataGrid>
 
                 <!-- Services Actions -->
                 <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="10" Margin="0,10,0,20">
-                    <TextBox Name="ServiceNameBox" Watermark="Service Name" Width="200"/>
-                    <TextBox Name="ServicePriceBox" Watermark="Price" Width="100"/>
-                    <Button Name="AddServiceBtn" Content="Add" Background="#007ACC" Foreground="White" Click="AddServiceBtn_Click"/>
-                    <Button Name="UpdateServiceBtn" Content="Update" Background="DarkOrange" Foreground="White" Click="UpdateServiceBtn_Click"/>
-                    <Button Name="DeleteServiceBtn" Content="Delete" Background="IndianRed" Foreground="White" Click="DeleteServiceBtn_Click"/>
+                    <TextBox Name="ServiceNameBox" Watermark="Teenus Nimi" Width="200"/>
+                    <TextBox Name="ServicePriceBox" Watermark="Hind" Width="100"/>
+                    <Button Name="AddServiceBtn" Content="Lisa" Background="#007ACC" Foreground="White" Click="AddServiceBtn_Click"/>
+                    <Button Name="UpdateServiceBtn" Content="Uuenda" Background="DarkOrange" Foreground="White" Click="UpdateServiceBtn_Click"/>
+                    <Button Name="DeleteServiceBtn" Content="Kustuta" Background="IndianRed" Foreground="White" Click="DeleteServiceBtn_Click"/>
                 </StackPanel>
 
                 <!-- Logs Grid -->
                 <DataGrid Name="LogsGrid" AutoGenerateColumns="False" IsReadOnly="True" Grid.Row="2">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Car" Binding="{Binding Car}" Width="*"/>
-                        <DataGridTextColumn Header="Service" Binding="{Binding Service}" Width="*"/>
-                        <DataGridTextColumn Header="Date" Binding="{Binding DateOfService, StringFormat={}{0:d}}" Width="120"/>
-                        <DataGridTextColumn Header="Mileage" Binding="{Binding Mileage}" Width="100"/>
+                        <DataGridTextColumn Header="Auto" Binding="{Binding Car}" Width="*"/>
+                        <DataGridTextColumn Header="Teenus" Binding="{Binding Service}" Width="*"/>
+                        <DataGridTextColumn Header="Kuupäev" Binding="{Binding DateOfService, StringFormat={}{0:d}}" Width="120"/>
+                        <DataGridTextColumn Header="Kilomeetrid" Binding="{Binding Mileage}" Width="100"/>
                     </DataGrid.Columns>
                 </DataGrid>
 
@@ -106,7 +107,7 @@
                     </ComboBox>
                     
                     <TextBlock VerticalAlignment="Center" Text="Svc:"/>
-                    <ComboBox Name="LogServiceCombo" Width="120" PlaceholderText="Service">
+                    <ComboBox Name="LogServiceCombo" Width="120" PlaceholderText="Teenus">
                          <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Name}"/>
@@ -114,16 +115,17 @@
                         </ComboBox.ItemTemplate>
                     </ComboBox>
 
-                    <TextBlock VerticalAlignment="Center" Text="Date:"/>
+                    <TextBlock VerticalAlignment="Center" Text="Kuupäev:"/>
                     <DatePicker Name="LogDatePicker"/>
 
                     <TextBlock VerticalAlignment="Center" Text="Km:"/>
                     <TextBox Name="LogMileageBox" Watermark="123000" Width="80"/>
 
                     <Button Name="AddLogBtn" Content="Log" Background="#007ACC" Foreground="White" Click="AddLogBtn_Click"/>
-                    <Button Name="DeleteLogBtn" Content="Del" Background="IndianRed" Foreground="White" Click="DeleteLogBtn_Click"/>
+                    <Button Name="DeleteLogBtn" Content="Kust" Background="IndianRed" Foreground="White" Click="DeleteLogBtn_Click"/>
                 </StackPanel>
             </Grid>
+            </ScrollViewer>
         </TabItem>
 
     </TabControl>
