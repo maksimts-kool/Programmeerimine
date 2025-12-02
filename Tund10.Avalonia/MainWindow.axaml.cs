@@ -93,7 +93,7 @@ public partial class MainWindow : Window
         if (string.IsNullOrWhiteSpace(OwnerNameBox.Text) ||
             string.IsNullOrWhiteSpace(OwnerPhoneBox.Text))
         {
-            ShowAlert("Please fill in both Full Name and Phone.");
+            ShowAlert("Palun täitke nii täisnimi kui ka telefoninumber.");
             return;
         }
 
@@ -103,7 +103,7 @@ public partial class MainWindow : Window
 
         if (exists)
         {
-            ShowAlert("This owner already exists.");
+            ShowAlert("See omanik on juba olemas.");
             return;
         }
 
@@ -115,7 +115,7 @@ public partial class MainWindow : Window
         _db.SaveChanges();
         LoadOwners();
         LoadCars();
-        ShowAlert("Owner added successfully!");
+        ShowAlert("Omanik lisati edukalt!");
         OwnerNameBox.Clear();
         OwnerPhoneBox.Clear();
     }
@@ -124,7 +124,7 @@ public partial class MainWindow : Window
     {
         if (OwnersGrid.SelectedItem is null)
         {
-            ShowAlert("Select an owner to update.");
+            ShowAlert("Valige omanik, keda soovite uuendada.");
             return;
         }
 
@@ -151,21 +151,21 @@ public partial class MainWindow : Window
 
         if (!changed)
         {
-            ShowAlert("Nothing to update.");
+            ShowAlert("Uuendada pole midagi.");
             return;
         }
 
         _db.SaveChanges();
         LoadOwners();
         LoadCars();
-        ShowAlert("Owner updated successfully!");
+        ShowAlert("Omanik on edukalt uuendatud!");
     }
 
     private void DeleteOwnerBtn_Click(object? sender, RoutedEventArgs e)
     {
         if (OwnersGrid.SelectedItem is null)
         {
-            ShowAlert("Select an owner to delete.");
+            ShowAlert("Valige kustutatav omanik.");
             return;
         }
 
@@ -177,7 +177,7 @@ public partial class MainWindow : Window
 
         if (owner.Cars.Any())
         {
-            ShowAlert("Cannot delete this owner. Remove related cars first.");
+            ShowAlert("Seda omanikku ei saa kustutada. Eemalda esmalt seotud autod.");
             return;
         }
 
@@ -185,7 +185,7 @@ public partial class MainWindow : Window
         _db.SaveChanges();
         LoadOwners();
         LoadCars();
-        ShowAlert("Owner deleted successfully.");
+        ShowAlert("Omanik on edukalt kustutatud.");
     }
 
     // -------------------- CARS --------------------
@@ -197,7 +197,7 @@ public partial class MainWindow : Window
             string.IsNullOrWhiteSpace(CarRegBox.Text) ||
             OwnerCombo.SelectedItem is not Owner selectedOwner)
         {
-            ShowAlert("Please fill in all car fields and choose an owner.");
+            ShowAlert("Palun täitke kõik auto väljad ja valige omanik.");
             return;
         }
 
@@ -206,7 +206,7 @@ public partial class MainWindow : Window
         var exists = _db.Cars.Any(c => c.RegistrationNumber.ToUpper() == reg);
         if (exists)
         {
-            ShowAlert("A car with this registration already exists.");
+            ShowAlert("Sellise registreerimisnumbriga auto on juba olemas.");
             return;
         }
 
@@ -221,7 +221,7 @@ public partial class MainWindow : Window
         _db.SaveChanges();
         LoadCars();
         LoadCarServices();
-        ShowAlert("Car added successfully!");
+        ShowAlert("Auto lisati edukalt!");
         CarBrandBox.Clear();
         CarModelBox.Clear();
         CarRegBox.Clear();
@@ -231,7 +231,7 @@ public partial class MainWindow : Window
     {
         if (CarsGrid.SelectedItem is null)
         {
-            ShowAlert("Select a car to update.");
+            ShowAlert("Valige uuendatav auto.");
             return;
         }
 
@@ -273,21 +273,21 @@ public partial class MainWindow : Window
 
         if (!changed)
         {
-            ShowAlert("Nothing to update.");
+            ShowAlert("Uuendada pole midagi.");
             return;
         }
 
         _db.SaveChanges();
         LoadCars();
         LoadCarServices();
-        ShowAlert("Car updated successfully!");
+        ShowAlert("Auto uuendamine õnnestus!");
     }
 
     private void DeleteCarBtn_Click(object? sender, RoutedEventArgs e)
     {
         if (CarsGrid.SelectedItem is null)
         {
-            ShowAlert("Select a car to delete.");
+            ShowAlert("Valige kustutatav auto.");
             return;
         }
 
@@ -301,7 +301,7 @@ public partial class MainWindow : Window
 
         if (car.CarServices.Any())
         {
-            ShowAlert("Cannot delete this car. Remove service logs first.");
+            ShowAlert("Seda autot ei saa kustutada. Kustuta esmalt teeninduslogid.");
             return;
         }
 
@@ -309,7 +309,7 @@ public partial class MainWindow : Window
         _db.SaveChanges();
         LoadCars();
         LoadCarServices();
-        ShowAlert("Car deleted successfully!");
+        ShowAlert("Auto on edukalt kustutatud!");
     }
 
     // -------------------- SERVICES --------------------
@@ -319,20 +319,20 @@ public partial class MainWindow : Window
         if (string.IsNullOrWhiteSpace(ServiceNameBox.Text) ||
             string.IsNullOrWhiteSpace(ServicePriceBox.Text))
         {
-            ShowAlert("Please fill in both Service Name and Price.");
+            ShowAlert("Palun täitke nii teenuse nimi kui ka hind.");
             return;
         }
 
         if (!decimal.TryParse(ServicePriceBox.Text, out decimal price) || price <= 0)
         {
-            ShowAlert("Please enter a valid positive price.");
+            ShowAlert("Palun sisestage kehtiv positiivne hind.");
             return;
         }
 
         string name = ServiceNameBox.Text.Trim().ToLower();
         if (_db.Services.Any(s => s.Name.ToLower() == name))
         {
-            ShowAlert("This service already exists.");
+            ShowAlert("See teenus on juba olemas.");
             return;
         }
 
@@ -340,7 +340,7 @@ public partial class MainWindow : Window
         _db.SaveChanges();
         LoadServices();
         LoadCarServices();
-        ShowAlert("Service added successfully!");
+        ShowAlert("Teenus lisati edukalt!");
         ServiceNameBox.Clear();
         ServicePriceBox.Clear();
     }
@@ -349,7 +349,7 @@ public partial class MainWindow : Window
     {
         if (ServicesGrid.SelectedItem is null)
         {
-            ShowAlert("Select a service to update.");
+            ShowAlert("Valige teenus, mida soovite uuendada.");
             return;
         }
 
@@ -377,21 +377,21 @@ public partial class MainWindow : Window
 
         if (!changed)
         {
-            ShowAlert("Nothing to update.");
+            ShowAlert("Uuendada pole midagi.");
             return;
         }
 
         _db.SaveChanges();
         LoadServices();
         LoadCarServices();
-        ShowAlert("Service updated successfully!");
+        ShowAlert("Teenus uuendati edukalt!");
     }
 
     private void DeleteServiceBtn_Click(object? sender, RoutedEventArgs e)
     {
         if (ServicesGrid.SelectedItem is null)
         {
-            ShowAlert("Select a service to delete.");
+            ShowAlert("Valige teenus, mida soovite kustutada.");
             return;
         }
 
@@ -405,7 +405,7 @@ public partial class MainWindow : Window
 
         if (service.CarServices.Any())
         {
-            ShowAlert("Cannot delete this service. Remove linked car-service logs first.");
+            ShowAlert("Seda teenust ei saa kustutada. Eemalda esmalt seotud autoteeninduse logid.");
             return;
         }
 
@@ -413,7 +413,7 @@ public partial class MainWindow : Window
         _db.SaveChanges();
         LoadServices();
         LoadCarServices();
-        ShowAlert("Service deleted successfully!");
+        ShowAlert("Teenus kustutati edukalt!");
     }
 
     // -------------------- MAINTENANCE LOGS --------------------
@@ -425,13 +425,13 @@ public partial class MainWindow : Window
             !LogDatePicker.SelectedDate.HasValue ||
             string.IsNullOrWhiteSpace(LogMileageBox.Text))
         {
-            ShowAlert("Please fill in all maintenance fields (Car, Service, Date, Mileage).");
+            ShowAlert("Palun täitke kõik hooldusväljad.");
             return;
         }
 
         if (!int.TryParse(LogMileageBox.Text, out int mileage) || mileage <= 0)
         {
-            ShowAlert("Invalid mileage value.");
+            ShowAlert("Lubamatu läbisõidu väärtus.");
             return;
         }
 
@@ -444,7 +444,7 @@ public partial class MainWindow : Window
 
         if (exists)
         {
-            ShowAlert("A log for this combination on this date already exists.");
+            ShowAlert("Selle kirje jaoks on sellel kuupäeval juba olemas logi.");
             return;
         }
 
@@ -458,14 +458,14 @@ public partial class MainWindow : Window
 
         _db.SaveChanges();
         LoadCarServices();
-        ShowAlert("Maintenance record added successfully!");
+        ShowAlert("Hooldusandmed lisati edukalt!");
     }
 
     private void DeleteLogBtn_Click(object? sender, RoutedEventArgs e)
     {
         if (LogsGrid.SelectedItem is null)
         {
-            ShowAlert("Select a record to delete.");
+            ShowAlert("Valige kustutatav kirje.");
             return;
         }
 
@@ -480,23 +480,46 @@ public partial class MainWindow : Window
         _db.CarServices.Remove(log);
         _db.SaveChanges();
         LoadCarServices();
-        ShowAlert("Maintenance record deleted successfully!");
+        ShowAlert("Hooldusandmed kustutati edukalt!");
+    }
+
+    private void LoginBtn_Click(object? sender, RoutedEventArgs e)
+    {
+        string username = LoginNameBox.Text?.Trim() ?? "";
+        string password = LoginPasswordBox.Text?.Trim() ?? "";
+
+        if (username == "admin" && password == "admin")
+        {
+            LoginPanel.IsVisible = false;
+
+            OwnerActionPanel.IsVisible = true;
+            CarActionPanel.IsVisible = true;
+            ServiceActionPanel.IsVisible = true;
+            LogActionPanel.IsVisible = true;
+
+            ShowAlert("Tere tulemast, admin!");
+        }
+        else
+        {
+            ShowAlert("Vale kasutajanimi või parool!");
+        }
     }
 
     // -------------------- UTILITY --------------------
 
     private async void ShowAlert(string message)
     {
-        // Create a dialog window
         var dlg = new Window
         {
             Width = 300,
             Height = 180,
-            Title = "Message",
-            WindowStartupLocation = WindowStartupLocation.CenterOwner
+            Title = "Sõnum",
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            Topmost = true,
+            ShowInTaskbar = false,
+            CanResize = false,
         };
 
-        // Create layout
         var stack = new StackPanel
         {
             Orientation = Orientation.Vertical,
@@ -521,15 +544,12 @@ public partial class MainWindow : Window
             HorizontalAlignment = HorizontalAlignment.Center
         };
 
-        // Close the dialog when OK is clicked
         okButton.Click += (_, _) => dlg.Close();
 
-        // Add controls
         stack.Children.Add(text);
         stack.Children.Add(okButton);
         dlg.Content = stack;
 
-        // Show modal dialog (waits for close)
         await dlg.ShowDialog(this);
     }
 }

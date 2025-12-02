@@ -4,11 +4,31 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
         x:Class="Tund10.Avalonia.MainWindow"
-        Title="Auto Management System"
-        Width="950" Height="600"
+        Title="Auto Register"
+        Width="990" Height="600"
         WindowStartupLocation="CenterScreen">
 
-    <TabControl Margin="5">
+    <Grid RowDefinitions="Auto,*" Margin="10">
+    <StackPanel Name="LoginPanel"
+                    Grid.Row="0"
+                    Orientation="Horizontal"
+                    Spacing="10"
+                    Margin="0,0,0,10">
+            <TextBox Name="LoginNameBox"
+                     Watermark="Kasutajanimi"
+                     Width="150" />
+            <TextBox Name="LoginPasswordBox"
+                     Watermark="Salasõna"
+                         Width="150" />
+            <Button Name="LoginBtn"
+                    Content="Logi sisse"
+                    Background="#007ACC"
+                    Foreground="White"
+                    Click="LoginBtn_Click" />
+        </StackPanel>
+    
+
+    <TabControl Grid.Row="1" x:Name="MainTabs" Margin="5">
         
         <!-- OWNERS TAB -->
         <TabItem Header="OMANIKUD">
@@ -21,7 +41,7 @@
                     </DataGrid.Columns>
                 </DataGrid>
 
-                <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
+                <StackPanel Name="OwnerActionPanel" Grid.Row="1" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0" IsVisible="False">
                     <TextBox Name="OwnerNameBox" Watermark="Nimi" Width="200"/>
                     <TextBox Name="OwnerPhoneBox" Watermark="Telefon" Width="150"/>
                     <Button Name="AddOwnerBtn" Content="Lisa" Background="#007ACC" Foreground="White" Click="AddOwnerBtn_Click"/>
@@ -39,12 +59,12 @@
                         <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
                         <DataGridTextColumn Header="Bränd" Binding="{Binding Brand}" Width="100"/>
                         <DataGridTextColumn Header="Mudel" Binding="{Binding Model}" Width="100"/>
-                        <DataGridTextColumn Header="Reg Number" Binding="{Binding RegistrationNumber}" Width="100"/>
+                        <DataGridTextColumn Header="Reg Number" Binding="{Binding RegistrationNumber}" Width="120"/>
                         <DataGridTextColumn Header="Omanik" Binding="{Binding OwnerName}" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>
 
-                <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
+                <StackPanel Name="CarActionPanel" Grid.Row="1" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0" IsVisible="False">
                     <TextBox Name="CarBrandBox" Watermark="Bränd" Width="100"/>
                     <TextBox Name="CarModelBox" Watermark="Mudel" Width="100"/>
                     <TextBox Name="CarRegBox" Watermark="Reg Num" Width="100"/>
@@ -64,8 +84,7 @@
 
         <!-- SERVICES TAB -->
         <TabItem Header="TEENUSED &amp; LOGID">
-        <ScrollViewer HorizontalScrollBarVisibility="Auto">
-            <Grid Width="970" RowDefinitions="Auto, Auto, *, Auto" Margin="10">
+            <Grid RowDefinitions="Auto, Auto, *, Auto" Margin="10">
                 
                 <!-- Services List -->
                 <DataGrid Name="ServicesGrid" Height="150" AutoGenerateColumns="False" IsReadOnly="True" Grid.Row="0">
@@ -77,7 +96,7 @@
                 </DataGrid>
 
                 <!-- Services Actions -->
-                <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="10" Margin="0,10,0,20">
+                <StackPanel Name="ServiceActionPanel" Grid.Row="1" Orientation="Horizontal" Spacing="10" Margin="0,10,0,20" IsVisible="False">
                     <TextBox Name="ServiceNameBox" Watermark="Teenus Nimi" Width="200"/>
                     <TextBox Name="ServicePriceBox" Watermark="Hind" Width="100"/>
                     <Button Name="AddServiceBtn" Content="Lisa" Background="#007ACC" Foreground="White" Click="AddServiceBtn_Click"/>
@@ -91,12 +110,12 @@
                         <DataGridTextColumn Header="Auto" Binding="{Binding Car}" Width="*"/>
                         <DataGridTextColumn Header="Teenus" Binding="{Binding Service}" Width="*"/>
                         <DataGridTextColumn Header="Kuupäev" Binding="{Binding DateOfService, StringFormat={}{0:d}}" Width="120"/>
-                        <DataGridTextColumn Header="Kilomeetrid" Binding="{Binding Mileage}" Width="100"/>
+                        <DataGridTextColumn Header="Kilomeetrid" Binding="{Binding Mileage}" Width="120"/>
                     </DataGrid.Columns>
                 </DataGrid>
 
                 <!-- Logs Actions -->
-                <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
+                <StackPanel Name="LogActionPanel" Grid.Row="3" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0" IsVisible="False">
                     <TextBlock VerticalAlignment="Center" Text="Car:"/>
                     <ComboBox Name="LogCarCombo" Width="120" PlaceholderText="Car">
                          <ComboBox.ItemTemplate>
@@ -125,8 +144,8 @@
                     <Button Name="DeleteLogBtn" Content="Kust" Background="IndianRed" Foreground="White" Click="DeleteLogBtn_Click"/>
                 </StackPanel>
             </Grid>
-            </ScrollViewer>
         </TabItem>
-
+        
     </TabControl>
+    </Grid>
 </Window>
