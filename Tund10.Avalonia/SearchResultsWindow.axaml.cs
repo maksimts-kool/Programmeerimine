@@ -1,7 +1,4 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Interactivity;
-using System.Collections.Generic;
 
 namespace Tund10.Avalonia;
 
@@ -15,19 +12,14 @@ public partial class SearchResultsWindow : Window
         MainRef = parent;
     }
 
-    public void SetResults(List<string> items)
-    {
-        ResultsList.ItemsSource = items;
-    }
+    public void SetResults(object items) => ResultsList.ItemsSource = (System.Collections.IEnumerable)items;
 
     private void ResultsList_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-        if (ResultsList.SelectedItem == null)
-            return;
-
-        string selected = ResultsList.SelectedItem.ToString()!;
-        Close();
-        MainRef.HandleSearchSelection(selected);
+        if (e.AddedItems.Count > 0)
+        {
+            Close();
+            MainRef.HandleSearchSelection(e.AddedItems[0]!.ToString()!);
+        }
     }
-
 }
