@@ -9,23 +9,35 @@
         WindowStartupLocation="CenterScreen">
 
     <Grid RowDefinitions="Auto,*" Margin="10">
-    <StackPanel Name="LoginPanel"
-                    Grid.Row="0"
+    <!-- LOGIN PANEL + SEARCH BAR AREA -->
+    <Grid Row="0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Login Panel -->
+        <StackPanel Name="LoginPanel"
                     Orientation="Horizontal"
                     Spacing="10"
-                    Margin="0,0,0,10">
-            <TextBox Name="LoginNameBox"
-                     Watermark="Kasutajanimi"
-                     Width="150" />
-            <TextBox Name="LoginPasswordBox"
-                     Watermark="Salasõna"
-                         Width="150" />
+                    Grid.Column="0">
+            <TextBox Name="LoginNameBox" Watermark="Kasutajanimi" Width="150"/>
+            <TextBox Name="LoginPasswordBox" Watermark="Parool" Width="150"/>
             <Button Name="LoginBtn"
                     Content="Logi sisse"
                     Background="#007ACC"
                     Foreground="White"
-                    Click="LoginBtn_Click" />
+                    Click="LoginBtn_Click"/>
         </StackPanel>
+
+        <!-- SEARCH BAR -->
+        <TextBox Name="SearchBox"
+                 Width="250"
+                 Grid.Column="1"
+                 HorizontalAlignment="Right"
+                 Watermark="Otsi..."
+                 KeyUp="SearchBox_KeyUp"/>
+    </Grid>
     
 
     <TabControl Grid.Row="1" x:Name="MainTabs" Margin="5">

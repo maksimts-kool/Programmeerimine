@@ -1,0 +1,31 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Tund10.Avalonia.SearchResultsWindow"
+        Width="250"
+        Height="200"
+        CanResize="False"
+        WindowStartupLocation="Manual"
+        SystemDecorations="None"
+        Background="White"
+        TransparencyLevelHint="AcrylicBlur"
+        >
+
+    <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="4" Padding="5">
+        <ListBox Name="ResultsList"
+         SelectionChanged="ResultsList_SelectionChanged"
+         BorderThickness="0">
+
+    <ListBox.ItemTemplate>
+        <DataTemplate>
+            <TextBlock Text="{Binding}"
+                       TextWrapping="Wrap"
+                       MaxWidth="250"
+                       Margin="3"
+                       FontSize="14"/>
+        </DataTemplate>
+    </ListBox.ItemTemplate>
+
+</ListBox>
+    </Border>
+
+</Window>

@@ -7,12 +7,15 @@ using Tund10.Avalonia.Models;
 using Avalonia;
 using Avalonia.Layout;
 using Avalonia.Media;
+using System.Collections.Generic;
+using Avalonia.Input;
 
 namespace Tund10.Avalonia;
 
 public partial class MainWindow : Window
 {
     private readonly AutoDbContext _db = new();
+    private SearchResultsWindow? SearchPopup;
 
     public MainWindow()
     {
@@ -505,6 +508,99 @@ public partial class MainWindow : Window
         }
     }
 
+    private void SearchBox_KeyUp(object? sender, KeyEventArgs e)
+    {
+        string query = SearchBox.Text?.Trim().ToLower() ?? "";
+
+        if (query.Length < 3)
+        {
+            SearchPopup?.Close();
+            SearchPopup = null;
+            return;
+        }
+
+        var results = new List<string>();
+
+        // OWNERS
+        foreach (dynamic o in OwnersGrid.ItemsSource!)
+        {
+            if (((string)o.FullName).ToLower().Contains(query) ||
+    ((string)o.Phone).ToLower().Contains(query))
+            {
+                results.Add($"OMANIKUD • {o.FullName} • {o.Phone}");
+                //if (results.Count == 3) break;
+            }
+        }
+
+        // CARS
+        if (results.Count < 3)
+        {
+            foreach (dynamic c in CarsGrid.ItemsSource!)
+            {
+                if (((string)c.Brand).ToLower().Contains(query) ||
+    ((string)c.Model).ToLower().Contains(query) ||
+    ((string)c.RegistrationNumber).ToLower().Contains(query) ||
+    ((string)c.OwnerName).ToLower().Contains(query))
+                {
+                    results.Add($"AUTOD • {c.Brand} {c.Model} ({c.RegistrationNumber})");
+                    //if (results.Count == 3) break;
+                }
+            }
+        }
+
+        // SERVICES
+        if (results.Count < 3)
+        {
+            foreach (dynamic s in ServicesGrid.ItemsSource!)
+            {
+                if (((string)s.Name).ToLower().Contains(query) ||
+    s.Price.ToString().Contains(query))
+                {
+                    results.Add($"TEENUSED • {s.Name}");
+                    //if (results.Count == 3) break;
+                }
+            }
+        }
+
+        // LOGS
+        if (results.Count < 3 && LogsGrid.ItemsSource is IEnumerable<object> logs)
+        {
+            foreach (dynamic log in logs)
+            {
+                if (((string)log.Car).ToLower().Contains(query) ||
+                    ((string)log.Service).ToLower().Contains(query) ||
+                    log.Mileage.ToString().Contains(query) ||
+                    log.DateOfService.ToString("yyyy-MM-dd").Contains(query))
+                {
+                    // include date for unique identification
+                    results.Add($"LOGID • {log.Car} → {log.Service} → {log.DateOfService:yyyy-MM-dd}");
+                    if (results.Count == 3) break;
+                }
+            }
+        }
+
+        if (results.Count == 0)
+        {
+            SearchPopup?.Close();
+            SearchPopup = null;
+            return;
+        }
+
+        if (SearchPopup == null)
+        {
+            SearchPopup = new SearchResultsWindow(this)
+            {
+                ShowActivated = false,
+            };
+        }
+
+        var screenPos = SearchBox.PointToScreen(new Point(0, SearchBox.Bounds.Height));
+        SearchPopup.Position = new PixelPoint((int)screenPos.X, (int)screenPos.Y);
+
+        SearchPopup.SetResults(results);
+        SearchPopup.Show(this);
+    }
+
     // -------------------- UTILITY --------------------
 
     private async void ShowAlert(string message)
@@ -551,5 +647,74 @@ public partial class MainWindow : Window
         dlg.Content = stack;
 
         await dlg.ShowDialog(this);
+    }
+    private void SelectRow(DataGrid grid, Func<dynamic, bool> match)
+    {
+        if (grid.ItemsSource is IEnumerable<object> items)
+        {
+            foreach (var item in items)
+            {
+                dynamic d = item;
+                if (match(d))
+                {
+                    grid.SelectedItem = item;
+                    grid.ScrollIntoView(item, null);
+                    break;
+                }
+            }
+        }
+    }
+    public void HandleSearchSelection(string line)
+    {
+        if (!line.Contains("•")) return;
+
+        string[] parts = line.Split('•');
+        string tab = parts[0].Trim().ToUpper();
+        string target = parts[1].Trim();
+
+        // OWNERS
+        if (tab == "OMANIKUD")
+        {
+            MainTabs.SelectedIndex = 0;
+            SelectRow(OwnersGrid, o => ((string)o.FullName) == target);
+        }
+
+        // CARS
+        if (tab == "AUTOD")
+        {
+            MainTabs.SelectedIndex = 1;
+            string reg = target.Split('(').Last().Replace(")", "").Trim();
+            SelectRow(CarsGrid, c => ((string)c.RegistrationNumber) == reg);
+        }
+
+        // SERVICES
+        if (tab == "TEENUSED")
+        {
+            MainTabs.SelectedIndex = 2;
+            SelectRow(ServicesGrid, s => ((string)s.Name) == target);
+        }
+
+        // LOGS
+        if (tab == "LOGID")
+        {
+            MainTabs.SelectedIndex = 2;
+
+            var parts2 = target.Split('→', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            if (parts2.Length < 3)
+                return;
+
+            string carName = parts2[0];
+            string serviceName = parts2[1];
+            DateTime date = DateTime.Parse(parts2[2]);
+
+            SelectRow(LogsGrid, l =>
+                ((string)l.Car).Equals(carName, StringComparison.OrdinalIgnoreCase) &&
+                ((string)l.Service).Equals(serviceName, StringComparison.OrdinalIgnoreCase) &&
+                ((DateTime)l.DateOfService).Date == date.Date
+            );
+        }
+
+        SearchBox.Text = "";
     }
 }
