@@ -4,6 +4,7 @@ namespace Tund10.Avalonia.Models;
 
 public class CarService
 {
+    public int Id { get; set; }
     public int CarId { get; set; }
     public Car? Car { get; set; }
 

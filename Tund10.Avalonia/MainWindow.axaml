@@ -29,13 +29,17 @@
     </Window.Styles>
 
     <Grid RowDefinitions="Auto,*" Margin="10">
-        <Grid ColumnDefinitions="*,Auto">
+        <Grid ColumnDefinitions="*,Auto,Auto">
             <StackPanel Name="LoginPanel" Orientation="Horizontal" Spacing="10">
                 <TextBox Name="LoginNameBox" Watermark="Kasutajanimi" Width="150"/>
                 <TextBox Name="LoginPasswordBox" Watermark="Parool" Width="150"/>
                 <Button Name="LoginBtn" Content="Logi sisse" Classes="primary" Click="LoginBtn_Click"/>
             </StackPanel>
-            <TextBox Name="SearchBox" Width="250" Grid.Column="1" HorizontalAlignment="Right" 
+            <ComboBox Name="LanguageCombo" Width="80" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,10,0" SelectionChanged="LanguageCombo_SelectionChanged">
+                <ComboBoxItem Content="EE"/>
+                <ComboBoxItem Content="RU"/>
+            </ComboBox>
+            <TextBox Name="SearchBox" Width="250" Grid.Column="2" HorizontalAlignment="Right" 
                      Watermark="Otsi..." KeyUp="SearchBox_KeyUp"/>
         </Grid>
     
@@ -48,20 +52,29 @@
                             <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
                             <DataGridTextColumn Header="Nimi" Binding="{Binding FullName}" Width="*"/>
                             <DataGridTextColumn Header="Telefon" Binding="{Binding Phone}" Width="150"/>
+                            <DataGridTemplateColumn Header="Tegevus" Width="250" IsVisible="False">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Spacing="5">
+                                            <Button Content="Lisa auto" Click="AddCarForOwner_Click" Tag="{Binding Id}" Classes="primary"/>
+                                            <Button Content="Uuenda" Click="UpdateOwnerFromGrid_Click" Tag="{Binding Id}" Classes="warning"/>
+                                            <Button Content="Kustuta" Click="DeleteOwnerFromGrid_Click" Tag="{Binding Id}" Classes="danger"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                     <StackPanel Name="OwnerActionPanel" Grid.Row="1" Classes="actions" IsVisible="False">
                         <TextBox Name="OwnerNameBox" Watermark="Nimi" Width="200"/>
                         <TextBox Name="OwnerPhoneBox" Watermark="Telefon" Width="150"/>
                         <Button Name="AddOwnerBtn" Content="Lisa" Classes="primary" Click="AddOwnerBtn_Click"/>
-                        <Button Name="UpdateOwnerBtn" Content="Uuenda" Classes="warning" Click="UpdateOwnerBtn_Click"/>
-                        <Button Name="DeleteOwnerBtn" Content="Kustuta" Classes="danger" Click="DeleteOwnerBtn_Click"/>
                     </StackPanel>
                 </Grid>
             </TabItem>
 
             <TabItem Header="AUTOD">
-                <Grid RowDefinitions="*,Auto" Margin="10">
+                <Grid Margin="10">
                     <DataGrid Name="CarsGrid" AutoGenerateColumns="False" IsReadOnly="True">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
@@ -69,21 +82,19 @@
                             <DataGridTextColumn Header="Mudel" Binding="{Binding Model}" Width="100"/>
                             <DataGridTextColumn Header="Reg Number" Binding="{Binding RegistrationNumber}" Width="120"/>
                             <DataGridTextColumn Header="Omanik" Binding="{Binding OwnerName}" Width="*"/>
+                            <DataGridTemplateColumn Header="Tegevus" Width="280" IsVisible="False">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Spacing="5">
+                                            <Button Content="Lisa teenus" Click="AddServiceForCar_Click" Tag="{Binding Id}" Classes="primary"/>
+                                            <Button Content="Uuenda" Click="UpdateCarFromGrid_Click" Tag="{Binding Id}" Classes="warning"/>
+                                            <Button Content="Kustuta" Click="DeleteCarFromGrid_Click" Tag="{Binding Id}" Classes="danger"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
-                    <StackPanel Name="CarActionPanel" Grid.Row="1" Classes="actions" IsVisible="False">
-                        <TextBox Name="CarBrandBox" Watermark="Bränd" Width="100"/>
-                        <TextBox Name="CarModelBox" Watermark="Mudel" Width="100"/>
-                        <TextBox Name="CarRegBox" Watermark="Reg Num" Width="100"/>
-                        <ComboBox Name="OwnerCombo" Width="150" PlaceholderText="Vali omanik">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate><TextBlock Text="{Binding FullName}"/></DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                        <Button Name="AddCarBtn" Content="Lisa" Classes="primary" Click="AddCarBtn_Click"/>
-                        <Button Name="UpdateCarBtn" Content="Uuenda" Classes="warning" Click="UpdateCarBtn_Click"/>
-                        <Button Name="DeleteCarBtn" Content="Kustuta" Classes="danger" Click="DeleteCarBtn_Click"/>
-                    </StackPanel>
                 </Grid>
             </TabItem>
 
@@ -93,7 +104,17 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
                             <DataGridTextColumn Header="Teenus Nimi" Binding="{Binding Name}" Width="*"/>
-                            <DataGridTextColumn Header="Hind" Binding="{Binding Price}" Width="100"/>
+                            <DataGridTextColumn Header="Hind" Binding="{Binding Price, StringFormat={}{0:F2}}" Width="100"/>
+                            <DataGridTemplateColumn Header="Tegevus" Width="180" IsVisible="False">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Spacing="5">
+                                            <Button Content="Uuenda" Click="UpdateServiceFromGrid_Click" Tag="{Binding Id}" Classes="warning"/>
+                                            <Button Content="Kustuta" Click="DeleteServiceFromGrid_Click" Tag="{Binding Id}" Classes="danger"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                     <StackPanel Name="ServiceActionPanel" Grid.Row="1" Orientation="Horizontal" Spacing="10" 
@@ -101,37 +122,23 @@
                         <TextBox Name="ServiceNameBox" Watermark="Teenus Nimi" Width="200"/>
                         <TextBox Name="ServicePriceBox" Watermark="Hind" Width="100"/>
                         <Button Name="AddServiceBtn" Content="Lisa" Classes="primary" Click="AddServiceBtn_Click"/>
-                        <Button Name="UpdateServiceBtn" Content="Uuenda" Classes="warning" Click="UpdateServiceBtn_Click"/>
-                        <Button Name="DeleteServiceBtn" Content="Kustuta" Classes="danger" Click="DeleteServiceBtn_Click"/>
                     </StackPanel>
                     <DataGrid Name="LogsGrid" Grid.Row="2" AutoGenerateColumns="False" IsReadOnly="True">
                         <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
                             <DataGridTextColumn Header="Auto" Binding="{Binding Car}" Width="*"/>
                             <DataGridTextColumn Header="Teenus" Binding="{Binding Service}" Width="*"/>
                             <DataGridTextColumn Header="Kuupäev" Binding="{Binding DateOfService, StringFormat={}{0:d}}" Width="120"/>
                             <DataGridTextColumn Header="Kilomeetrid" Binding="{Binding Mileage}" Width="120"/>
+                            <DataGridTemplateColumn Header="Tegevus" Width="100" IsVisible="False">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="Kustuta" Click="DeleteLogFromGrid_Click" Tag="{Binding Id}" Classes="danger"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
-                    <StackPanel Name="LogActionPanel" Grid.Row="3" Classes="actions" IsVisible="False">
-                        <TextBlock VerticalAlignment="Center" Text="Auto:"/>
-                        <ComboBox Name="LogCarCombo" Width="120" PlaceholderText="Car">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate><TextBlock Text="{Binding RegistrationNumber}"/></DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                        <TextBlock VerticalAlignment="Center" Text="Tns:"/>
-                        <ComboBox Name="LogServiceCombo" Width="120" PlaceholderText="Teenus">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate><TextBlock Text="{Binding Name}"/></DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                        <TextBlock VerticalAlignment="Center" Text="Kuupäev:"/>
-                        <DatePicker Name="LogDatePicker"/>
-                        <TextBlock VerticalAlignment="Center" Text="Km:"/>
-                        <TextBox Name="LogMileageBox" Watermark="123000" Width="80"/>
-                        <Button Name="AddLogBtn" Content="Log" Classes="primary" Click="AddLogBtn_Click"/>
-                        <Button Name="DeleteLogBtn" Content="Kust" Classes="danger" Click="DeleteLogBtn_Click"/>
-                    </StackPanel>
                 </Grid>
             </TabItem>
         </TabControl>

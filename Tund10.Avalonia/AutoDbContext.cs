@@ -32,9 +32,6 @@ public class AutoDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder mb)
     {
         mb.Entity<CarService>()
-            .HasKey(cs => new { cs.CarId, cs.ServiceId, cs.DateOfService });
-
-        mb.Entity<CarService>()
             .HasOne(cs => cs.Car)
             .WithMany(c => c.CarServices)
             .HasForeignKey(cs => cs.CarId);

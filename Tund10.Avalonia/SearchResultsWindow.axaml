@@ -7,6 +7,12 @@
     <Border BorderBrush="Gray" BorderThickness="1" Padding="5">
         <ListBox Name="ResultsList"
                  SelectionChanged="ResultsList_SelectionChanged"
-                 BorderThickness="0"/>
+                 BorderThickness="0">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" TextWrapping="Wrap"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Border>
 </Window>
