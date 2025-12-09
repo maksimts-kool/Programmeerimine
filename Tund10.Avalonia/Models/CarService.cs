@@ -11,6 +11,7 @@ public class CarService
     public int ServiceId { get; set; }
     public Service? Service { get; set; }
 
-    public DateTime DateOfService { get; set; }
+    public DateTime DateOfService { get; set; } = DateTime.Now;
     public int Mileage { get; set; }
+    public string Status { get; set; } = "Not Started";
 }

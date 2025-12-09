@@ -12,6 +12,8 @@ public class AutoDbContext : DbContext
     public DbSet<Car> Cars { get; set; }
     public DbSet<Service> Services { get; set; }
     public DbSet<CarService> CarServices { get; set; }
+    public DbSet<Worker> Workers { get; set; }
+    public DbSet<Role> Roles { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {

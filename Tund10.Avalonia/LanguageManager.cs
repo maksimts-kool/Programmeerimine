@@ -78,6 +78,8 @@ public static class LanguageManager
             ["DeleteBtn"] = "Kustuta",
             ["AddServiceBtn"] = "Lisa teenus"
         },
+
+        // ------------------------- RUSSIAN -------------------------
         ["RU"] = new()
         {
             ["Title"] = "Автомобильный регистр",
@@ -142,6 +144,73 @@ public static class LanguageManager
             ["UpdateBtn"] = "Обновить",
             ["DeleteBtn"] = "Удалить",
             ["AddServiceBtn"] = "Добавить услугу"
+        },
+
+        // ------------------------- ENGLISH (UK) -------------------------
+        ["UK"] = new()
+        {
+            ["Title"] = "Car Register",
+            ["Login"] = "Login",
+            ["Username"] = "Username",
+            ["Password"] = "Password",
+            ["Search"] = "Search...",
+            ["Owners"] = "OWNERS",
+            ["Cars"] = "CARS",
+            ["ServicesLogs"] = "SERVICES & LOGS",
+            ["ID"] = "ID",
+            ["Name"] = "Name",
+            ["Phone"] = "Phone",
+            ["Actions"] = "Actions",
+            ["AddCar"] = "Add Car",
+            ["Update"] = "Update",
+            ["Delete"] = "Delete",
+            ["Add"] = "Add",
+            ["Brand"] = "Brand",
+            ["Model"] = "Model",
+            ["RegNumber"] = "Reg Number",
+            ["Owner"] = "Owner",
+            ["AddService"] = "Add Service",
+            ["ServiceName"] = "Service Name",
+            ["Price"] = "Price",
+            ["Car"] = "Car",
+            ["Service"] = "Service",
+            ["Date"] = "Date",
+            ["Mileage"] = "Mileage",
+            ["Save"] = "Save",
+            ["Cancel"] = "Cancel",
+            ["Message"] = "Message",
+            ["OK"] = "OK",
+            ["Welcome"] = "Welcome, admin!",
+            ["WrongCredentials"] = "Wrong username or password!",
+            ["FillAllFields"] = "Please fill in all fields.",
+            ["CarExists"] = "A car with that registration number already exists.",
+            ["CarAdded"] = "Car added successfully!",
+            ["OwnerExists"] = "This owner already exists.",
+            ["OwnerAdded"] = "Owner added successfully!",
+            ["OwnerUpdated"] = "Owner updated successfully!",
+            ["OwnerDeleted"] = "Owner deleted successfully!",
+            ["CannotDeleteOwner"] = "Cannot delete this owner. Remove linked cars first.",
+            ["CarUpdated"] = "Car updated successfully!",
+            ["CarDeleted"] = "Car deleted successfully!",
+            ["CannotDeleteCar"] = "Cannot delete this car until logs are deleted.",
+            ["ServiceAdded"] = "Service added successfully!",
+            ["ServiceUpdated"] = "Service updated successfully!",
+            ["ServiceDeleted"] = "Service deleted successfully!",
+            ["ServiceExists"] = "This service already exists.",
+            ["CannotDeleteService"] = "Cannot delete this service. Remove related logs first.",
+            ["LogDeleted"] = "Log deleted successfully!",
+            ["LogExists"] = "A log already exists for this date.",
+            ["InvalidMileage"] = "Invalid mileage value.",
+            ["InvalidPrice"] = "Please enter a valid positive price.",
+            ["UpdateOwner"] = "Update Owner",
+            ["UpdateCar"] = "Update Car",
+            ["UpdateService"] = "Update Service",
+            ["AddServiceTitle"] = "Add Service",
+            ["SelectService"] = "Select Service",
+            ["AddCarBtn"] = "Add Car",
+            ["UpdateBtn"] = "Update",
+            ["DeleteBtn"] = "Delete",
+            ["AddServiceBtn"] = "Add Service"
         }
     };
 
@@ -157,7 +226,8 @@ public static class LanguageManager
 
     public static string Get(string key)
     {
-        if (Translations.ContainsKey(_currentLanguage) && Translations[_currentLanguage].ContainsKey(key))
+        if (Translations.ContainsKey(_currentLanguage) &&
+            Translations[_currentLanguage].ContainsKey(key))
             return Translations[_currentLanguage][key];
         return key;
     }
@@ -165,9 +235,7 @@ public static class LanguageManager
     public static void LoadLanguage()
     {
         if (File.Exists(_settingsPath))
-        {
             _currentLanguage = File.ReadAllText(_settingsPath).Trim();
-        }
     }
 
     private static void SaveLanguage()

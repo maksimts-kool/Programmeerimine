@@ -10,6 +10,39 @@ public static class SeedData
     {
         if (db.Owners.Any()) return;
 
+        // Add default roles
+        if (!db.Roles.Any())
+        {
+            db.Roles.AddRange(
+                new Role { Name = "Owner", CanManageOwners = true, CanManageCars = true, CanManageServices = true, CanChangeStatus = true, CanManageWorkers = true },
+                new Role { Name = "Manager", CanManageOwners = true, CanManageCars = true, CanManageServices = true, CanChangeStatus = true, CanManageWorkers = false },
+                new Role { Name = "Mechanic", CanManageOwners = false, CanManageCars = false, CanManageServices = false, CanChangeStatus = true, CanManageWorkers = false },
+                new Role { Name = "Viewer", CanManageOwners = false, CanManageCars = false, CanManageServices = false, CanChangeStatus = false, CanManageWorkers = false }
+            );
+            db.SaveChanges();
+        }
+
+        // Add default workers
+        if (!db.Workers.Any(w => w.Name == "admin"))
+        {
+            db.Workers.Add(new Worker
+            {
+                Name = "admin",
+                Password = "admin",
+                Role = "Owner"
+            });
+        }
+        if (!db.Workers.Any(w => w.Name == "everyone"))
+        {
+            db.Workers.Add(new Worker
+            {
+                Name = "everyone",
+                Password = "everyone",
+                Role = "Viewer"
+            });
+        }
+        db.SaveChanges();
+
         // Add 100 Owners
         var firstNames = new[] { "Jaan", "Mari", "Peeter", "Kati", "Toomas", "Liis", "Andres", "Kristiina", "Mart", "Anna", "Mati", "Kadri", "Priit", "Tiina", "Rein", "Ene", "Jaak", "Piret", "Ants", "Marika" };
         var lastNames = new[] { "Tamm", "Sepp", "Saar", "Mägi", "Kask", "Kukk", "Rebane", "Ilves", "Karu", "Lepp", "Pärn", "Raud", "Kivi", "Jõgi", "Mets", "Nurk", "Org", "Soo", "Laas", "Teder" };
@@ -65,7 +98,7 @@ public static class SeedData
             {
                 CarId = cars[i].Id,
                 ServiceId = services[random.Next(100)].Id,
-                DateOfService = DateTime.Now.AddDays(-random.Next(365)),
+                DateOfService = DateTime.Now.AddDays(-random.Next(365)).Date.AddHours(random.Next(24)),
                 Mileage = 10000 + random.Next(200000)
             };
         }

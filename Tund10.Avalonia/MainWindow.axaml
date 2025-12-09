@@ -29,17 +29,19 @@
     </Window.Styles>
 
     <Grid RowDefinitions="Auto,*" Margin="10">
-        <Grid ColumnDefinitions="*,Auto,Auto">
+        <Grid ColumnDefinitions="*,Auto,Auto,Auto">
             <StackPanel Name="LoginPanel" Orientation="Horizontal" Spacing="10">
                 <TextBox Name="LoginNameBox" Watermark="Kasutajanimi" Width="150"/>
                 <TextBox Name="LoginPasswordBox" Watermark="Parool" Width="150"/>
                 <Button Name="LoginBtn" Content="Logi sisse" Classes="primary" Click="LoginBtn_Click"/>
             </StackPanel>
-            <ComboBox Name="LanguageCombo" Width="80" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,10,0" SelectionChanged="LanguageCombo_SelectionChanged">
+            <Button Name="LogoutBtn" Content="Log Out" Classes="danger" Click="LogoutBtn_Click" IsVisible="False"/>
+            <ComboBox Name="LanguageCombo" Width="80" Grid.Column="2" HorizontalAlignment="Right" Margin="0,0,10,0" SelectionChanged="LanguageCombo_SelectionChanged">
                 <ComboBoxItem Content="EE"/>
                 <ComboBoxItem Content="RU"/>
+                <ComboBoxItem Content="UK"/>
             </ComboBox>
-            <TextBox Name="SearchBox" Width="250" Grid.Column="2" HorizontalAlignment="Right" 
+            <TextBox Name="SearchBox" Width="250" Grid.Column="3" HorizontalAlignment="Right" 
                      Watermark="Otsi..." KeyUp="SearchBox_KeyUp"/>
         </Grid>
     
@@ -47,24 +49,7 @@
         <TabControl Grid.Row="1" x:Name="MainTabs" Margin="5">
             <TabItem Header="OMANIKUD">
                 <Grid RowDefinitions="*,Auto" Margin="10">
-                    <DataGrid Name="OwnersGrid" AutoGenerateColumns="False" IsReadOnly="True">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
-                            <DataGridTextColumn Header="Nimi" Binding="{Binding FullName}" Width="*"/>
-                            <DataGridTextColumn Header="Telefon" Binding="{Binding Phone}" Width="150"/>
-                            <DataGridTemplateColumn Header="Tegevus" Width="250" IsVisible="False">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" Spacing="5">
-                                            <Button Content="Lisa auto" Click="AddCarForOwner_Click" Tag="{Binding Id}" Classes="primary"/>
-                                            <Button Content="Uuenda" Click="UpdateOwnerFromGrid_Click" Tag="{Binding Id}" Classes="warning"/>
-                                            <Button Content="Kustuta" Click="DeleteOwnerFromGrid_Click" Tag="{Binding Id}" Classes="danger"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
+                    <DataGrid Name="OwnersGrid" AutoGenerateColumns="False" IsReadOnly="True"/>
                     <StackPanel Name="OwnerActionPanel" Grid.Row="1" Classes="actions" IsVisible="False">
                         <TextBox Name="OwnerNameBox" Watermark="Nimi" Width="200"/>
                         <TextBox Name="OwnerPhoneBox" Watermark="Telefon" Width="150"/>
@@ -75,70 +60,33 @@
 
             <TabItem Header="AUTOD">
                 <Grid Margin="10">
-                    <DataGrid Name="CarsGrid" AutoGenerateColumns="False" IsReadOnly="True">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
-                            <DataGridTextColumn Header="Bränd" Binding="{Binding Brand}" Width="100"/>
-                            <DataGridTextColumn Header="Mudel" Binding="{Binding Model}" Width="100"/>
-                            <DataGridTextColumn Header="Reg Number" Binding="{Binding RegistrationNumber}" Width="120"/>
-                            <DataGridTextColumn Header="Omanik" Binding="{Binding OwnerName}" Width="*"/>
-                            <DataGridTemplateColumn Header="Tegevus" Width="280" IsVisible="False">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" Spacing="5">
-                                            <Button Content="Lisa teenus" Click="AddServiceForCar_Click" Tag="{Binding Id}" Classes="primary"/>
-                                            <Button Content="Uuenda" Click="UpdateCarFromGrid_Click" Tag="{Binding Id}" Classes="warning"/>
-                                            <Button Content="Kustuta" Click="DeleteCarFromGrid_Click" Tag="{Binding Id}" Classes="danger"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
+                    <DataGrid Name="CarsGrid" AutoGenerateColumns="False" IsReadOnly="True"/>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="WORKERS">
+                <Grid RowDefinitions="*,Auto" Margin="10">
+                    <DataGrid Name="WorkersGrid" AutoGenerateColumns="False" IsReadOnly="True"/>
+                    <StackPanel Name="WorkerActionPanel" Grid.Row="1" Classes="actions" IsVisible="False">
+                        <TextBox Name="WorkerNameBox" Watermark="Name" Width="200"/>
+                        <TextBox Name="WorkerPasswordBox" Watermark="Password" Width="150"/>
+                        <ComboBox Name="WorkerRoleCombo" Width="150"/>
+                        <Button Name="AddWorkerBtn" Content="Lisa" Classes="primary" Click="AddWorkerBtn_Click"/>
+                        <Button Name="ManageRolesBtn" Content="Manage Roles" Classes="warning" Click="ManageRolesBtn_Click"/>
+                    </StackPanel>
                 </Grid>
             </TabItem>
 
             <TabItem Header="TEENUSED &amp; LOGID">
                 <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="10">
-                    <DataGrid Name="ServicesGrid" Height="150" AutoGenerateColumns="False" IsReadOnly="True">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
-                            <DataGridTextColumn Header="Teenus Nimi" Binding="{Binding Name}" Width="*"/>
-                            <DataGridTextColumn Header="Hind" Binding="{Binding Price, StringFormat={}{0:F2}}" Width="100"/>
-                            <DataGridTemplateColumn Header="Tegevus" Width="180" IsVisible="False">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" Spacing="5">
-                                            <Button Content="Uuenda" Click="UpdateServiceFromGrid_Click" Tag="{Binding Id}" Classes="warning"/>
-                                            <Button Content="Kustuta" Click="DeleteServiceFromGrid_Click" Tag="{Binding Id}" Classes="danger"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
+                    <DataGrid Name="ServicesGrid" Height="150" AutoGenerateColumns="False" IsReadOnly="True"/>
                     <StackPanel Name="ServiceActionPanel" Grid.Row="1" Orientation="Horizontal" Spacing="10" 
                                 Margin="0,10,0,20" IsVisible="False">
                         <TextBox Name="ServiceNameBox" Watermark="Teenus Nimi" Width="200"/>
                         <TextBox Name="ServicePriceBox" Watermark="Hind" Width="100"/>
                         <Button Name="AddServiceBtn" Content="Lisa" Classes="primary" Click="AddServiceBtn_Click"/>
                     </StackPanel>
-                    <DataGrid Name="LogsGrid" Grid.Row="2" AutoGenerateColumns="False" IsReadOnly="True">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
-                            <DataGridTextColumn Header="Auto" Binding="{Binding Car}" Width="*"/>
-                            <DataGridTextColumn Header="Teenus" Binding="{Binding Service}" Width="*"/>
-                            <DataGridTextColumn Header="Kuupäev" Binding="{Binding DateOfService, StringFormat={}{0:d}}" Width="120"/>
-                            <DataGridTextColumn Header="Kilomeetrid" Binding="{Binding Mileage}" Width="120"/>
-                            <DataGridTemplateColumn Header="Tegevus" Width="100" IsVisible="False">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Content="Kustuta" Click="DeleteLogFromGrid_Click" Tag="{Binding Id}" Classes="danger"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
+                    <DataGrid Name="LogsGrid" Grid.Row="2" AutoGenerateColumns="False" IsReadOnly="True"/>
                 </Grid>
             </TabItem>
         </TabControl>
