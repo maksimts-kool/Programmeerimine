@@ -1,0 +1,46 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Tund10.Avalonia.AddServiceWindow"
+        Title="Add Service"
+        Width="400" Height="450"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+    <Window.Styles>
+        <Style Selector="Button.success">
+            <Setter Property="Background" Value="#28A745"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="Button.danger">
+            <Setter Property="Background" Value="IndianRed"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </Window.Styles>
+    <StackPanel Margin="20" Spacing="15">
+        <TextBlock Name="CarInfoText" FontWeight="Bold" FontSize="14"/>
+        
+        <StackPanel Spacing="5">
+            <TextBlock Name="ServiceLabel" Text="Service" FontWeight="Bold"/>
+            <ComboBox Name="ServiceCombo" Width="350"/>
+        </StackPanel>
+        
+        <StackPanel Spacing="5">
+            <TextBlock Name="DateLabel" Text="Date" FontWeight="Bold"/>
+            <DatePicker Name="DatePicker" Width="350" HorizontalAlignment="Left"/>
+        </StackPanel>
+        
+        <StackPanel Spacing="5">
+            <TextBlock Name="HourLabel" Text="Hour" FontWeight="Bold"/>
+            <ComboBox Name="HourCombo" Width="350" HorizontalAlignment="Left"/>
+        </StackPanel>
+        
+        <StackPanel Spacing="5">
+            <TextBlock Name="MileageLabel" Text="Mileage" FontWeight="Bold"/>
+            <TextBox Name="MileageBox" Width="350" HorizontalAlignment="Left"/>
+        </StackPanel>
+        
+        <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center" Margin="0,20,0,0">
+            <Button Name="SaveBtn" Content="Save" Width="100" Classes="success" Click="SaveBtn_Click"/>
+            <Button Name="CancelBtn" Content="Cancel" Width="100" Classes="danger" Click="CancelBtn_Click"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

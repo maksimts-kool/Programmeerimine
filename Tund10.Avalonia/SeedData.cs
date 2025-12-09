@@ -14,10 +14,10 @@ public static class SeedData
         if (!db.Roles.Any())
         {
             db.Roles.AddRange(
-                new Role { Name = "Owner", CanManageOwners = true, CanManageCars = true, CanManageServices = true, CanChangeStatus = true, CanManageWorkers = true },
-                new Role { Name = "Manager", CanManageOwners = true, CanManageCars = true, CanManageServices = true, CanChangeStatus = true, CanManageWorkers = false },
-                new Role { Name = "Mechanic", CanManageOwners = false, CanManageCars = false, CanManageServices = false, CanChangeStatus = true, CanManageWorkers = false },
-                new Role { Name = "Viewer", CanManageOwners = false, CanManageCars = false, CanManageServices = false, CanChangeStatus = false, CanManageWorkers = false }
+                new Role { Name = "Owner", CanViewOwners = true, CanManageOwners = true, CanViewCars = true, CanManageCars = true, CanViewServices = true, CanManageServices = true, CanChangeStatus = true, CanViewWorkers = true, CanManageWorkers = true },
+                new Role { Name = "Manager", CanViewOwners = true, CanManageOwners = true, CanViewCars = true, CanManageCars = true, CanViewServices = true, CanManageServices = true, CanChangeStatus = true, CanViewWorkers = false, CanManageWorkers = false },
+                new Role { Name = "Mechanic", CanViewOwners = false, CanManageOwners = false, CanViewCars = true, CanManageCars = false, CanViewServices = true, CanManageServices = false, CanChangeStatus = true, CanViewWorkers = false, CanManageWorkers = false },
+                new Role { Name = "Viewer", CanViewOwners = true, CanManageOwners = false, CanViewCars = true, CanManageCars = false, CanViewServices = true, CanManageServices = false, CanChangeStatus = false, CanViewWorkers = false, CanManageWorkers = false }
             );
             db.SaveChanges();
         }
@@ -31,17 +31,8 @@ public static class SeedData
                 Password = "admin",
                 Role = "Owner"
             });
+            db.SaveChanges();
         }
-        if (!db.Workers.Any(w => w.Name == "everyone"))
-        {
-            db.Workers.Add(new Worker
-            {
-                Name = "everyone",
-                Password = "everyone",
-                Role = "Viewer"
-            });
-        }
-        db.SaveChanges();
 
         // Add 100 Owners
         var firstNames = new[] { "Jaan", "Mari", "Peeter", "Kati", "Toomas", "Liis", "Andres", "Kristiina", "Mart", "Anna", "Mati", "Kadri", "Priit", "Tiina", "Rein", "Ene", "Jaak", "Piret", "Ants", "Marika" };
@@ -66,7 +57,7 @@ public static class SeedData
             services[i] = new Service
             {
                 Name = $"{serviceNames[i % serviceNames.Length]} {i / serviceNames.Length + 1}",
-                Price = 50 + (i * 10) % 500
+                Price = decimal.Round(50 + (i * 10) % 500, 2)
             };
         }
         db.Services.AddRange(services);

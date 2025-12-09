@@ -10,7 +10,7 @@ using Avalonia.Media;
 using System.Collections.Generic;
 using Avalonia.Input;
 using Avalonia.Controls.Templates;
-using Avalonia.Data;
+using System.Threading.Tasks;
 
 namespace Tund10.Avalonia;
 
@@ -18,7 +18,7 @@ public partial class MainWindow : Window
 {
     private readonly AutoDbContext _db = new();
     private SearchResultsWindow? SearchPopup;
-    private string _currentUserRole = "Owner";
+    private string _currentUserRole = "Viewer";
 
     public MainWindow()
     {
@@ -26,7 +26,6 @@ public partial class MainWindow : Window
         _db.Database.EnsureCreated();
         SeedData.Seed(_db);
 
-        _currentUserRole = "Viewer";
         ((TabItem)MainTabs.Items[2]!).IsVisible = false;
 
         LanguageManager.LoadLanguage();
@@ -37,96 +36,85 @@ public partial class MainWindow : Window
             _ => 0
         };
         UpdateLanguage();
+        LoadAllData();
+    }
 
+    private void LoadAllData()
+    {
         LoadOwners();
         LoadCars();
         LoadServices();
-        LoadCarServices();
+        LoadLogs();
         LoadWorkers();
         LoadRoles();
     }
 
-    // -------------------- LOAD METHODS --------------------
-
-    private void LoadRoles()
-    {
+    public void LoadRoles() =>
         WorkerRoleCombo.ItemsSource = _db.Roles.Select(r => r.Name).ToList();
-    }
 
-    private void LoadWorkers()
-    {
-        var workers = _db.Workers
+    private void LoadWorkers() =>
+        WorkersGrid.ItemsSource = _db.Workers
             .Select(w => new { w.Id, w.Name, w.Role })
             .ToList();
 
-        WorkersGrid.ItemsSource = workers;
-    }
-
-    private void LoadOwners()
-    {
-        var owners = _db.Owners
+    private void LoadOwners() =>
+        OwnersGrid.ItemsSource = _db.Owners
             .Select(o => new { o.Id, o.FullName, o.Phone })
             .ToList();
 
-        OwnersGrid.ItemsSource = owners;
-    }
-
     private void LoadCars()
     {
-        var cars = _db.Cars
+        var carsData = _db.Cars
             .Include(c => c.Owner)
+            .ToList()
             .Select(c => new
             {
                 c.Id,
                 c.Brand,
                 c.Model,
                 c.RegistrationNumber,
-                c.OwnerId,
-                OwnerName = c.Owner!.FullName
+                OwnerName = c.Owner != null ? c.Owner.FullName : ""
             })
             .ToList();
 
-        CarsGrid.ItemsSource = cars;
+        CarsGrid.ItemsSource = carsData;
     }
 
     private void LoadServices()
     {
-        var services = _db.Services
-            .Select(s => new { s.Id, s.Name, s.Price })
+        ServicesGrid.ItemsSource = _db.Services
+            .Select(s => new { s.Id, s.Name, Price = s.Price.ToString("F2") })
             .ToList();
-
-        ServicesGrid.ItemsSource = services;
     }
 
-    private void LoadCarServices()
+    private void LoadLogs()
     {
-        var logs = _db.CarServices
+        var logsData = _db.CarServices
             .Include(cs => cs.Car)
             .Include(cs => cs.Service)
+            .Include(cs => cs.Worker)
+            .ToList()
             .Select(cs => new
             {
                 cs.Id,
-                cs.CarId,
-                cs.ServiceId,
                 cs.Mileage,
                 cs.DateOfService,
                 cs.Status,
-                Car = cs.Car!.RegistrationNumber,
-                Service = cs.Service!.Name,
+                Car = cs.Car != null ? cs.Car.RegistrationNumber : "",
+                Service = cs.Service != null ? cs.Service.Name : "",
+                Worker = cs.Worker != null ? cs.Worker.Name : "Määramata",
                 DateTimeDisplay = cs.DateOfService.ToString("yyyy-MM-dd HH:mm")
             })
             .ToList();
 
-        LogsGrid.ItemsSource = logs;
+        LogsGrid.ItemsSource = logsData;
     }
 
     // -------------------- OWNERS --------------------
 
     private async void AddCarForOwner_Click(object? sender, RoutedEventArgs e)
     {
-        if (sender is not Button btn || btn.Tag is not int ownerId)
-            return;
-
+        if (sender is not Button btn || btn.Tag is not int ownerId) return;
         var owner = _db.Owners.Find(ownerId);
         if (owner == null) return;
 
@@ -137,18 +125,18 @@ public partial class MainWindow : Window
 
     private void AddOwnerBtn_Click(object? sender, RoutedEventArgs e)
     {
-        if (string.IsNullOrWhiteSpace(OwnerNameBox.Text) ||
-            string.IsNullOrWhiteSpace(OwnerPhoneBox.Text))
+        if (ValidateInput(OwnerNameBox.Text, OwnerPhoneBox.Text))
         {
             ShowAlert(LanguageManager.Get("FillAllFields"));
             return;
         }
 
-        var exists = _db.Owners.Any(o =>
-            o.FullName.ToLower() == OwnerNameBox.Text.Trim().ToLower() &&
-            o.Phone.Trim() == OwnerPhoneBox.Text.Trim());
+        string ownerName = OwnerNameBox.Text!.Trim().ToLower();
+        string ownerPhone = OwnerPhoneBox.Text!.Trim();
 
-        if (exists)
+        if (_db.Owners.Any(o =>
+            o.FullName.ToLower() == ownerName &&
+            o.Phone.Trim() == ownerPhone))
         {
             ShowAlert(LanguageManager.Get("OwnerExists"));
             return;
@@ -156,97 +144,39 @@ public partial class MainWindow : Window
 
         _db.Owners.Add(new Owner
         {
-            FullName = OwnerNameBox.Text.Trim(),
-            Phone = OwnerPhoneBox.Text.Trim()
+            FullName = OwnerNameBox.Text!.Trim(),
+            Phone = OwnerPhoneBox.Text!.Trim()
         });
         _db.SaveChanges();
-        LoadOwners();
-        LoadCars();
+        RefreshAfterChange();
         ShowAlert(LanguageManager.Get("OwnerAdded"));
-        OwnerNameBox.Clear();
-        OwnerPhoneBox.Clear();
+        ClearInputs(OwnerNameBox, OwnerPhoneBox);
     }
 
     private async void UpdateOwnerFromGrid_Click(object? sender, RoutedEventArgs e)
     {
-        if (sender is not Button btn || btn.Tag is not int ownerId)
-            return;
-
-        var owner = _db.Owners.Find(ownerId);
+        if (GetTag(sender) is not int id) return;
+        var owner = _db.Owners.Find(id);
         if (owner == null) return;
 
-        var dlg = new Window
-        {
-            Width = 400,
-            Height = 250,
-            Title = LanguageManager.Get("UpdateOwner"),
-            WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            CanResize = false
-        };
-
-        var stack = new StackPanel { Margin = new Thickness(20), Spacing = 15 };
-
-        var nameBox = new TextBox { Width = 350, Text = owner.FullName, Watermark = LanguageManager.Get("Name") };
-        var phoneBox = new TextBox { Width = 350, Text = owner.Phone, Watermark = LanguageManager.Get("Phone") };
-
-        stack.Children.Add(nameBox);
-        stack.Children.Add(phoneBox);
-
-        var btnPanel = new StackPanel
-        {
-            Orientation = Orientation.Horizontal,
-            Spacing = 10,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            Margin = new Thickness(0, 10, 0, 0)
-        };
-
-        var saveBtn = new Button { Content = LanguageManager.Get("Save"), Width = 100 };
-        saveBtn.Click += (_, _) =>
-        {
-            if (string.IsNullOrWhiteSpace(nameBox.Text) || string.IsNullOrWhiteSpace(phoneBox.Text))
-            {
-                ShowAlert(LanguageManager.Get("FillAllFields"));
-                return;
-            }
-
-            owner.FullName = nameBox.Text.Trim();
-            owner.Phone = phoneBox.Text.Trim();
-            _db.SaveChanges();
-            LoadOwners();
-            LoadCars();
-            ShowAlert(LanguageManager.Get("OwnerUpdated"));
-            dlg.Close();
-        };
-
-        var cancelBtn = new Button { Content = LanguageManager.Get("Cancel"), Width = 100 };
-        cancelBtn.Click += (_, _) => dlg.Close();
-
-        btnPanel.Children.Add(saveBtn);
-        btnPanel.Children.Add(cancelBtn);
-        stack.Children.Add(btnPanel);
-
-        dlg.Content = stack;
-        await dlg.ShowDialog(this);
+        await ShowUpdateDialog(new UpdateWindow(_db, owner, this, "Owner"));
+        LoadOwners();
+        LoadCars();
     }
 
     private void DeleteOwnerFromGrid_Click(object? sender, RoutedEventArgs e)
     {
-        if (sender is not Button btn || btn.Tag is not int ownerId)
-            return;
-
-        var owner = _db.Owners.Include(o => o.Cars).FirstOrDefault(o => o.Id == ownerId);
-        if (owner == null) return;
-
-        if (owner.Cars.Any())
+        if (GetTag(sender) is not int id) return;
+        var owner = _db.Owners.Include(o => o.Cars).FirstOrDefault(o => o.Id == id);
+        if (owner?.Cars.Any() == true)
         {
             ShowAlert(LanguageManager.Get("CannotDeleteOwner"));
             return;
         }
 
-        _db.Owners.Remove(owner);
+        _db.Owners.Remove(owner!);
         _db.SaveChanges();
-        LoadOwners();
-        LoadCars();
+        RefreshAfterChange();
         ShowAlert(LanguageManager.Get("OwnerDeleted"));
     }
 
@@ -254,308 +184,74 @@ public partial class MainWindow : Window
 
     private async void AddServiceForCar_Click(object? sender, RoutedEventArgs e)
     {
-        if (sender is not Button btn || btn.Tag is not int carId)
-            return;
-
+        if (GetTag(sender) is not int carId) return;
         var car = _db.Cars.Find(carId);
         if (car == null) return;
 
-        var dlg = new Window
-        {
-            Width = 400,
-            Height = 300,
-            Title = LanguageManager.Get("AddServiceTitle"),
-            WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            CanResize = false
-        };
-
-        var stack = new StackPanel { Margin = new Thickness(20), Spacing = 15 };
-
-        stack.Children.Add(new TextBlock
-        {
-            Text = $"{LanguageManager.Get("Car")}: {car.Brand} {car.Model} ({car.RegistrationNumber})",
-            FontWeight = FontWeight.Bold,
-            FontSize = 16
-        });
-
-        var serviceCombo = new ComboBox
-        {
-            Width = 350,
-            PlaceholderText = LanguageManager.Get("SelectService"),
-            ItemsSource = _db.Services.ToList()
-        };
-        serviceCombo.ItemTemplate = new FuncDataTemplate<Service>((s, _) =>
-            new TextBlock { Text = s?.Name });
-        stack.Children.Add(serviceCombo);
-
-        var datePicker = new DatePicker { Width = 350, SelectedDate = DateTime.Now, HorizontalAlignment = HorizontalAlignment.Left };
-        stack.Children.Add(datePicker);
-
-        var hourCombo = new ComboBox { Width = 350, PlaceholderText = LanguageManager.Get("SelectService"), HorizontalAlignment = HorizontalAlignment.Left };
-        for (int h = 0; h < 24; h++)
-            hourCombo.Items.Add($"{h:D2}:00");
-        hourCombo.SelectedIndex = DateTime.Now.Hour;
-        stack.Children.Add(hourCombo);
-
-        var mileageBox = new TextBox { Width = 350, Watermark = LanguageManager.Get("Mileage"), HorizontalAlignment = HorizontalAlignment.Left };
-        stack.Children.Add(mileageBox);
-
-        var btnPanel = new StackPanel
-        {
-            Orientation = Orientation.Horizontal,
-            Spacing = 10,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            Margin = new Thickness(0, 10, 0, 0)
-        };
-
-        var saveBtn = new Button { Content = LanguageManager.Get("Save"), Width = 100 };
-        saveBtn.Click += (_, _) =>
-        {
-            if (serviceCombo.SelectedItem is not Service service ||
-                !datePicker.SelectedDate.HasValue ||
-                hourCombo.SelectedIndex == -1 ||
-                string.IsNullOrWhiteSpace(mileageBox.Text))
-            {
-                ShowAlert(LanguageManager.Get("FillAllFields"));
-                return;
-            }
-
-            if (!int.TryParse(mileageBox.Text, out int mileage) || mileage <= 0)
-            {
-                ShowAlert(LanguageManager.Get("InvalidMileage"));
-                return;
-            }
-
-            DateTime dateTime = datePicker.SelectedDate.Value.Date.AddHours(hourCombo.SelectedIndex);
-
-            bool exists = _db.CarServices.Any(cs => cs.DateOfService == dateTime);
-
-            if (exists)
-            {
-                ShowAlert(LanguageManager.Get("LogExists"));
-                return;
-            }
-
-            _db.CarServices.Add(new CarService
-            {
-                CarId = carId,
-                ServiceId = service.Id,
-                Mileage = mileage,
-                DateOfService = dateTime
-            });
-
-            _db.SaveChanges();
-            LoadCarServices();
-            ShowAlert(LanguageManager.Get("ServiceAdded"));
-            dlg.Close();
-        };
-
-        var cancelBtn = new Button { Content = LanguageManager.Get("Cancel"), Width = 100 };
-        cancelBtn.Click += (_, _) => dlg.Close();
-
-        btnPanel.Children.Add(saveBtn);
-        btnPanel.Children.Add(cancelBtn);
-        stack.Children.Add(btnPanel);
-
-        dlg.Content = stack;
-        await dlg.ShowDialog(this);
+        await ShowUpdateDialog(new AddServiceWindow(_db, carId, car, this));
+        LoadLogs();
     }
-
-
 
     private async void UpdateCarFromGrid_Click(object? sender, RoutedEventArgs e)
     {
-        if (sender is not Button btn || btn.Tag is not int carId)
-            return;
-
-        var car = _db.Cars.Find(carId);
+        if (GetTag(sender) is not int id) return;
+        var car = _db.Cars.Find(id);
         if (car == null) return;
 
-        var dlg = new Window
-        {
-            Width = 400,
-            Height = 300,
-            Title = LanguageManager.Get("UpdateCar"),
-            WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            CanResize = false
-        };
-
-        var stack = new StackPanel { Margin = new Thickness(20), Spacing = 15 };
-
-        var brandBox = new TextBox { Width = 350, Text = car.Brand, Watermark = LanguageManager.Get("Brand") };
-        var modelBox = new TextBox { Width = 350, Text = car.Model, Watermark = LanguageManager.Get("Model") };
-        var regBox = new TextBox { Width = 350, Text = car.RegistrationNumber, Watermark = LanguageManager.Get("RegNumber") };
-        var ownerCombo = new ComboBox { Width = 350, PlaceholderText = LanguageManager.Get("Owner"), ItemsSource = _db.Owners.ToList() };
-        ownerCombo.ItemTemplate = new FuncDataTemplate<Owner>((o, _) => new TextBlock { Text = o?.FullName });
-        ownerCombo.SelectedItem = _db.Owners.Find(car.OwnerId);
-
-        stack.Children.Add(brandBox);
-        stack.Children.Add(modelBox);
-        stack.Children.Add(regBox);
-        stack.Children.Add(ownerCombo);
-
-        var btnPanel = new StackPanel
-        {
-            Orientation = Orientation.Horizontal,
-            Spacing = 10,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            Margin = new Thickness(0, 10, 0, 0)
-        };
-
-        var saveBtn = new Button { Content = LanguageManager.Get("Save"), Width = 100 };
-        saveBtn.Click += (_, _) =>
-        {
-            if (string.IsNullOrWhiteSpace(brandBox.Text) ||
-                string.IsNullOrWhiteSpace(modelBox.Text) ||
-                string.IsNullOrWhiteSpace(regBox.Text) ||
-                ownerCombo.SelectedItem is not Owner selectedOwner)
-            {
-                ShowAlert(LanguageManager.Get("FillAllFields"));
-                return;
-            }
-
-            car.Brand = brandBox.Text.Trim();
-            car.Model = modelBox.Text.Trim();
-            car.RegistrationNumber = regBox.Text.Trim().ToUpper();
-            car.OwnerId = selectedOwner.Id;
-            _db.SaveChanges();
-            LoadCars();
-            LoadCarServices();
-            ShowAlert(LanguageManager.Get("CarUpdated"));
-            dlg.Close();
-        };
-
-        var cancelBtn = new Button { Content = LanguageManager.Get("Cancel"), Width = 100 };
-        cancelBtn.Click += (_, _) => dlg.Close();
-
-        btnPanel.Children.Add(saveBtn);
-        btnPanel.Children.Add(cancelBtn);
-        stack.Children.Add(btnPanel);
-
-        dlg.Content = stack;
-        await dlg.ShowDialog(this);
+        await ShowUpdateDialog(new UpdateWindow(_db, car, this, "Car"));
+        LoadCars();
+        LoadLogs();
     }
 
     private void DeleteCarFromGrid_Click(object? sender, RoutedEventArgs e)
     {
-        if (sender is not Button btn || btn.Tag is not int carId)
-            return;
-
-        var car = _db.Cars.Include(c => c.CarServices).FirstOrDefault(c => c.Id == carId);
-        if (car == null) return;
-
-        if (car.CarServices.Any())
+        if (GetTag(sender) is not int id) return;
+        var car = _db.Cars.Include(c => c.CarServices).FirstOrDefault(c => c.Id == id);
+        if (car?.CarServices.Any() == true)
         {
             ShowAlert(LanguageManager.Get("CannotDeleteCar"));
             return;
         }
 
-        _db.Cars.Remove(car);
+        _db.Cars.Remove(car!);
         _db.SaveChanges();
-        LoadCars();
-        LoadCarServices();
+        RefreshAfterChange();
         ShowAlert(LanguageManager.Get("CarDeleted"));
     }
-
-
 
     // -------------------- SERVICES --------------------
 
     private async void UpdateServiceFromGrid_Click(object? sender, RoutedEventArgs e)
     {
-        if (sender is not Button btn || btn.Tag is not int serviceId)
-            return;
-
-        var service = _db.Services.Find(serviceId);
+        if (GetTag(sender) is not int id) return;
+        var service = _db.Services.Find(id);
         if (service == null) return;
 
-        var dlg = new Window
-        {
-            Width = 400,
-            Height = 250,
-            Title = LanguageManager.Get("UpdateService"),
-            WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            CanResize = false
-        };
-
-        var stack = new StackPanel { Margin = new Thickness(20), Spacing = 15 };
-
-        var nameBox = new TextBox { Width = 350, Text = service.Name, Watermark = LanguageManager.Get("ServiceName") };
-        var priceBox = new TextBox { Width = 350, Text = service.Price.ToString(), Watermark = LanguageManager.Get("Price") };
-
-        stack.Children.Add(nameBox);
-        stack.Children.Add(priceBox);
-
-        var btnPanel = new StackPanel
-        {
-            Orientation = Orientation.Horizontal,
-            Spacing = 10,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            Margin = new Thickness(0, 10, 0, 0)
-        };
-
-        var saveBtn = new Button { Content = LanguageManager.Get("Save"), Width = 100 };
-        saveBtn.Click += (_, _) =>
-        {
-            if (string.IsNullOrWhiteSpace(nameBox.Text) || string.IsNullOrWhiteSpace(priceBox.Text))
-            {
-                ShowAlert(LanguageManager.Get("FillAllFields"));
-                return;
-            }
-
-            if (!decimal.TryParse(priceBox.Text, out decimal price) || price <= 0)
-            {
-                ShowAlert(LanguageManager.Get("InvalidPrice"));
-                return;
-            }
-
-            service.Name = nameBox.Text.Trim();
-            service.Price = price;
-            _db.SaveChanges();
-            LoadServices();
-            LoadCarServices();
-            ShowAlert(LanguageManager.Get("ServiceUpdated"));
-            dlg.Close();
-        };
-
-        var cancelBtn = new Button { Content = LanguageManager.Get("Cancel"), Width = 100 };
-        cancelBtn.Click += (_, _) => dlg.Close();
-
-        btnPanel.Children.Add(saveBtn);
-        btnPanel.Children.Add(cancelBtn);
-        stack.Children.Add(btnPanel);
-
-        dlg.Content = stack;
-        await dlg.ShowDialog(this);
+        await ShowUpdateDialog(new UpdateWindow(_db, service, this, "Service"));
+        LoadServices();
+        LoadLogs();
     }
 
     private void DeleteServiceFromGrid_Click(object? sender, RoutedEventArgs e)
     {
-        if (sender is not Button btn || btn.Tag is not int serviceId)
-            return;
-
+        if (GetTag(sender) is not int id) return;
         var service = _db.Services.Include(s => s.CarServices)
-            .FirstOrDefault(s => s.Id == serviceId);
-
-        if (service == null) return;
-
-        if (service.CarServices.Any())
+            .FirstOrDefault(s => s.Id == id);
+        if (service?.CarServices.Any() == true)
         {
             ShowAlert(LanguageManager.Get("CannotDeleteService"));
             return;
         }
 
-        _db.Services.Remove(service);
+        _db.Services.Remove(service!);
         _db.SaveChanges();
-        LoadServices();
-        LoadCarServices();
+        RefreshAfterChange();
         ShowAlert(LanguageManager.Get("ServiceDeleted"));
     }
 
     private void AddServiceBtn_Click(object? sender, RoutedEventArgs e)
     {
-        if (string.IsNullOrWhiteSpace(ServiceNameBox.Text) ||
-            string.IsNullOrWhiteSpace(ServicePriceBox.Text))
+        if (ValidateInput(ServiceNameBox.Text, ServicePriceBox.Text))
         {
             ShowAlert(LanguageManager.Get("FillAllFields"));
             return;
@@ -567,89 +263,168 @@ public partial class MainWindow : Window
             return;
         }
 
-        string name = ServiceNameBox.Text.Trim().ToLower();
-        if (_db.Services.Any(s => s.Name.ToLower() == name))
+        string serviceName = ServiceNameBox.Text!.Trim().ToLower();
+
+        if (_db.Services.Any(s => s.Name.ToLower() == serviceName))
         {
             ShowAlert(LanguageManager.Get("ServiceExists"));
             return;
         }
 
-        _db.Services.Add(new Service { Name = ServiceNameBox.Text.Trim(), Price = price });
+        _db.Services.Add(new Service
+        {
+            Name = ServiceNameBox.Text!.Trim(),
+            Price = decimal.Round(price, 2)
+        });
         _db.SaveChanges();
-        LoadServices();
-        LoadCarServices();
+        RefreshAfterChange();
         ShowAlert(LanguageManager.Get("ServiceAdded"));
-        ServiceNameBox.Clear();
-        ServicePriceBox.Clear();
+        ClearInputs(ServiceNameBox, ServicePriceBox);
     }
 
-    // -------------------- MAINTENANCE LOGS --------------------
+    // -------------------- LOGS --------------------
 
     private async void ChangeStatusFromGrid_Click(object? sender, RoutedEventArgs e)
     {
-        if (sender is not Button btn || btn.Tag is not int logId)
-            return;
-
-        var log = _db.CarServices.Find(logId);
+        if (GetTag(sender) is not int id) return;
+        var log = _db.CarServices.Find(id);
         if (log == null) return;
 
-        var dlg = new Window
-        {
-            Width = 300,
-            Height = 200,
-            Title = "Change Status",
-            WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            CanResize = false
-        };
-
-        var stack = new StackPanel { Margin = new Thickness(20), Spacing = 15 };
-        var statusCombo = new ComboBox { Width = 250 };
-        statusCombo.Items.Add("Not Started");
-        statusCombo.Items.Add("In Progress");
-        statusCombo.Items.Add("Done");
-        statusCombo.SelectedItem = log.Status;
-        stack.Children.Add(statusCombo);
-
-        var btnPanel = new StackPanel
-        {
-            Orientation = Orientation.Horizontal,
-            Spacing = 10,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            Margin = new Thickness(0, 10, 0, 0)
-        };
-
-        var saveBtn = new Button { Content = LanguageManager.Get("Save"), Width = 100 };
-        saveBtn.Click += (_, _) =>
-        {
-            log.Status = statusCombo.SelectedItem?.ToString() ?? "Not Started";
-            _db.SaveChanges();
-            LoadCarServices();
-            dlg.Close();
-        };
-
-        var cancelBtn = new Button { Content = LanguageManager.Get("Cancel"), Width = 100 };
-        cancelBtn.Click += (_, _) => dlg.Close();
-
-        btnPanel.Children.Add(saveBtn);
-        btnPanel.Children.Add(cancelBtn);
-        stack.Children.Add(btnPanel);
-
-        dlg.Content = stack;
-        await dlg.ShowDialog(this);
+        await ShowUpdateDialog(new UpdateWindow(_db, log, this, "Status"));
+        LoadLogs();
     }
 
     private void DeleteLogFromGrid_Click(object? sender, RoutedEventArgs e)
     {
-        if (sender is not Button btn || btn.Tag is not int logId)
-            return;
-
-        var log = _db.CarServices.Find(logId);
+        if (GetTag(sender) is not int id) return;
+        var log = _db.CarServices.Find(id);
         if (log == null) return;
 
         _db.CarServices.Remove(log);
         _db.SaveChanges();
-        LoadCarServices();
+        LoadLogs();
         ShowAlert(LanguageManager.Get("LogDeleted"));
+    }
+
+    // -------------------- WORKERS --------------------
+
+    private void AddWorkerBtn_Click(object? sender, RoutedEventArgs e)
+    {
+        if (ValidateInput(WorkerNameBox.Text, WorkerPasswordBox.Text) || WorkerRoleCombo.SelectedIndex == -1)
+        {
+            ShowAlert(LanguageManager.Get("FillAllFields"));
+            return;
+        }
+
+        _db.Workers.Add(new Worker
+        {
+            Name = WorkerNameBox.Text!.Trim(),
+            Password = WorkerPasswordBox.Text!.Trim(),
+            Role = WorkerRoleCombo.SelectedItem!.ToString()!
+        });
+        _db.SaveChanges();
+        LoadWorkers();
+        ShowAlert(LanguageManager.Get("WorkerAdded"));
+        ClearInputs(WorkerNameBox, WorkerPasswordBox);
+        WorkerRoleCombo.SelectedIndex = -1;
+    }
+
+    private async void UpdateWorkerFromGrid_Click(object? sender, RoutedEventArgs e)
+    {
+        if (GetTag(sender) is not int id) return;
+        var worker = _db.Workers.Find(id);
+        if (worker == null) return;
+
+        await ShowUpdateDialog(new UpdateWindow(_db, worker, this, "Worker"));
+        LoadWorkers();
+    }
+
+    private void DeleteWorkerFromGrid_Click(object? sender, RoutedEventArgs e)
+    {
+        if (GetTag(sender) is not int id) return;
+        var worker = _db.Workers.Find(id);
+        if (worker?.Name == "admin")
+        {
+            ShowAlert(LanguageManager.Get("CannotDeleteDefault"));
+            return;
+        }
+
+        _db.Workers.Remove(worker!);
+        _db.SaveChanges();
+        LoadWorkers();
+        ShowAlert(LanguageManager.Get("WorkerDeleted"));
+    }
+
+    private void LoginBtn_Click(object? sender, RoutedEventArgs e)
+    {
+        string username = LoginNameBox.Text != null ? LoginNameBox.Text.Trim() : "";
+        string password = LoginPasswordBox.Text != null ? LoginPasswordBox.Text.Trim() : "";
+
+        var worker = _db.Workers.FirstOrDefault(w =>
+            w.Name == username &&
+            w.Password == password);
+
+        if (worker != null)
+        {
+            _currentUserRole = worker.Role;
+            SetLoginState(true, worker.Name);
+            ApplyRolePermissions(worker);
+            LoadAllData();
+            ShowAlert(LanguageManager.Format("Welcome", worker.Name));
+        }
+        else
+        {
+            ShowAlert(LanguageManager.Get("WrongCredentials"));
+        }
+    }
+
+    private void LogoutBtn_Click(object? sender, RoutedEventArgs e)
+    {
+        _currentUserRole = "Viewer";
+        SetLoginState(false, null);
+
+        ((TabItem)MainTabs.Items[0]!).IsVisible = true;
+        ((TabItem)MainTabs.Items[1]!).IsVisible = true;
+        ((TabItem)MainTabs.Items[2]!).IsVisible = false;
+        ((TabItem)MainTabs.Items[3]!).IsVisible = true;
+
+        UpdateActionColumns();
+        LoadAllData();
+    }
+
+    private void ApplyRolePermissions(Worker worker)
+    {
+        var role = _db.Roles.FirstOrDefault(r => r.Name == _currentUserRole);
+
+        bool canManageOwners = role != null && role.CanManageOwners;
+        bool canManageServices = role != null && role.CanManageServices;
+        bool canManageWorkers = role != null && role.CanManageWorkers;
+        bool canViewOwners = role != null && role.CanViewOwners;
+        bool canViewCars = role != null && role.CanViewCars;
+        bool canViewServices = role != null && role.CanViewServices;
+
+        OwnerActionPanel.IsVisible = canManageOwners;
+        ServiceActionPanel.IsVisible = canManageServices;
+        WorkerActionPanel.IsVisible = canManageWorkers;
+
+        ((TabItem)MainTabs.Items[0]!).IsVisible = canViewOwners;
+        ((TabItem)MainTabs.Items[1]!).IsVisible = canViewCars;
+        ((TabItem)MainTabs.Items[2]!).IsVisible = worker.Name == "admin";
+        ((TabItem)MainTabs.Items[3]!).IsVisible = canViewServices;
+
+        UpdateDataGridHeaders();
+        UpdateActionColumns();
+    }
+
+    private void SetLoginState(bool loggedIn, string? userName)
+    {
+        LoginPanel.IsVisible = !loggedIn;
+        LogoutBtn.IsVisible = loggedIn;
+        if (!loggedIn)
+        {
+            LoginNameBox.Clear();
+            LoginPasswordBox.Clear();
+        }
     }
 
     private void LanguageCombo_SelectionChanged(object? sender, SelectionChangedEventArgs e)
@@ -673,10 +448,28 @@ public partial class MainWindow : Window
         LoginPasswordBox.Watermark = LanguageManager.Get("Password");
         SearchBox.Watermark = LanguageManager.Get("Search");
 
+        UpdateTabHeaders();
+        UpdateInputLabels();
+        UpdateDataGridHeaders();
+        UpdateActionColumns();
+
+        LoadAllData();
+    }
+
+    private void UpdateTabHeaders()
+    {
         ((TabItem)MainTabs.Items[0]!).Header = LanguageManager.Get("Owners");
         ((TabItem)MainTabs.Items[1]!).Header = LanguageManager.Get("Cars");
-        ((TabItem)MainTabs.Items[2]!).Header = "Workers";
+        ((TabItem)MainTabs.Items[2]!).Header = LanguageManager.Get("Workers");
         ((TabItem)MainTabs.Items[3]!).Header = LanguageManager.Get("ServicesLogs");
+    }
+
+    private void UpdateInputLabels()
+    {
+        LogoutBtn.Content = LanguageManager.Get("Logout");
+        WorkerNameBox.Watermark = LanguageManager.Get("WorkerName");
+        WorkerPasswordBox.Watermark = LanguageManager.Get("WorkerPassword");
+        ManageRolesBtn.Content = LanguageManager.Get("ManageRoles");
 
         OwnerNameBox.Watermark = LanguageManager.Get("Name");
         OwnerPhoneBox.Watermark = LanguageManager.Get("Phone");
@@ -685,334 +478,201 @@ public partial class MainWindow : Window
         ServiceNameBox.Watermark = LanguageManager.Get("ServiceName");
         ServicePriceBox.Watermark = LanguageManager.Get("Price");
         AddServiceBtn.Content = LanguageManager.Get("Add");
-
-        RebuildDataGrids();
-
-        LoadOwners();
-        LoadCars();
-        LoadServices();
-        LoadCarServices();
-        LoadWorkers();
     }
 
-    private void RebuildDataGrids()
+    private void UpdateDataGridHeaders()
     {
-        bool isLoggedIn = !LoginPanel.IsVisible;
-        var currentRole = _db.Roles.FirstOrDefault(r => r.Name == _currentUserRole);
-        bool canManage = currentRole?.CanManageOwners ?? false;
-        bool canChangeStatus = currentRole?.CanChangeStatus ?? false;
+        ((DataGridTextColumn)OwnersGrid.Columns[0]).Header = LanguageManager.Get("ID");
+        ((DataGridTextColumn)OwnersGrid.Columns[1]).Header = LanguageManager.Get("Name");
+        ((DataGridTextColumn)OwnersGrid.Columns[2]).Header = LanguageManager.Get("Phone");
+        ((DataGridTemplateColumn)OwnersGrid.Columns[3]).Header = LanguageManager.Get("Actions");
 
-        // Rebuild Owners Grid
-        OwnersGrid.Columns.Clear();
-        OwnersGrid.Columns.Add(new DataGridTextColumn { Header = LanguageManager.Get("ID"), Binding = new Binding("Id"), Width = new DataGridLength(60) });
-        OwnersGrid.Columns.Add(new DataGridTextColumn { Header = LanguageManager.Get("Name"), Binding = new Binding("FullName"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
-        OwnersGrid.Columns.Add(new DataGridTextColumn { Header = LanguageManager.Get("Phone"), Binding = new Binding("Phone"), Width = new DataGridLength(150) });
+        ((DataGridTextColumn)CarsGrid.Columns[0]).Header = LanguageManager.Get("ID");
+        ((DataGridTextColumn)CarsGrid.Columns[1]).Header = LanguageManager.Get("Brand");
+        ((DataGridTextColumn)CarsGrid.Columns[2]).Header = LanguageManager.Get("Model");
+        ((DataGridTextColumn)CarsGrid.Columns[3]).Header = LanguageManager.Get("RegNumber");
+        ((DataGridTextColumn)CarsGrid.Columns[4]).Header = LanguageManager.Get("Owner");
+        ((DataGridTemplateColumn)CarsGrid.Columns[5]).Header = LanguageManager.Get("Actions");
 
-        var ownerActionsCol = new DataGridTemplateColumn { Header = LanguageManager.Get("Actions"), Width = new DataGridLength(320), IsVisible = canManage };
-        ownerActionsCol.CellTemplate = new FuncDataTemplate<object>((item, ns) =>
+        ((DataGridTextColumn)WorkersGrid.Columns[0]).Header = LanguageManager.Get("ID");
+        ((DataGridTextColumn)WorkersGrid.Columns[1]).Header = LanguageManager.Get("Name");
+        ((DataGridTextColumn)WorkersGrid.Columns[2]).Header = LanguageManager.Get("WorkerRole");
+        ((DataGridTemplateColumn)WorkersGrid.Columns[3]).Header = LanguageManager.Get("Actions");
+
+        ((DataGridTextColumn)ServicesGrid.Columns[0]).Header = LanguageManager.Get("ID");
+        ((DataGridTextColumn)ServicesGrid.Columns[1]).Header = LanguageManager.Get("ServiceName");
+        ((DataGridTextColumn)ServicesGrid.Columns[2]).Header = LanguageManager.Get("Price");
+        ((DataGridTemplateColumn)ServicesGrid.Columns[3]).Header = LanguageManager.Get("Actions");
+
+        ((DataGridTextColumn)LogsGrid.Columns[0]).Header = LanguageManager.Get("ID");
+        ((DataGridTextColumn)LogsGrid.Columns[1]).Header = LanguageManager.Get("Car");
+        ((DataGridTextColumn)LogsGrid.Columns[2]).Header = LanguageManager.Get("Service");
+        ((DataGridTextColumn)LogsGrid.Columns[3]).Header = LanguageManager.Get("WorkerName");
+        ((DataGridTextColumn)LogsGrid.Columns[4]).Header = LanguageManager.Get("Date");
+        ((DataGridTextColumn)LogsGrid.Columns[5]).Header = LanguageManager.Get("Mileage");
+        ((DataGridTextColumn)LogsGrid.Columns[6]).Header = LanguageManager.Get("Status");
+        ((DataGridTemplateColumn)LogsGrid.Columns[7]).Header = LanguageManager.Get("Actions");
+    }
+
+    private void UpdateActionColumns()
+    {
+        var role = _db.Roles.FirstOrDefault(r => r.Name == _currentUserRole);
+        bool canManage = role != null && role.CanManageOwners;
+        bool canChangeStatus = role != null && role.CanChangeStatus;
+
+        SetupOwnerActions(canManage);
+        SetupCarActions(canManage);
+        SetupServiceActions(canManage);
+        SetupLogActions(canManage, canChangeStatus);
+
+        bool canManageWorkers = role != null && role.CanManageWorkers;
+        SetupWorkerActions(canManageWorkers);
+    }
+
+    private void SetupOwnerActions(bool canManage)
+    {
+        var col = (DataGridTemplateColumn)OwnersGrid.Columns[3];
+        col.IsVisible = canManage;
+        col.CellTemplate = new FuncDataTemplate<object>((item, _) =>
         {
-            var panel = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 5 };
-            var addCarBtn = new Button { Content = LanguageManager.Get("AddCarBtn"), Classes = { "primary" } };
-            addCarBtn.Click += AddCarForOwner_Click;
-            addCarBtn.Tag = ((dynamic)item!)?.Id;
-            var updateBtn = new Button { Content = LanguageManager.Get("UpdateBtn"), Classes = { "warning" } };
-            updateBtn.Click += UpdateOwnerFromGrid_Click;
-            updateBtn.Tag = ((dynamic)item!)?.Id;
-            var deleteBtn = new Button { Content = LanguageManager.Get("DeleteBtn"), Classes = { "danger" } };
-            deleteBtn.Click += DeleteOwnerFromGrid_Click;
-            deleteBtn.Tag = ((dynamic)item!)?.Id;
-            panel.Children.Add(addCarBtn);
-            panel.Children.Add(updateBtn);
-            panel.Children.Add(deleteBtn);
+            var panel = CreateActionPanel();
+            dynamic itemData = item!;
+            AddButtonWithHandler(panel, LanguageManager.Get("AddCarBtn"), "primary",
+                (EventHandler<RoutedEventArgs>)((s, e) => AddCarForOwner_Click(s, e)), itemData.Id);
+            AddButtonWithHandler(panel, LanguageManager.Get("UpdateBtn"), "warning",
+                (EventHandler<RoutedEventArgs>)((s, e) => UpdateOwnerFromGrid_Click(s, e)), itemData.Id);
+            AddButtonWithHandler(panel, LanguageManager.Get("DeleteBtn"), "danger",
+                (EventHandler<RoutedEventArgs>)((s, e) => DeleteOwnerFromGrid_Click(s, e)), itemData.Id);
             return panel;
         });
-        OwnersGrid.Columns.Add(ownerActionsCol);
+    }
 
-        // Rebuild Cars Grid
-        CarsGrid.Columns.Clear();
-        CarsGrid.Columns.Add(new DataGridTextColumn { Header = LanguageManager.Get("ID"), Binding = new Binding("Id"), Width = new DataGridLength(60) });
-        CarsGrid.Columns.Add(new DataGridTextColumn { Header = LanguageManager.Get("Brand"), Binding = new Binding("Brand"), Width = new DataGridLength(100) });
-        CarsGrid.Columns.Add(new DataGridTextColumn { Header = LanguageManager.Get("Model"), Binding = new Binding("Model"), Width = new DataGridLength(100) });
-        CarsGrid.Columns.Add(new DataGridTextColumn { Header = LanguageManager.Get("RegNumber"), Binding = new Binding("RegistrationNumber"), Width = new DataGridLength(120) });
-        CarsGrid.Columns.Add(new DataGridTextColumn { Header = LanguageManager.Get("Owner"), Binding = new Binding("OwnerName"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
-
-        var carActionsCol = new DataGridTemplateColumn { Header = LanguageManager.Get("Actions"), Width = new DataGridLength(360), IsVisible = canManage };
-        carActionsCol.CellTemplate = new FuncDataTemplate<object>((item, ns) =>
+    private void SetupCarActions(bool canManage)
+    {
+        var col = (DataGridTemplateColumn)CarsGrid.Columns[5];
+        col.IsVisible = canManage;
+        col.CellTemplate = new FuncDataTemplate<object>((item, _) =>
         {
-            var panel = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 5 };
-            var addServiceBtn = new Button { Content = LanguageManager.Get("AddServiceBtn"), Classes = { "primary" } };
-            addServiceBtn.Click += AddServiceForCar_Click;
-            addServiceBtn.Tag = ((dynamic)item!)?.Id;
-            var updateBtn = new Button { Content = LanguageManager.Get("UpdateBtn"), Classes = { "warning" } };
-            updateBtn.Click += UpdateCarFromGrid_Click;
-            updateBtn.Tag = ((dynamic)item!)?.Id;
-            var deleteBtn = new Button { Content = LanguageManager.Get("DeleteBtn"), Classes = { "danger" } };
-            deleteBtn.Click += DeleteCarFromGrid_Click;
-            deleteBtn.Tag = ((dynamic)item!)?.Id;
-            panel.Children.Add(addServiceBtn);
-            panel.Children.Add(updateBtn);
-            panel.Children.Add(deleteBtn);
+            var panel = CreateActionPanel();
+            dynamic itemData = item!;
+            AddButtonWithHandler(panel, LanguageManager.Get("AddServiceBtn"), "primary",
+                (EventHandler<RoutedEventArgs>)((s, e) => AddServiceForCar_Click(s, e)), itemData.Id);
+            AddButtonWithHandler(panel, LanguageManager.Get("UpdateBtn"), "warning",
+                (EventHandler<RoutedEventArgs>)((s, e) => UpdateCarFromGrid_Click(s, e)), itemData.Id);
+            AddButtonWithHandler(panel, LanguageManager.Get("DeleteBtn"), "danger",
+                (EventHandler<RoutedEventArgs>)((s, e) => DeleteCarFromGrid_Click(s, e)), itemData.Id);
             return panel;
         });
-        CarsGrid.Columns.Add(carActionsCol);
+    }
 
-        // Rebuild Services Grid
-        ServicesGrid.Columns.Clear();
-        ServicesGrid.Columns.Add(new DataGridTextColumn { Header = LanguageManager.Get("ID"), Binding = new Binding("Id"), Width = new DataGridLength(60) });
-        ServicesGrid.Columns.Add(new DataGridTextColumn { Header = LanguageManager.Get("ServiceName"), Binding = new Binding("Name"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
-        ServicesGrid.Columns.Add(new DataGridTextColumn { Header = LanguageManager.Get("Price"), Binding = new Binding("Price", BindingMode.OneWay) { StringFormat = "{0:F2}" }, Width = new DataGridLength(100) });
-
-        var serviceActionsCol = new DataGridTemplateColumn { Header = LanguageManager.Get("Actions"), Width = new DataGridLength(180), IsVisible = canManage };
-        serviceActionsCol.CellTemplate = new FuncDataTemplate<object>((item, ns) =>
+    private void SetupServiceActions(bool canManage)
+    {
+        var col = (DataGridTemplateColumn)ServicesGrid.Columns[3];
+        col.IsVisible = canManage;
+        col.CellTemplate = new FuncDataTemplate<object>((item, _) =>
         {
-            var panel = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 5 };
-            var updateBtn = new Button { Content = LanguageManager.Get("UpdateBtn"), Classes = { "warning" } };
-            updateBtn.Click += UpdateServiceFromGrid_Click;
-            updateBtn.Tag = ((dynamic)item!)?.Id;
-            var deleteBtn = new Button { Content = LanguageManager.Get("DeleteBtn"), Classes = { "danger" } };
-            deleteBtn.Click += DeleteServiceFromGrid_Click;
-            deleteBtn.Tag = ((dynamic)item!)?.Id;
-            panel.Children.Add(updateBtn);
-            panel.Children.Add(deleteBtn);
+            var panel = CreateActionPanel();
+            dynamic itemData = item!;
+            AddButtonWithHandler(panel, LanguageManager.Get("UpdateBtn"), "warning",
+                (EventHandler<RoutedEventArgs>)((s, e) => UpdateServiceFromGrid_Click(s, e)), itemData.Id);
+            AddButtonWithHandler(panel, LanguageManager.Get("DeleteBtn"), "danger",
+                (EventHandler<RoutedEventArgs>)((s, e) => DeleteServiceFromGrid_Click(s, e)), itemData.Id);
             return panel;
         });
-        ServicesGrid.Columns.Add(serviceActionsCol);
+    }
 
-        // Rebuild Logs Grid
-        LogsGrid.Columns.Clear();
-        LogsGrid.Columns.Add(new DataGridTextColumn { Header = LanguageManager.Get("ID"), Binding = new Binding("Id"), Width = new DataGridLength(60) });
-        LogsGrid.Columns.Add(new DataGridTextColumn { Header = LanguageManager.Get("Car"), Binding = new Binding("Car"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
-        LogsGrid.Columns.Add(new DataGridTextColumn { Header = LanguageManager.Get("Service"), Binding = new Binding("Service"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
-        LogsGrid.Columns.Add(new DataGridTextColumn { Header = LanguageManager.Get("Date"), Binding = new Binding("DateTimeDisplay"), Width = new DataGridLength(160) });
-        LogsGrid.Columns.Add(new DataGridTextColumn { Header = LanguageManager.Get("Mileage"), Binding = new Binding("Mileage"), Width = new DataGridLength(120) });
-        LogsGrid.Columns.Add(new DataGridTextColumn { Header = "Status", Binding = new Binding("Status"), Width = new DataGridLength(120) });
+    private async void AssignWorkerToLog_Click(object? sender, RoutedEventArgs e)
+    {
+        if (GetTag(sender) is not int id) return;
+        var log = _db.CarServices.Include(l => l.Worker).FirstOrDefault(l => l.Id == id);
+        if (log == null) return;
 
-        var logActionsCol = new DataGridTemplateColumn { Header = LanguageManager.Get("Actions"), Width = new DataGridLength(200), IsVisible = canChangeStatus };
-        logActionsCol.CellTemplate = new FuncDataTemplate<object>((item, ns) =>
+        await ShowUpdateDialog(new UpdateWindow(_db, log, this, "AssignWorker"));
+        LoadLogs();
+    }
+
+    private void SetupLogActions(bool canManage, bool canChangeStatus)
+    {
+        var col = (DataGridTemplateColumn)LogsGrid.Columns[7];
+        col.IsVisible = canChangeStatus;
+        col.CellTemplate = new FuncDataTemplate<object>((item, _) =>
         {
-            var panel = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 5 };
-            var statusBtn = new Button { Content = "Status", Width = 80 };
-            statusBtn.Click += ChangeStatusFromGrid_Click;
-            statusBtn.Tag = ((dynamic)item!)?.Id;
-            panel.Children.Add(statusBtn);
+            var panel = CreateActionPanel();
+            dynamic itemData = item!;
+            AddButtonWithHandler(panel, LanguageManager.Get("Status"), "purple",
+                (EventHandler<RoutedEventArgs>)((s, e) => ChangeStatusFromGrid_Click(s, e)), itemData.Id, 70);
+            AddButtonWithHandler(panel, LanguageManager.Get("WorkerName"), "primary",
+                (EventHandler<RoutedEventArgs>)((s, e) => AssignWorkerToLog_Click(s, e)), itemData.Id, 120);
             if (canManage)
             {
-                var deleteBtn = new Button { Content = LanguageManager.Get("DeleteBtn"), Classes = { "danger" }, Width = 80 };
-                deleteBtn.Click += DeleteLogFromGrid_Click;
-                deleteBtn.Tag = ((dynamic)item!)?.Id;
-                panel.Children.Add(deleteBtn);
+                AddButtonWithHandler(panel, LanguageManager.Get("DeleteBtn"), "danger",
+                    (EventHandler<RoutedEventArgs>)((s, e) => DeleteLogFromGrid_Click(s, e)), itemData.Id, 70);
             }
             return panel;
         });
-        LogsGrid.Columns.Add(logActionsCol);
-        
+
         LogsGrid.LoadingRow += (s, e) =>
         {
             if (e.Row.DataContext is not null)
             {
-                dynamic item = e.Row.DataContext;
-                string status = item.Status;
+                dynamic data = e.Row.DataContext;
+                string status = data.Status;
                 e.Row.Background = status switch
                 {
-                    "Not Started" => new SolidColorBrush(Color.FromRgb(255, 240, 240)),
-                    "In Progress" => new SolidColorBrush(Color.FromRgb(255, 250, 205)),
-                    "Done" => new SolidColorBrush(Color.FromRgb(220, 255, 220)),
+                    "Alustamata" => new SolidColorBrush(Color.FromRgb(255, 240, 240)),
+                    "Pooleli" => new SolidColorBrush(Color.FromRgb(255, 250, 205)),
+                    "Valmis" => new SolidColorBrush(Color.FromRgb(220, 255, 220)),
                     _ => Brushes.White
                 };
             }
         };
+    }
 
-        // Rebuild Workers Grid
-        WorkersGrid.Columns.Clear();
-        WorkersGrid.Columns.Add(new DataGridTextColumn { Header = "ID", Binding = new Binding("Id"), Width = new DataGridLength(60) });
-        WorkersGrid.Columns.Add(new DataGridTextColumn { Header = "Name", Binding = new Binding("Name"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
-        WorkersGrid.Columns.Add(new DataGridTextColumn { Header = "Role", Binding = new Binding("Role"), Width = new DataGridLength(150) });
-
-        var workerActionsCol = new DataGridTemplateColumn { Header = LanguageManager.Get("Actions"), Width = new DataGridLength(180), IsVisible = currentRole?.CanManageWorkers ?? false };
-        workerActionsCol.CellTemplate = new FuncDataTemplate<object>((item, ns) =>
+    private void SetupWorkerActions(bool canManage)
+    {
+        var col = (DataGridTemplateColumn)WorkersGrid.Columns[3];
+        col.IsVisible = canManage;
+        col.CellTemplate = new FuncDataTemplate<object>((item, _) =>
         {
-            var panel = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 5 };
-            var updateBtn = new Button { Content = LanguageManager.Get("UpdateBtn"), Classes = { "warning" } };
-            updateBtn.Click += UpdateWorkerFromGrid_Click;
-            updateBtn.Tag = ((dynamic)item!)?.Id;
-            var deleteBtn = new Button { Content = LanguageManager.Get("DeleteBtn"), Classes = { "danger" } };
-            deleteBtn.Click += DeleteWorkerFromGrid_Click;
-            deleteBtn.Tag = ((dynamic)item!)?.Id;
-            panel.Children.Add(updateBtn);
-            panel.Children.Add(deleteBtn);
+            var panel = CreateActionPanel();
+            dynamic itemData = item!;
+            AddButtonWithHandler(panel, LanguageManager.Get("UpdateBtn"), "warning",
+                (EventHandler<RoutedEventArgs>)((s, e) => UpdateWorkerFromGrid_Click(s, e)), itemData.Id);
+            AddButtonWithHandler(panel, LanguageManager.Get("DeleteBtn"), "danger",
+                (EventHandler<RoutedEventArgs>)((s, e) => DeleteWorkerFromGrid_Click(s, e)), itemData.Id);
             return panel;
         });
-        WorkersGrid.Columns.Add(workerActionsCol);
     }
 
-    private void AddWorkerBtn_Click(object? sender, RoutedEventArgs e)
+    private StackPanel CreateActionPanel() =>
+        new() { Orientation = Orientation.Horizontal, Spacing = 5 };
+
+    private void AddButtonWithHandler(StackPanel panel, string content, string classes,
+        EventHandler<RoutedEventArgs> handler, int tag, int width = 0)
     {
-        if (string.IsNullOrWhiteSpace(WorkerNameBox.Text) ||
-            string.IsNullOrWhiteSpace(WorkerPasswordBox.Text) ||
-            WorkerRoleCombo.SelectedIndex == -1)
+        var btn = new Button
         {
-            ShowAlert(LanguageManager.Get("FillAllFields"));
-            return;
-        }
-
-        _db.Workers.Add(new Worker
-        {
-            Name = WorkerNameBox.Text.Trim(),
-            Password = WorkerPasswordBox.Text.Trim(),
-            Role = WorkerRoleCombo.SelectedItem!.ToString()!
-        });
-        _db.SaveChanges();
-        LoadWorkers();
-        ShowAlert("Worker added successfully!");
-        WorkerNameBox.Clear();
-        WorkerPasswordBox.Clear();
-        WorkerRoleCombo.SelectedIndex = -1;
-    }
-
-    private async void UpdateWorkerFromGrid_Click(object? sender, RoutedEventArgs e)
-    {
-        if (sender is not Button btn || btn.Tag is not int workerId)
-            return;
-
-        var worker = _db.Workers.Find(workerId);
-        if (worker == null) return;
-
-        var dlg = new Window
-        {
-            Width = 400,
-            Height = 300,
-            Title = "Update Worker",
-            WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            CanResize = false
+            Content = content,
+            Classes = { classes },
+            Tag = tag
         };
+        if (width > 0) btn.Width = width;
+        btn.Click += handler;
+        panel.Children.Add(btn);
+    }
 
-        var stack = new StackPanel { Margin = new Thickness(20), Spacing = 15 };
-
-        var nameBox = new TextBox { Width = 350, Text = worker.Name, Watermark = "Name" };
-        var passwordBox = new TextBox { Width = 350, Text = worker.Password, Watermark = "Password" };
-        var roleCombo = new ComboBox { Width = 350, ItemsSource = _db.Roles.Select(r => r.Name).ToList() };
-        roleCombo.SelectedItem = worker.Role;
-
-        stack.Children.Add(nameBox);
-        stack.Children.Add(passwordBox);
-        stack.Children.Add(roleCombo);
-
-        var btnPanel = new StackPanel
+    private void AddButton(StackPanel panel, string content, string classes,
+        EventHandler<RoutedEventArgs> handler, int tag, int width = 0)
+    {
+        var btn = new Button
         {
-            Orientation = Orientation.Horizontal,
-            Spacing = 10,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            Margin = new Thickness(0, 10, 0, 0)
+            Content = content,
+            Classes = { classes },
+            Tag = tag
         };
-
-        var saveBtn = new Button { Content = LanguageManager.Get("Save"), Width = 100 };
-        saveBtn.Click += (_, _) =>
-        {
-            if (string.IsNullOrWhiteSpace(nameBox.Text) || string.IsNullOrWhiteSpace(passwordBox.Text) || roleCombo.SelectedItem == null)
-            {
-                ShowAlert(LanguageManager.Get("FillAllFields"));
-                return;
-            }
-
-            if (worker.Name == "admin" || worker.Name == "everyone")
-            {
-                ShowAlert("Cannot modify default workers.");
-                return;
-            }
-
-            worker.Name = nameBox.Text.Trim();
-            worker.Password = passwordBox.Text.Trim();
-            worker.Role = roleCombo.SelectedItem.ToString()!;
-            _db.SaveChanges();
-            LoadWorkers();
-            ShowAlert("Worker updated successfully!");
-            dlg.Close();
-        };
-
-        var cancelBtn = new Button { Content = LanguageManager.Get("Cancel"), Width = 100 };
-        cancelBtn.Click += (_, _) => dlg.Close();
-
-        btnPanel.Children.Add(saveBtn);
-        btnPanel.Children.Add(cancelBtn);
-        stack.Children.Add(btnPanel);
-
-        dlg.Content = stack;
-        await dlg.ShowDialog(this);
-    }
-
-    private void DeleteWorkerFromGrid_Click(object? sender, RoutedEventArgs e)
-    {
-        if (sender is not Button btn || btn.Tag is not int workerId)
-            return;
-
-        var worker = _db.Workers.Find(workerId);
-        if (worker == null) return;
-
-        if (worker.Name == "admin" || worker.Name == "everyone")
-        {
-            ShowAlert("Cannot delete default workers.");
-            return;
-        }
-
-        _db.Workers.Remove(worker);
-        _db.SaveChanges();
-        LoadWorkers();
-        ShowAlert("Worker deleted successfully!");
-    }
-
-    private void LoginBtn_Click(object? sender, RoutedEventArgs e)
-    {
-        string username = LoginNameBox.Text?.Trim() ?? "";
-        string password = LoginPasswordBox.Text?.Trim() ?? "";
-
-        var worker = _db.Workers.FirstOrDefault(w => w.Name == username && w.Password == password);
-        if (worker != null)
-        {
-            _currentUserRole = worker.Role;
-            LoginPanel.IsVisible = false;
-            LogoutBtn.IsVisible = true;
-
-            var role = _db.Roles.FirstOrDefault(r => r.Name == _currentUserRole);
-            OwnerActionPanel.IsVisible = role?.CanManageOwners ?? false;
-            ServiceActionPanel.IsVisible = role?.CanManageServices ?? false;
-            WorkerActionPanel.IsVisible = role?.CanManageWorkers ?? false;
-
-            ((TabItem)MainTabs.Items[2]!).IsVisible = worker.Name == "admin";
-
-            RebuildDataGrids();
-            LoadOwners();
-            LoadCars();
-            LoadServices();
-            LoadCarServices();
-            LoadWorkers();
-
-            ShowAlert($"Welcome, {worker.Name}!");
-        }
-        else
-        {
-            ShowAlert(LanguageManager.Get("WrongCredentials"));
-        }
-    }
-
-    private void LogoutBtn_Click(object? sender, RoutedEventArgs e)
-    {
-        _currentUserRole = "Viewer";
-        LoginPanel.IsVisible = true;
-        LogoutBtn.IsVisible = false;
-        LoginNameBox.Clear();
-        LoginPasswordBox.Clear();
-
-        OwnerActionPanel.IsVisible = false;
-        ServiceActionPanel.IsVisible = false;
-        WorkerActionPanel.IsVisible = false;
-        ((TabItem)MainTabs.Items[2]!).IsVisible = false;
-
-        RebuildDataGrids();
-        LoadOwners();
-        LoadCars();
-        LoadServices();
-        LoadCarServices();
-        LoadWorkers();
+        if (width > 0) btn.Width = width;
+        btn.Click += handler;
+        panel.Children.Add(btn);
     }
 
     private void SearchBox_KeyUp(object? sender, KeyEventArgs e)
@@ -1029,28 +689,26 @@ public partial class MainWindow : Window
         var results = new List<string>();
 
         // OWNERS
-        foreach (dynamic o in OwnersGrid.ItemsSource!)
+        foreach (dynamic o in OwnersGrid.ItemsSource ?? Enumerable.Empty<object>())
         {
             if (((string)o.FullName).ToLower().Contains(query) ||
-    ((string)o.Phone).ToLower().Contains(query))
+                ((string)o.Phone).ToLower().Contains(query))
             {
                 results.Add($"{LanguageManager.Get("Owners").ToUpper()} • {o.FullName} • {o.Phone}");
-                //if (results.Count == 3) break;
             }
         }
 
         // CARS
         if (results.Count < 3)
         {
-            foreach (dynamic c in CarsGrid.ItemsSource!)
+            foreach (dynamic c in CarsGrid.ItemsSource ?? Enumerable.Empty<object>())
             {
                 if (((string)c.Brand).ToLower().Contains(query) ||
-    ((string)c.Model).ToLower().Contains(query) ||
-    ((string)c.RegistrationNumber).ToLower().Contains(query) ||
-    ((string)c.OwnerName).ToLower().Contains(query))
+                    ((string)c.Model).ToLower().Contains(query) ||
+                    ((string)c.RegistrationNumber).ToLower().Contains(query) ||
+                    ((string)c.OwnerName).ToLower().Contains(query))
                 {
                     results.Add($"{LanguageManager.Get("Cars").ToUpper()} • {c.Brand} {c.Model} ({c.RegistrationNumber})");
-                    //if (results.Count == 3) break;
                 }
             }
         }
@@ -1058,28 +716,24 @@ public partial class MainWindow : Window
         // SERVICES
         if (results.Count < 3)
         {
-            foreach (dynamic s in ServicesGrid.ItemsSource!)
+            foreach (dynamic s in ServicesGrid.ItemsSource ?? Enumerable.Empty<object>())
             {
-                if (((string)s.Name).ToLower().Contains(query) ||
-    s.Price.ToString().Contains(query))
+                if (((string)s.Name).ToLower().Contains(query))
                 {
                     results.Add($"{LanguageManager.Get("ServicesLogs").ToUpper()} • {s.Name}");
-                    //if (results.Count == 3) break;
                 }
             }
         }
 
         // LOGS
-        if (results.Count < 3 && LogsGrid.ItemsSource is IEnumerable<object> logs)
+        if (results.Count < 3)
         {
-            foreach (dynamic log in logs)
+            foreach (dynamic log in LogsGrid.ItemsSource ?? Enumerable.Empty<object>())
             {
                 if (((string)log.Car).ToLower().Contains(query) ||
                     ((string)log.Service).ToLower().Contains(query) ||
-                    log.Mileage.ToString().Contains(query) ||
-                    log.DateOfService.ToString("yyyy-MM-dd").Contains(query))
+                    log.Mileage.ToString().Contains(query))
                 {
-                    // include date for unique identification
                     results.Add($"{LanguageManager.Get("ServicesLogs").ToUpper()} • {log.Car} → {log.Service} → {log.DateOfService:yyyy-MM-dd}");
                     if (results.Count == 3) break;
                 }
@@ -1093,24 +747,108 @@ public partial class MainWindow : Window
             return;
         }
 
-        if (SearchPopup == null)
-        {
-            SearchPopup = new SearchResultsWindow(this)
-            {
-                ShowActivated = false,
-            };
-        }
+        SearchPopup ??= new SearchResultsWindow(this) { ShowActivated = false };
 
         var screenPos = SearchBox.PointToScreen(new Point(0, SearchBox.Bounds.Height));
         SearchPopup.Position = new PixelPoint((int)screenPos.X, (int)screenPos.Y);
-
         SearchPopup.SetResults(results);
         SearchPopup.Show(this);
     }
 
-    // -------------------- UTILITY --------------------
+    public async void HandleSearchSelection(string line)
+    {
+        if (!line.Contains("•")) return;
 
-    private async void ShowAlert(string message)
+        string[] parts = line.Split('•');
+        string tab = parts[0].Trim().ToUpper();
+        string target = parts[1].Trim();
+
+        if (tab == LanguageManager.Get("Owners").ToUpper())
+        {
+            MainTabs.SelectedIndex = 0;
+            await Task.Delay(100);
+            SelectRowAndFocus(OwnersGrid, o => ((string)o.FullName) == target);
+        }
+        else if (tab == LanguageManager.Get("Cars").ToUpper())
+        {
+            MainTabs.SelectedIndex = 1;
+            await Task.Delay(100);
+            string reg = target.Split('(').Last().Replace(")", "").Trim();
+            SelectRowAndFocus(CarsGrid, c => ((string)c.RegistrationNumber) == reg);
+        }
+        else if (tab == LanguageManager.Get("ServicesLogs").ToUpper())
+        {
+            MainTabs.SelectedIndex = 3;
+            await Task.Delay(100);
+
+            if (target.Contains("→"))
+            {
+                var parts2 = target.Split('→', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                if (parts2.Length >= 3)
+                {
+                    var carName = parts2[0];
+                    var serviceName = parts2[1];
+                    var date = DateTime.Parse(parts2[2]);
+                    SelectRowAndFocus(LogsGrid, l =>
+                        ((string)l.Car).Equals(carName, StringComparison.OrdinalIgnoreCase) &&
+                        ((string)l.Service).Equals(serviceName, StringComparison.OrdinalIgnoreCase) &&
+                        ((DateTime)l.DateOfService).Date == date.Date);
+                }
+            }
+            else
+            {
+                SelectRowAndFocus(ServicesGrid, s => ((string)s.Name) == target);
+            }
+        }
+
+        SearchBox.Text = "";
+    }
+
+    private void SelectRowAndFocus(DataGrid grid, Func<dynamic, bool> match)
+    {
+        var itemsSource = grid.ItemsSource as IEnumerable<object>;
+        if (itemsSource == null) return;
+
+        var itemList = itemsSource.ToList();
+        int index = 0;
+        foreach (var item in itemList)
+        {
+            if (match((dynamic)item))
+            {
+                grid.SelectedIndex = index;
+                grid.ScrollIntoView(item, grid.Columns[0]);
+                grid.Focus();
+                break;
+            }
+            index++;
+        }
+    }
+
+    private async Task ShowUpdateDialog(Window dialog) =>
+        await dialog.ShowDialog(this);
+
+    private void RefreshAfterChange()
+    {
+        LoadOwners();
+        LoadCars();
+        LoadServices();
+        LoadLogs();
+        LoadWorkers();
+    }
+
+    private void ClearInputs(params TextBox[] inputs)
+    {
+        foreach (var tb in inputs)
+            tb.Clear();
+    }
+
+    private bool ValidateInput(params string?[] inputs) =>
+        inputs.Any(i => string.IsNullOrWhiteSpace(i));
+
+    private int? GetTag(object? sender) =>
+        (sender as Button)?.Tag as int?;
+
+    public async void ShowAlert(string message)
     {
         var dlg = new Window
         {
@@ -1132,13 +870,13 @@ public partial class MainWindow : Window
             Margin = new Thickness(20)
         };
 
-        var text = new TextBlock
+        stack.Children.Add(new TextBlock
         {
             Text = message,
             TextWrapping = TextWrapping.Wrap,
             TextAlignment = TextAlignment.Center,
             HorizontalAlignment = HorizontalAlignment.Center
-        };
+        });
 
         var okButton = new Button
         {
@@ -1148,216 +886,12 @@ public partial class MainWindow : Window
         };
 
         okButton.Click += (_, _) => dlg.Close();
-
-        stack.Children.Add(text);
         stack.Children.Add(okButton);
         dlg.Content = stack;
 
         await dlg.ShowDialog(this);
     }
-    private void SelectRow(DataGrid grid, Func<dynamic, bool> match)
-    {
-        if (grid.ItemsSource is IEnumerable<object> items)
-        {
-            foreach (var item in items)
-            {
-                dynamic d = item;
-                if (match(d))
-                {
-                    grid.SelectedItem = item;
-                    grid.ScrollIntoView(item, null);
-                    break;
-                }
-            }
-        }
-    }
-    public void HandleSearchSelection(string line)
-    {
-        if (!line.Contains("•")) return;
 
-        string[] parts = line.Split('•');
-        string tab = parts[0].Trim().ToUpper();
-        string target = parts[1].Trim();
-
-        // OWNERS
-        if (tab == LanguageManager.Get("Owners").ToUpper())
-        {
-            MainTabs.SelectedIndex = 0;
-            SelectRow(OwnersGrid, o => ((string)o.FullName) == target);
-        }
-
-        // CARS
-        if (tab == LanguageManager.Get("Cars").ToUpper())
-        {
-            MainTabs.SelectedIndex = 1;
-            string reg = target.Split('(').Last().Replace(")", "").Trim();
-            SelectRow(CarsGrid, c => ((string)c.RegistrationNumber) == reg);
-        }
-
-        // SERVICES & LOGS
-        if (tab == LanguageManager.Get("ServicesLogs").ToUpper())
-        {
-            MainTabs.SelectedIndex = 2;
-
-            if (target.Contains("→"))
-            {
-                // LOGS
-                var parts2 = target.Split('→', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-
-                if (parts2.Length < 3)
-                    return;
-
-                string carName = parts2[0];
-                string serviceName = parts2[1];
-                DateTime date = DateTime.Parse(parts2[2]);
-
-                SelectRow(LogsGrid, l =>
-                    ((string)l.Car).Equals(carName, StringComparison.OrdinalIgnoreCase) &&
-                    ((string)l.Service).Equals(serviceName, StringComparison.OrdinalIgnoreCase) &&
-                    ((DateTime)l.DateOfService).Date == date.Date
-                );
-            }
-            else
-            {
-                // SERVICES
-                SelectRow(ServicesGrid, s => ((string)s.Name) == target);
-            }
-        }
-
-        SearchBox.Text = "";
-    }
-
-    private async void ManageRolesBtn_Click(object? sender, RoutedEventArgs e)
-    {
-        var dlg = new Window
-        {
-            Width = 600,
-            Height = 500,
-            Title = "Manage Roles",
-            WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            CanResize = false
-        };
-
-        var mainStack = new StackPanel { Margin = new Thickness(20), Spacing = 15 };
-
-        var rolesGrid = new DataGrid { Height = 300, AutoGenerateColumns = false, IsReadOnly = true };
-        rolesGrid.Columns.Add(new DataGridTextColumn { Header = "Role", Binding = new Binding("Name"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
-        rolesGrid.ItemsSource = _db.Roles.ToList();
-        mainStack.Children.Add(rolesGrid);
-
-        var btnPanel = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 10 };
-        
-        var addBtn = new Button { Content = "Add Role", Width = 100 };
-        addBtn.Click += async (_, _) =>
-        {
-            var addDlg = new Window { Width = 400, Height = 400, Title = "Add Role", WindowStartupLocation = WindowStartupLocation.CenterOwner };
-            var stack = new StackPanel { Margin = new Thickness(20), Spacing = 10 };
-            var nameBox = new TextBox { Watermark = "Role Name", Width = 350 };
-            var ownersCheck = new CheckBox { Content = "Can Manage Owners" };
-            var carsCheck = new CheckBox { Content = "Can Manage Cars" };
-            var servicesCheck = new CheckBox { Content = "Can Manage Services" };
-            var statusCheck = new CheckBox { Content = "Can Change Status" };
-            var workersCheck = new CheckBox { Content = "Can Manage Workers" };
-            stack.Children.Add(nameBox);
-            stack.Children.Add(ownersCheck);
-            stack.Children.Add(carsCheck);
-            stack.Children.Add(servicesCheck);
-            stack.Children.Add(statusCheck);
-            stack.Children.Add(workersCheck);
-            var saveBtn = new Button { Content = "Save", Width = 100, HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness(0, 10, 0, 0) };
-            saveBtn.Click += (_, _) =>
-            {
-                if (string.IsNullOrWhiteSpace(nameBox.Text))
-                {
-                    ShowAlert("Please enter role name.");
-                    return;
-                }
-                _db.Roles.Add(new Role
-                {
-                    Name = nameBox.Text.Trim(),
-                    CanManageOwners = ownersCheck.IsChecked ?? false,
-                    CanManageCars = carsCheck.IsChecked ?? false,
-                    CanManageServices = servicesCheck.IsChecked ?? false,
-                    CanChangeStatus = statusCheck.IsChecked ?? false,
-                    CanManageWorkers = workersCheck.IsChecked ?? false
-                });
-                _db.SaveChanges();
-                rolesGrid.ItemsSource = _db.Roles.ToList();
-                LoadRoles();
-                addDlg.Close();
-            };
-            stack.Children.Add(saveBtn);
-            addDlg.Content = stack;
-            await addDlg.ShowDialog(dlg);
-        };
-
-        var editBtn = new Button { Content = "Edit Role", Width = 100 };
-        editBtn.Click += async (_, _) =>
-        {
-            if (rolesGrid.SelectedItem is not Role role) return;
-            var editDlg = new Window { Width = 400, Height = 400, Title = "Edit Role", WindowStartupLocation = WindowStartupLocation.CenterOwner };
-            var stack = new StackPanel { Margin = new Thickness(20), Spacing = 10 };
-            var nameBox = new TextBox { Text = role.Name, Watermark = "Role Name", Width = 350 };
-            var ownersCheck = new CheckBox { Content = "Can Manage Owners", IsChecked = role.CanManageOwners };
-            var carsCheck = new CheckBox { Content = "Can Manage Cars", IsChecked = role.CanManageCars };
-            var servicesCheck = new CheckBox { Content = "Can Manage Services", IsChecked = role.CanManageServices };
-            var statusCheck = new CheckBox { Content = "Can Change Status", IsChecked = role.CanChangeStatus };
-            var workersCheck = new CheckBox { Content = "Can Manage Workers", IsChecked = role.CanManageWorkers };
-            stack.Children.Add(nameBox);
-            stack.Children.Add(ownersCheck);
-            stack.Children.Add(carsCheck);
-            stack.Children.Add(servicesCheck);
-            stack.Children.Add(statusCheck);
-            stack.Children.Add(workersCheck);
-            var saveBtn = new Button { Content = "Save", Width = 100, HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness(0, 10, 0, 0) };
-            saveBtn.Click += (_, _) =>
-            {
-                if (string.IsNullOrWhiteSpace(nameBox.Text))
-                {
-                    ShowAlert("Please enter role name.");
-                    return;
-                }
-                role.Name = nameBox.Text.Trim();
-                role.CanManageOwners = ownersCheck.IsChecked ?? false;
-                role.CanManageCars = carsCheck.IsChecked ?? false;
-                role.CanManageServices = servicesCheck.IsChecked ?? false;
-                role.CanChangeStatus = statusCheck.IsChecked ?? false;
-                role.CanManageWorkers = workersCheck.IsChecked ?? false;
-                _db.SaveChanges();
-                rolesGrid.ItemsSource = _db.Roles.ToList();
-                LoadRoles();
-                editDlg.Close();
-            };
-            stack.Children.Add(saveBtn);
-            editDlg.Content = stack;
-            await editDlg.ShowDialog(dlg);
-        };
-
-        var deleteBtn = new Button { Content = "Delete Role", Width = 100 };
-        deleteBtn.Click += (_, _) =>
-        {
-            if (rolesGrid.SelectedItem is not Role role) return;
-            if (_db.Workers.Any(w => w.Role == role.Name))
-            {
-                ShowAlert("Cannot delete role with assigned workers.");
-                return;
-            }
-            _db.Roles.Remove(role);
-            _db.SaveChanges();
-            rolesGrid.ItemsSource = _db.Roles.ToList();
-            LoadRoles();
-        };
-
-        btnPanel.Children.Add(addBtn);
-        btnPanel.Children.Add(editBtn);
-        btnPanel.Children.Add(deleteBtn);
-        mainStack.Children.Add(btnPanel);
-
-        var closeBtn = new Button { Content = "Close", Width = 100, HorizontalAlignment = HorizontalAlignment.Center };
-        closeBtn.Click += (_, _) => dlg.Close();
-        mainStack.Children.Add(closeBtn);
-
-        dlg.Content = mainStack;
-        await dlg.ShowDialog(this);
-    }
+    private async void ManageRolesBtn_Click(object? sender, RoutedEventArgs e) =>
+        await ShowUpdateDialog(new ManageRolesWindow(_db, this));
 }

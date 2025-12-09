@@ -1,0 +1,26 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Tund10.Avalonia.UpdateWindow"
+        Title="Update"
+        Width="400" Height="400"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+    <Window.Styles>
+        <Style Selector="Button.success">
+            <Setter Property="Background" Value="#28A745"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="Button.danger">
+            <Setter Property="Background" Value="IndianRed"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </Window.Styles>
+    <StackPanel Margin="20" Spacing="15">
+        <StackPanel Name="ContentPanel" Spacing="15"/>
+        
+        <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center" Margin="0,10,0,0">
+            <Button Name="SaveBtn" Content="Save" Width="100" Classes="success" Click="SaveBtn_Click"/>
+            <Button Name="CancelBtn" Content="Cancel" Width="100" Classes="danger" Click="CancelBtn_Click"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

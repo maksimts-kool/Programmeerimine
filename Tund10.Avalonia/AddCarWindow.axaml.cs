@@ -19,14 +19,23 @@ public partial class AddCarWindow : Window
         InitializeComponent();
         _ownerId = ownerId;
         _mainWindow = mainWindow;
-        
+
         Title = LanguageManager.Get("AddCar");
         OwnerNameText.Text = $"{LanguageManager.Get("Owner")}: {ownerName}";
-        CarBrandBox.Watermark = LanguageManager.Get("Brand");
-        CarModelBox.Watermark = LanguageManager.Get("Model");
-        CarRegBox.Watermark = LanguageManager.Get("RegNumber");
         SaveBtn.Content = LanguageManager.Get("Save");
         CancelBtn.Content = LanguageManager.Get("Cancel");
+        UpdateLabels();
+    }
+
+    private void UpdateLabels()
+    {
+        var brandStack = (StackPanel)CarBrandBox.Parent!;
+        var modelStack = (StackPanel)CarModelBox.Parent!;
+        var regStack = (StackPanel)CarRegBox.Parent!;
+
+        ((TextBlock)brandStack.Children[0]).Text = LanguageManager.Get("Brand");
+        ((TextBlock)modelStack.Children[0]).Text = LanguageManager.Get("Model");
+        ((TextBlock)regStack.Children[0]).Text = LanguageManager.Get("RegNumber");
     }
 
     private void SaveBtn_Click(object? sender, RoutedEventArgs e)
@@ -39,7 +48,25 @@ public partial class AddCarWindow : Window
             return;
         }
 
+        if (CarBrandBox.Text.Trim().Length < 2)
+        {
+            ShowAlert("Brand must be at least 2 characters long!");
+            return;
+        }
+
+        if (CarModelBox.Text.Trim().Length < 2)
+        {
+            ShowAlert("Model must be at least 2 characters long!");
+            return;
+        }
+
         var reg = CarRegBox.Text.Trim().ToUpper();
+
+        if (reg.Length < 3)
+        {
+            ShowAlert("Registration number must be at least 3 characters long!");
+            return;
+        }
 
         var exists = _db.Cars.Any(c => c.RegistrationNumber.ToUpper() == reg);
         if (exists)

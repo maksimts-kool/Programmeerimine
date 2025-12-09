@@ -9,4 +9,8 @@ public class Role
     public bool CanManageServices { get; set; }
     public bool CanChangeStatus { get; set; }
     public bool CanManageWorkers { get; set; }
+    public bool CanViewOwners { get; set; }
+    public bool CanViewCars { get; set; }
+    public bool CanViewServices { get; set; }
+    public bool CanViewWorkers { get; set; }
 }

@@ -2,19 +2,38 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="Tund10.Avalonia.AddCarWindow"
         Title="Lisa auto"
-        Width="400" Height="250"
+        Width="400" Height="350"
         WindowStartupLocation="CenterOwner"
         CanResize="False">
+    <Window.Styles>
+        <Style Selector="Button.success">
+            <Setter Property="Background" Value="#28A745"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="Button.danger">
+            <Setter Property="Background" Value="IndianRed"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </Window.Styles>
     <StackPanel Margin="20" Spacing="15">
         <TextBlock Name="OwnerNameText" FontWeight="Bold" FontSize="16"/>
         
-        <TextBox Name="CarBrandBox" Watermark="Bränd" Width="350"/>
-        <TextBox Name="CarModelBox" Watermark="Mudel" Width="350"/>
-        <TextBox Name="CarRegBox" Watermark="Registreerimisnumber" Width="350"/>
+        <StackPanel Spacing="5">
+            <TextBlock Text="Brand" FontWeight="Bold"/>
+            <TextBox Name="CarBrandBox" Width="350"/>
+        </StackPanel>
+        <StackPanel Spacing="5">
+            <TextBlock Text="Model" FontWeight="Bold"/>
+            <TextBox Name="CarModelBox" Width="350"/>
+        </StackPanel>
+        <StackPanel Spacing="5">
+            <TextBlock Text="Registration Number" FontWeight="Bold"/>
+            <TextBox Name="CarRegBox" Width="350"/>
+        </StackPanel>
         
-        <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center" Margin="0,10,0,0">
-            <Button Name="SaveBtn" Content="Salvesta" Width="100" Click="SaveBtn_Click"/>
-            <Button Name="CancelBtn" Content="Tühista" Width="100" Click="CancelBtn_Click"/>
+        <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center" Margin="0,20,0,0">
+            <Button Name="SaveBtn" Content="Salvesta" Width="100" Classes="success" Click="SaveBtn_Click"/>
+            <Button Name="CancelBtn" Content="Tühista" Width="100" Classes="danger" Click="CancelBtn_Click"/>
         </StackPanel>
     </StackPanel>
 </Window>

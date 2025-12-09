@@ -1,0 +1,65 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Tund10.Avalonia.ManageRolesWindow"
+        Title="Manage Roles"
+        Width="1600" Height="500"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+    <Window.Styles>
+        <Style Selector="CheckBox /template/ Border#NormalRectangle">
+            <Setter Property="Background" Value="#0066FF"/>
+            <Setter Property="BorderBrush" Value="#0066FF"/>
+        </Style>
+        <Style Selector="CheckBox:checked /template/ Border#NormalRectangle">
+            <Setter Property="Background" Value="#0066FF"/>
+            <Setter Property="BorderBrush" Value="#0066FF"/>
+        </Style>
+        <Style Selector="DataGridRow:disabled CheckBox /template/ Border#NormalRectangle">
+            <Setter Property="Background" Value="#CCCCCC"/>
+            <Setter Property="BorderBrush" Value="#999999"/>
+        </Style>
+        <Style Selector="DataGridRow:disabled Button">
+            <Setter Property="Background" Value="#CCCCCC"/>
+            <Setter Property="Foreground" Value="#666666"/>
+        </Style>
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="#007ACC"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="Button.success">
+            <Setter Property="Background" Value="#28A745"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="Button.warning">
+            <Setter Property="Background" Value="DarkOrange"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="Button.danger">
+            <Setter Property="Background" Value="IndianRed"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </Window.Styles>
+    <Grid RowDefinitions="*,Auto" Margin="20">
+        <DataGrid Name="RolesGrid" AutoGenerateColumns="False" IsReadOnly="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Role" Binding="{Binding Name}" Width="120" IsReadOnly="True"/>
+                <DataGridCheckBoxColumn Header="View Owners" Binding="{Binding CanViewOwners}" Width="150"/>
+                <DataGridCheckBoxColumn Header="Manage Owners" Binding="{Binding CanManageOwners}" Width="170"/>
+                <DataGridCheckBoxColumn Header="View Cars" Binding="{Binding CanViewCars}" Width="140"/>
+                <DataGridCheckBoxColumn Header="Manage Cars" Binding="{Binding CanManageCars}" Width="160"/>
+                <DataGridCheckBoxColumn Header="View Services" Binding="{Binding CanViewServices}" Width="160"/>
+                <DataGridCheckBoxColumn Header="Manage Services" Binding="{Binding CanManageServices}" Width="180"/>
+                <DataGridCheckBoxColumn Header="Change Status" Binding="{Binding CanChangeStatus}" Width="170"/>
+                <DataGridCheckBoxColumn Header="View Workers" Binding="{Binding CanViewWorkers}" Width="160"/>
+                <DataGridCheckBoxColumn Header="Manage Workers" Binding="{Binding CanManageWorkers}" Width="180"/>
+                <DataGridTemplateColumn Header="Actions" Width="100"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="10" Margin="0,15,0,0">
+            <Button Name="AddRoleBtn" Content="Add Role" Width="100" Classes="warning" Click="AddRoleBtn_Click"/>
+            <Button Name="SaveBtn" Content="Save" Width="100" Classes="success" Click="SaveBtn_Click"/>
+            <Button Name="CloseBtn" Content="Close" Width="100" Classes="danger" Click="CloseBtn_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

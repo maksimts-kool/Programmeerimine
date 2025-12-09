@@ -1,0 +1,41 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Tund10.Avalonia.RoleEditWindow"
+        Title="Role"
+        Width="400" Height="600"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+    <Window.Styles>
+        <Style Selector="Button.success">
+            <Setter Property="Background" Value="#28A745"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="Button.danger">
+            <Setter Property="Background" Value="IndianRed"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </Window.Styles>
+    <ScrollViewer>
+        <StackPanel Margin="20" Spacing="10">
+            <TextBox Name="RoleNameBox" Watermark="Role Name" Width="350"/>
+            <TextBlock Name="OwnersLabel" Text="Owners" FontWeight="Bold" Margin="0,10,0,0"/>
+            <CheckBox Name="ViewOwnersCheck" Content="Can View Owners"/>
+            <CheckBox Name="OwnersCheck" Content="Can Manage Owners"/>
+            <TextBlock Name="CarsLabel" Text="Cars" FontWeight="Bold" Margin="0,10,0,0"/>
+            <CheckBox Name="ViewCarsCheck" Content="Can View Cars"/>
+            <CheckBox Name="CarsCheck" Content="Can Manage Cars"/>
+            <TextBlock Name="ServicesLabel" Text="Services" FontWeight="Bold" Margin="0,10,0,0"/>
+            <CheckBox Name="ViewServicesCheck" Content="Can View Services"/>
+            <CheckBox Name="ServicesCheck" Content="Can Manage Services"/>
+            <CheckBox Name="StatusCheck" Content="Can Change Status"/>
+            <TextBlock Name="WorkersLabel" Text="Workers" FontWeight="Bold" Margin="0,10,0,0"/>
+            <CheckBox Name="ViewWorkersCheck" Content="Can View Workers"/>
+            <CheckBox Name="WorkersCheck" Content="Can Manage Workers"/>
+            
+            <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center" Margin="0,20,0,0">
+                <Button Name="SaveBtn" Content="Save" Width="100" Classes="success" Click="SaveBtn_Click"/>
+                <Button Name="CancelBtn" Content="Cancel" Width="100" Classes="danger" Click="CancelBtn_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</Window>

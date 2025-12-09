@@ -17,12 +17,6 @@ public class AutoDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            options.UseSqlServer(
-                "Server=(localdb)\\MSSQLLocalDB;Database=AutoAppDb;Integrated Security=True;");
-        }
-        else
         {
             var dbPath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -42,5 +36,11 @@ public class AutoDbContext : DbContext
             .HasOne(cs => cs.Service)
             .WithMany(s => s.CarServices)
             .HasForeignKey(cs => cs.ServiceId);
+
+        mb.Entity<CarService>()
+            .HasOne(cs => cs.Worker)
+            .WithMany()
+            .HasForeignKey(cs => cs.WorkerId)
+            .IsRequired(false);
     }
 }
