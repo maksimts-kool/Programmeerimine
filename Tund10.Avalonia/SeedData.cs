@@ -16,7 +16,7 @@ public static class SeedData
             db.Roles.AddRange(
                 new Role { Name = "Owner", CanViewOwners = true, CanManageOwners = true, CanViewCars = true, CanManageCars = true, CanViewServices = true, CanManageServices = true, CanChangeStatus = true, CanViewWorkers = true, CanManageWorkers = true },
                 new Role { Name = "Manager", CanViewOwners = true, CanManageOwners = true, CanViewCars = true, CanManageCars = true, CanViewServices = true, CanManageServices = true, CanChangeStatus = true, CanViewWorkers = false, CanManageWorkers = false },
-                new Role { Name = "Mechanic", CanViewOwners = false, CanManageOwners = false, CanViewCars = true, CanManageCars = false, CanViewServices = true, CanManageServices = false, CanChangeStatus = true, CanViewWorkers = false, CanManageWorkers = false },
+                new Role { Name = "Mechanic", CanViewOwners = false, CanManageOwners = false, CanViewCars = true, CanManageCars = false, CanViewServices = true, CanManageServices = true, CanChangeStatus = true, CanViewWorkers = false, CanManageWorkers = false },
                 new Role { Name = "Viewer", CanViewOwners = true, CanManageOwners = false, CanViewCars = true, CanManageCars = false, CanViewServices = true, CanManageServices = false, CanChangeStatus = false, CanViewWorkers = false, CanManageWorkers = false }
             );
             db.SaveChanges();

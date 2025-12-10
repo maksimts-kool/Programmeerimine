@@ -383,6 +383,11 @@ public partial class MainWindow : Window
         _currentUserRole = "Viewer";
         SetLoginState(false, null);
 
+        // Hide action panels for Viewer role
+        OwnerActionPanel.IsVisible = false;
+        ServiceActionPanel.IsVisible = false;
+        WorkerActionPanel.IsVisible = false;
+
         ((TabItem)MainTabs.Items[0]!).IsVisible = true;
         ((TabItem)MainTabs.Items[1]!).IsVisible = true;
         ((TabItem)MainTabs.Items[2]!).IsVisible = false;
@@ -519,11 +524,12 @@ public partial class MainWindow : Window
         var role = _db.Roles.FirstOrDefault(r => r.Name == _currentUserRole);
         bool canManage = role != null && role.CanManageOwners;
         bool canChangeStatus = role != null && role.CanChangeStatus;
+        bool canManageServices = role != null && role.CanManageServices;
 
         SetupOwnerActions(canManage);
         SetupCarActions(canManage);
-        SetupServiceActions(canManage);
-        SetupLogActions(canManage, canChangeStatus);
+        SetupServiceActions(canManageServices);
+        SetupLogActions(canManageServices, canChangeStatus);  // Pass canManageServices instead of canManage
 
         bool canManageWorkers = role != null && role.CanManageWorkers;
         SetupWorkerActions(canManageWorkers);
@@ -591,23 +597,29 @@ public partial class MainWindow : Window
         LoadLogs();
     }
 
-    private void SetupLogActions(bool canManage, bool canChangeStatus)
+    private void SetupLogActions(bool canManageServices, bool canChangeStatus)
     {
         var col = (DataGridTemplateColumn)LogsGrid.Columns[7];
-        col.IsVisible = canChangeStatus;
+        col.IsVisible = canChangeStatus || canManageServices;
         col.CellTemplate = new FuncDataTemplate<object>((item, _) =>
         {
             var panel = CreateActionPanel();
             dynamic itemData = item!;
-            AddButtonWithHandler(panel, LanguageManager.Get("Status"), "purple",
-                (EventHandler<RoutedEventArgs>)((s, e) => ChangeStatusFromGrid_Click(s, e)), itemData.Id, 70);
-            AddButtonWithHandler(panel, LanguageManager.Get("WorkerName"), "primary",
-                (EventHandler<RoutedEventArgs>)((s, e) => AssignWorkerToLog_Click(s, e)), itemData.Id, 120);
-            if (canManage)
+
+            if (canChangeStatus)
             {
+                AddButtonWithHandler(panel, LanguageManager.Get("Status"), "purple",
+                    (EventHandler<RoutedEventArgs>)((s, e) => ChangeStatusFromGrid_Click(s, e)), itemData.Id, 70);
+            }
+
+            if (canManageServices)
+            {
+                AddButtonWithHandler(panel, LanguageManager.Get("WorkerName"), "primary",
+                    (EventHandler<RoutedEventArgs>)((s, e) => AssignWorkerToLog_Click(s, e)), itemData.Id, 100);
                 AddButtonWithHandler(panel, LanguageManager.Get("DeleteBtn"), "danger",
                     (EventHandler<RoutedEventArgs>)((s, e) => DeleteLogFromGrid_Click(s, e)), itemData.Id, 70);
             }
+
             return panel;
         });
 
