@@ -9,32 +9,32 @@
         WindowStartupLocation="CenterScreen">
 
     <Window.Styles>
-    <Style Selector="Button.primary">
-        <Setter Property="Background" Value="#007ACC"/>
-        <Setter Property="Foreground" Value="White"/>
-    </Style>
-    <Style Selector="Button.warning">
-        <Setter Property="Background" Value="DarkOrange"/>
-        <Setter Property="Foreground" Value="White"/>
-    </Style>
-    <Style Selector="Button.danger">
-        <Setter Property="Background" Value="IndianRed"/>
-        <Setter Property="Foreground" Value="White"/>
-    </Style>
-    <Style Selector="Button.success">
-        <Setter Property="Background" Value="#28A745"/>
-        <Setter Property="Foreground" Value="White"/>
-    </Style>
-    <Style Selector="Button.purple">
-        <Setter Property="Background" Value="#6F42C1"/>
-        <Setter Property="Foreground" Value="White"/>
-    </Style>
-    <Style Selector="StackPanel.actions">
-        <Setter Property="Orientation" Value="Horizontal"/>
-        <Setter Property="Spacing" Value="10"/>
-        <Setter Property="Margin" Value="0,10,0,0"/>
-    </Style>
-</Window.Styles>
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="#007ACC"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="Button.warning">
+            <Setter Property="Background" Value="DarkOrange"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="Button.danger">
+            <Setter Property="Background" Value="IndianRed"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="Button.success">
+            <Setter Property="Background" Value="#28A745"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="Button.purple">
+            <Setter Property="Background" Value="#6F42C1"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="StackPanel.actions">
+            <Setter Property="Orientation" Value="Horizontal"/>
+            <Setter Property="Spacing" Value="10"/>
+            <Setter Property="Margin" Value="0,10,0,0"/>
+        </Style>
+    </Window.Styles>
 
     <Grid RowDefinitions="Auto,*" Margin="10">
         <Grid ColumnDefinitions="*,Auto,Auto,Auto">
@@ -52,10 +52,8 @@
             <TextBox Name="SearchBox" Width="250" Grid.Column="3" HorizontalAlignment="Right" 
                      Watermark="Otsi..." KeyUp="SearchBox_KeyUp"/>
         </Grid>
+
         
-
-    
-
         <TabControl Grid.Row="1" x:Name="MainTabs" Margin="5">
             <TabItem Header="OMANIKUD">
                 <Grid RowDefinitions="*,Auto" Margin="10">
@@ -78,15 +76,15 @@
             <TabItem Header="AUTOD">
                 <Grid Margin="10">
                     <DataGrid Name="CarsGrid" AutoGenerateColumns="False" IsReadOnly="True">
-    <DataGrid.Columns>
-        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
-        <DataGridTextColumn Header="Bränd" Binding="{Binding Brand}" Width="100"/>
-        <DataGridTextColumn Header="Mudel" Binding="{Binding Model}" Width="100"/>
-        <DataGridTextColumn Header="Reg Number" Binding="{Binding RegistrationNumber}" Width="120"/>
-        <DataGridTemplateColumn Header="Omanik" Width="*"/>
-        <DataGridTemplateColumn Header="Tegevus" Width="360"/>
-    </DataGrid.Columns>
-</DataGrid>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
+                            <DataGridTextColumn Header="Bränd" Binding="{Binding Brand}" Width="100"/>
+                            <DataGridTextColumn Header="Mudel" Binding="{Binding Model}" Width="100"/>
+                            <DataGridTextColumn Header="Reg Number" Binding="{Binding RegistrationNumber}" Width="120"/>
+                            <DataGridTemplateColumn Header="Omanik" Width="*"/>
+                            <DataGridTemplateColumn Header="Tegevus" Width="360"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
                 </Grid>
             </TabItem>
 
@@ -101,12 +99,12 @@
                         </DataGrid.Columns>
                     </DataGrid>
                     <StackPanel Name="WorkerActionPanel" Grid.Row="1" Classes="actions" IsVisible="False">
-    <TextBox Name="WorkerNameBox" Watermark="Name" Width="200"/>
-    <TextBox Name="WorkerPasswordBox" Watermark="Password" Width="150"/>
-    <ComboBox Name="WorkerRoleCombo" Width="150"/>
-    <Button Name="AddWorkerBtn" Content="Add" Classes="primary" Click="AddWorkerBtn_Click"/>
-    <Button Name="ManageRolesBtn" Content="Manage Roles" Classes="warning" Click="ManageRolesBtn_Click"/>
-</StackPanel>
+                        <TextBox Name="WorkerNameBox" Watermark="Name" Width="200"/>
+                        <TextBox Name="WorkerPasswordBox" Watermark="Password" Width="150"/>
+                        <ComboBox Name="WorkerRoleCombo" Width="150"/>
+                        <Button Name="AddWorkerBtn" Content="Add" Classes="primary" Click="AddWorkerBtn_Click"/>
+                        <Button Name="ManageRolesBtn" Content="Manage Roles" Classes="warning" Click="ManageRolesBtn_Click"/>
+                    </StackPanel>
                 </Grid>
             </TabItem>
 
@@ -127,18 +125,18 @@
                         <Button Name="AddServiceBtn" Content="Lisa" Classes="primary" Click="AddServiceBtn_Click"/>
                     </StackPanel>
                     <DataGrid Name="LogsGrid" Grid.Row="2" AutoGenerateColumns="False" IsReadOnly="True" ColumnWidth="*">
-    <DataGrid.Columns>
-        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
-        <DataGridTemplateColumn Header="Auto" Width="*"/>
-        <DataGridTemplateColumn Header="Teenus" Width="*"/>
-        <DataGridTextColumn Header="Töötaja" Binding="{Binding Worker}" Width="120"/>
-        <DataGridTextColumn Header="Kuupäev" Binding="{Binding DateTimeDisplay}" Width="140"/>
-        <DataGridTextColumn Header="Kilomeetrid" Binding="{Binding Mileage}" Width="100"/>
-        <DataGridTextColumn Header="Staatus" Binding="{Binding Status}" Width="100"/>
-        <DataGridTemplateColumn Header="Tegevus" Width="200"/>
-        <DataGridTemplateColumn Header="Tegevus 2" Width="80"/>
-    </DataGrid.Columns>
-</DataGrid>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
+                            <DataGridTemplateColumn Header="Auto" Width="*"/>
+                            <DataGridTemplateColumn Header="Teenus" Width="*"/>
+                            <DataGridTextColumn Header="Töötaja" Binding="{Binding Worker}" Width="120"/>
+                            <DataGridTextColumn Header="Kuupäev" Binding="{Binding DateTimeDisplay}" Width="140"/>
+                            <DataGridTextColumn Header="Kilomeetrid" Binding="{Binding Mileage}" Width="100"/>
+                            <DataGridTextColumn Header="Staatus" Binding="{Binding Status}" Width="100"/>
+                            <DataGridTemplateColumn Header="Tegevus" Width="200"/>
+                            <DataGridTemplateColumn Header="Tegevus 2" Width="80"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
                 </Grid>
             </TabItem>
         </TabControl>
