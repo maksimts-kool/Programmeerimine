@@ -120,7 +120,7 @@ public static class LanguageManager
             ["RoleMustHavePermissionFormat"] = "Rollil '{0}' peab olema vähemalt üks õigus!",
             ["CannotManageWithoutViewFormat"] = "Roll '{0}': Ei saa hallata ilma vaatamisõiguseta!",
             ["CannotChangeStatusWithoutViewFormat"] = "Roll '{0}': Ei saa staatust muuta ilma autodele või teenustele juurdepääsuta!",
-            ["AssignWorker"] = "Назначить работника",
+            ["AssignWorker"] = "Määra töötaja",
         },
 
         ["RU"] = new()
@@ -230,7 +230,8 @@ public static class LanguageManager
             ["RoleMustHavePermissionFormat"] = "Роль '{0}' должна иметь хотя бы одно разрешение!",
             ["CannotManageWithoutViewFormat"] = "Роль '{0}': Невозможно управлять без прав просмотра!",
             ["CannotChangeStatusWithoutViewFormat"] = "Роль '{0}': Невозможно изменить статус без доступа к автомобилям или услугам!",
-            ["AssignWorker"] = "Määra töötaja",
+
+            ["AssignWorker"] = "Назначить работника",
         },
 
         ["UK"] = new()

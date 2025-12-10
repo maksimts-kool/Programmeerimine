@@ -12,6 +12,7 @@ using Avalonia.Input;
 using Avalonia.Controls.Templates;
 using System.Threading.Tasks;
 
+
 namespace Tund10.Avalonia;
 
 public partial class MainWindow : Window
@@ -407,6 +408,7 @@ public partial class MainWindow : Window
         bool canViewOwners = role != null && role.CanViewOwners;
         bool canViewCars = role != null && role.CanViewCars;
         bool canViewServices = role != null && role.CanViewServices;
+        bool canViewWorkers = role != null && role.CanViewWorkers;
 
         OwnerActionPanel.IsVisible = canManageOwners;
         ServiceActionPanel.IsVisible = canManageServices;
@@ -414,7 +416,7 @@ public partial class MainWindow : Window
 
         ((TabItem)MainTabs.Items[0]!).IsVisible = canViewOwners;
         ((TabItem)MainTabs.Items[1]!).IsVisible = canViewCars;
-        ((TabItem)MainTabs.Items[2]!).IsVisible = worker.Name == "admin";
+        ((TabItem)MainTabs.Items[2]!).IsVisible = canViewWorkers || worker.Name == "admin";
         ((TabItem)MainTabs.Items[3]!).IsVisible = canViewServices;
 
         UpdateDataGridHeaders();
@@ -483,6 +485,8 @@ public partial class MainWindow : Window
         ServiceNameBox.Watermark = LanguageManager.Get("ServiceName");
         ServicePriceBox.Watermark = LanguageManager.Get("Price");
         AddServiceBtn.Content = LanguageManager.Get("Add");
+
+        AddWorkerBtn.Content = LanguageManager.Get("Add");
     }
 
     private void UpdateDataGridHeaders()
@@ -496,7 +500,7 @@ public partial class MainWindow : Window
         ((DataGridTextColumn)CarsGrid.Columns[1]).Header = LanguageManager.Get("Brand");
         ((DataGridTextColumn)CarsGrid.Columns[2]).Header = LanguageManager.Get("Model");
         ((DataGridTextColumn)CarsGrid.Columns[3]).Header = LanguageManager.Get("RegNumber");
-        ((DataGridTextColumn)CarsGrid.Columns[4]).Header = LanguageManager.Get("Owner");
+        ((DataGridTemplateColumn)CarsGrid.Columns[4]).Header = LanguageManager.Get("Owner");
         ((DataGridTemplateColumn)CarsGrid.Columns[5]).Header = LanguageManager.Get("Actions");
 
         ((DataGridTextColumn)WorkersGrid.Columns[0]).Header = LanguageManager.Get("ID");
@@ -510,28 +514,31 @@ public partial class MainWindow : Window
         ((DataGridTemplateColumn)ServicesGrid.Columns[3]).Header = LanguageManager.Get("Actions");
 
         ((DataGridTextColumn)LogsGrid.Columns[0]).Header = LanguageManager.Get("ID");
-        ((DataGridTextColumn)LogsGrid.Columns[1]).Header = LanguageManager.Get("Car");
-        ((DataGridTextColumn)LogsGrid.Columns[2]).Header = LanguageManager.Get("Service");
+        ((DataGridTemplateColumn)LogsGrid.Columns[1]).Header = LanguageManager.Get("Car");
+        ((DataGridTemplateColumn)LogsGrid.Columns[2]).Header = LanguageManager.Get("Service");
         ((DataGridTextColumn)LogsGrid.Columns[3]).Header = LanguageManager.Get("WorkerName");
         ((DataGridTextColumn)LogsGrid.Columns[4]).Header = LanguageManager.Get("Date");
         ((DataGridTextColumn)LogsGrid.Columns[5]).Header = LanguageManager.Get("Mileage");
         ((DataGridTextColumn)LogsGrid.Columns[6]).Header = LanguageManager.Get("Status");
         ((DataGridTemplateColumn)LogsGrid.Columns[7]).Header = LanguageManager.Get("Actions");
+        ((DataGridTemplateColumn)LogsGrid.Columns[8]).Header = LanguageManager.Get("Status");
     }
 
     private void UpdateActionColumns()
     {
         var role = _db.Roles.FirstOrDefault(r => r.Name == _currentUserRole);
-        bool canManage = role != null && role.CanManageOwners;
+
+        bool canManageOwners = role != null && role.CanManageOwners;
+        bool canManageCars = role != null && role.CanManageCars;
         bool canChangeStatus = role != null && role.CanChangeStatus;
         bool canManageServices = role != null && role.CanManageServices;
-
-        SetupOwnerActions(canManage);
-        SetupCarActions(canManage);
-        SetupServiceActions(canManageServices);
-        SetupLogActions(canManageServices, canChangeStatus);  // Pass canManageServices instead of canManage
-
         bool canManageWorkers = role != null && role.CanManageWorkers;
+
+        SetupOwnerActions(canManageOwners);
+        SetupCarActions(canManageCars);
+        SetupServiceActions(canManageServices);
+        SetupLogActions(canManageServices, canChangeStatus, canManageCars);
+
         SetupWorkerActions(canManageWorkers);
     }
 
@@ -555,6 +562,28 @@ public partial class MainWindow : Window
 
     private void SetupCarActions(bool canManage)
     {
+        // Owner column (clickable link)
+        var ownerCol = (DataGridTemplateColumn)CarsGrid.Columns[4];
+        ownerCol.CellTemplate = new FuncDataTemplate<object>((item, _) =>
+        {
+            dynamic itemData = item!;
+            var btn = new Button
+            {
+                Content = new TextBlock
+                {
+                    Text = itemData.OwnerName,
+                    Foreground = new SolidColorBrush(Colors.Blue)
+                },
+                Background = new SolidColorBrush(Colors.Transparent),
+                Padding = new Thickness(0),
+                BorderThickness = new Thickness(0),
+                Cursor = new Cursor(StandardCursorType.Hand)
+            };
+            btn.Click += (s, e) => HandleOwnerLinkClick(itemData.OwnerName);
+            return btn;
+        });
+
+        // Actions column
         var col = (DataGridTemplateColumn)CarsGrid.Columns[5];
         col.IsVisible = canManage;
         col.CellTemplate = new FuncDataTemplate<object>((item, _) =>
@@ -597,47 +626,98 @@ public partial class MainWindow : Window
         LoadLogs();
     }
 
-    private void SetupLogActions(bool canManageServices, bool canChangeStatus)
+    private void SetupLogActions(bool canManageServices, bool canChangeStatus, bool canManageCars)
     {
+        // Car column (clickable link)
+        var carCol = (DataGridTemplateColumn)LogsGrid.Columns[1];
+        carCol.CellTemplate = new FuncDataTemplate<object>((item, _) =>
+        {
+            dynamic itemData = item!;
+            var btn = new Button
+            {
+                Content = new TextBlock
+                {
+                    Text = itemData.Car,
+                    Foreground = new SolidColorBrush(Colors.Blue)
+                },
+                Background = new SolidColorBrush(Colors.Transparent),
+                Padding = new Thickness(0),
+                BorderThickness = new Thickness(0),
+                Cursor = new Cursor(StandardCursorType.Hand)
+            };
+            btn.Click += (s, e) => HandleCarLinkClick(itemData.Car);
+            return btn;
+        });
+
+        // Service column (clickable link)
+        var serviceCol = (DataGridTemplateColumn)LogsGrid.Columns[2];
+        serviceCol.CellTemplate = new FuncDataTemplate<object>((item, _) =>
+        {
+            dynamic itemData = item!;
+            var btn = new Button
+            {
+                Content = new TextBlock
+                {
+                    Text = itemData.Service,
+                    Foreground = new SolidColorBrush(Colors.Blue)
+                },
+                Background = new SolidColorBrush(Colors.Transparent),
+                Padding = new Thickness(0),
+                BorderThickness = new Thickness(0),
+                Cursor = new Cursor(StandardCursorType.Hand)
+            };
+            btn.Click += (s, e) => HandleServiceLinkClick(itemData.Service);
+            return btn;
+        });
+
+        // Column 7 - Worker Name and Delete buttons (Tegevus)
         var col = (DataGridTemplateColumn)LogsGrid.Columns[7];
-        col.IsVisible = canChangeStatus || canManageServices;
+        col.IsVisible = canManageServices || canManageCars;
         col.CellTemplate = new FuncDataTemplate<object>((item, _) =>
         {
             var panel = CreateActionPanel();
             dynamic itemData = item!;
 
-            if (canChangeStatus)
-            {
-                AddButtonWithHandler(panel, LanguageManager.Get("Status"), "purple",
-                    (EventHandler<RoutedEventArgs>)((s, e) => ChangeStatusFromGrid_Click(s, e)), itemData.Id, 70);
-            }
-
-            if (canManageServices)
-            {
-                AddButtonWithHandler(panel, LanguageManager.Get("WorkerName"), "primary",
-                    (EventHandler<RoutedEventArgs>)((s, e) => AssignWorkerToLog_Click(s, e)), itemData.Id, 100);
-                AddButtonWithHandler(panel, LanguageManager.Get("DeleteBtn"), "danger",
-                    (EventHandler<RoutedEventArgs>)((s, e) => DeleteLogFromGrid_Click(s, e)), itemData.Id, 70);
-            }
+            AddButtonWithHandler(panel, LanguageManager.Get("WorkerName"), "primary",
+                (EventHandler<RoutedEventArgs>)((s, e) => AssignWorkerToLog_Click(s, e)), itemData.Id, 100);
+            AddButtonWithHandler(panel, LanguageManager.Get("DeleteBtn"), "danger",
+                (EventHandler<RoutedEventArgs>)((s, e) => DeleteLogFromGrid_Click(s, e)), itemData.Id, 70);
 
             return panel;
         });
 
-        LogsGrid.LoadingRow += (s, e) =>
+        // Column 8 - Status button (Tegevus 2)
+        var col2 = (DataGridTemplateColumn)LogsGrid.Columns[8];
+        col2.IsVisible = canChangeStatus;
+        col2.CellTemplate = new FuncDataTemplate<object>((item, _) =>
         {
-            if (e.Row.DataContext is not null)
+            var panel = CreateActionPanel();
+            dynamic itemData = item!;
+
+            AddButtonWithHandler(panel, LanguageManager.Get("Status"), "purple",
+                (EventHandler<RoutedEventArgs>)((s, e) => ChangeStatusFromGrid_Click(s, e)), itemData.Id, 70);
+
+            return panel;
+        });
+
+        LogsGrid.LoadingRow -= LogsGrid_LoadingRow;
+        LogsGrid.LoadingRow += LogsGrid_LoadingRow;
+    }
+
+    private void LogsGrid_LoadingRow(object? sender, DataGridRowEventArgs e)
+    {
+        if (e.Row.DataContext is not null)
+        {
+            dynamic data = e.Row.DataContext;
+            string status = data.Status;
+            e.Row.Background = status switch
             {
-                dynamic data = e.Row.DataContext;
-                string status = data.Status;
-                e.Row.Background = status switch
-                {
-                    "Alustamata" => new SolidColorBrush(Color.FromRgb(255, 240, 240)),
-                    "Pooleli" => new SolidColorBrush(Color.FromRgb(255, 250, 205)),
-                    "Valmis" => new SolidColorBrush(Color.FromRgb(220, 255, 220)),
-                    _ => Brushes.White
-                };
-            }
-        };
+                "Alustamata" => new SolidColorBrush(Color.FromRgb(255, 240, 240)),
+                "Pooleli" => new SolidColorBrush(Color.FromRgb(255, 250, 205)),
+                "Valmis" => new SolidColorBrush(Color.FromRgb(220, 255, 220)),
+                _ => Brushes.White
+            };
+        }
     }
 
     private void SetupWorkerActions(bool canManage)
@@ -660,21 +740,7 @@ public partial class MainWindow : Window
         new() { Orientation = Orientation.Horizontal, Spacing = 5 };
 
     private void AddButtonWithHandler(StackPanel panel, string content, string classes,
-        EventHandler<RoutedEventArgs> handler, int tag, int width = 0)
-    {
-        var btn = new Button
-        {
-            Content = content,
-            Classes = { classes },
-            Tag = tag
-        };
-        if (width > 0) btn.Width = width;
-        btn.Click += handler;
-        panel.Children.Add(btn);
-    }
-
-    private void AddButton(StackPanel panel, string content, string classes,
-        EventHandler<RoutedEventArgs> handler, int tag, int width = 0)
+    EventHandler<RoutedEventArgs> handler, int tag, int width = 0)
     {
         var btn = new Button
         {
@@ -902,6 +968,27 @@ public partial class MainWindow : Window
         dlg.Content = stack;
 
         await dlg.ShowDialog(this);
+    }
+
+    private async void HandleOwnerLinkClick(string ownerName)
+    {
+        MainTabs.SelectedIndex = 0;
+        await Task.Delay(100);
+        SelectRowAndFocus(OwnersGrid, o => ((string)o.FullName) == ownerName);
+    }
+
+    private async void HandleCarLinkClick(string registrationNumber)
+    {
+        MainTabs.SelectedIndex = 1;
+        await Task.Delay(100);
+        SelectRowAndFocus(CarsGrid, c => ((string)c.RegistrationNumber) == registrationNumber);
+    }
+
+    private async void HandleServiceLinkClick(string serviceName)
+    {
+        MainTabs.SelectedIndex = 3;
+        await Task.Delay(100);
+        SelectRowAndFocus(ServicesGrid, s => ((string)s.Name) == serviceName);
     }
 
     private async void ManageRolesBtn_Click(object? sender, RoutedEventArgs e) =>
