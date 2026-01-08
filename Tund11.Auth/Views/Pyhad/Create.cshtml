@@ -1,0 +1,35 @@
+@model Pyha
+
+@{
+    ViewData["Title"] = "Lisa püha";
+}
+
+<h1>Lisa püha</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="Nimetus" class="form-label"></label>
+                <input asp-for="Nimetus" class="form-control" />
+                <span asp-validation-for="Nimetus" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Kuupaev" class="form-label"></label>
+                <input asp-for="Kuupaev" class="form-control" type="date" />
+                <span asp-validation-for="Kuupaev" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Salvesta</button>
+            <a class="btn btn-secondary" asp-action="Index">Tagasi</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

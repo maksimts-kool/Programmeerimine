@@ -1,0 +1,39 @@
+@model IEnumerable<Kylaline>
+
+@{
+    ViewData["Title"] = "Külalised";
+}
+
+<h1>Külalised</h1>
+
+<p>
+    <a class="btn btn-primary" asp-action="Create">Lisa külaline</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nimi</th>
+            <th>Email</th>
+            <th>Kutse</th>
+            <th>Püha</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Nimi</td>
+                <td>@item.Email</td>
+                <td>@(item.OnKutse ? "Jah" : "Ei")</td>
+                <td>@item.Pyha?.Nimetus</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Muuda</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Detailid</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Kustuta</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

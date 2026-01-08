@@ -1,0 +1,35 @@
+@model IEnumerable<Pyha>
+
+@{
+    ViewData["Title"] = "Pühad";
+}
+
+<h1>Pühad</h1>
+
+<p>
+    <a class="btn btn-primary" asp-action="Create">Lisa püha</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nimetus</th>
+            <th>Kuupäev</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Nimetus)</td>
+                <td>@item.Kuupaev.ToString("yyyy-MM-dd")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Muuda</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Detailid</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Kustuta</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
