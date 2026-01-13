@@ -21,5 +21,5 @@ public class Kylaline
     [Range(1, int.MaxValue, ErrorMessage = "Vali püha")]
     public int PyhaId { get; set; }
 
-    public Pyha Pyha { get; set; } = null!;
+    public Pyha? Pyha { get; set; }
 }

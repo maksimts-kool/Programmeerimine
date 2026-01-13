@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tund11.Auth.Data;
 
@@ -10,9 +11,11 @@ using Tund11.Auth.Data;
 namespace Tund11.Auth.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260113105511_AddAnkeet")]
+    partial class AddAnkeet
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.0");
@@ -219,28 +222,26 @@ namespace Tund11.Auth.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Epost")
+                    b.Property<string>("Kirjeldus")
                         .IsRequired()
-                        .HasMaxLength(200)
+                        .HasMaxLength(1000)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("LoomiseKupaev")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Nimi")
+                    b.Property<bool>("OnAktiivne")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Pealkiri")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("OnOsaleb")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("PyhaId")
+                    b.Property<int>("VastuseteArv")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PyhaId");
 
                     b.ToTable("Ankeetid");
                 });
@@ -341,17 +342,6 @@ namespace Tund11.Auth.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Tund11.Models.Ankeet", b =>
-                {
-                    b.HasOne("Tund11.Models.Pyha", "Pyha")
-                        .WithMany()
-                        .HasForeignKey("PyhaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Pyha");
                 });
 
             modelBuilder.Entity("Tund11.Models.Kylaline", b =>

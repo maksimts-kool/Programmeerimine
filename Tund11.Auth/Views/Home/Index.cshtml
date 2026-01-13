@@ -1,8 +1,105 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Avaleht";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container">
+    <!-- Hero Section -->
+    <div class="row justify-content-center mt-5 mb-5">
+        <div class="col-lg-10">
+            <div class="text-center mb-5">
+                <h1 class="display-3 fw-bold text-primary mb-3">Tere tulemast Pikook Laad!</h1>
+                <p class="lead text-muted fs-4">Haldage sündmusi, külalisi ja ankeetide vastuseid ühes kohas</p>
+            </div>
+
+            <!-- Feature Cards -->
+            <div class="row g-4 mb-5">
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm hover-card">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-3">
+                                <span class="display-4">🎉</span>
+                            </div>
+                            <h3 class="card-title h4 mb-3">Meie Pühad</h3>
+                            <p class="card-text text-muted mb-4">Vaadake ja hallake kõiki eelseisvaid üritusi ja pühasid
+                            </p>
+                            <a asp-controller="Pyhad" asp-action="Index" class="btn btn-primary btn-lg w-100">
+                                Vaata pühasid
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm hover-card">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-3">
+                                <span class="display-4">📝</span>
+                            </div>
+                            <h3 class="card-title h4 mb-3">Ankeet</h3>
+                            <p class="card-text text-muted mb-4">Vastake küsimustele ja registreerige end üritustele</p>
+                            <a asp-controller="Ankeet" asp-action="Create" class="btn btn-success btn-lg w-100">
+                                Täida ankeet
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm hover-card">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-3">
+                                <span class="display-4">👥</span>
+                            </div>
+                            <h3 class="card-title h4 mb-3">Külalised</h3>
+                            <p class="card-text text-muted mb-4">Hallake külalisi ja nende osalemist üritustel</p>
+                            <a asp-controller="Kylalised" asp-action="Index" class="btn btn-info btn-lg w-100">
+                                Vaata külalisi
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm hover-card">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-3">
+                                <span class="display-4">🔒</span>
+                            </div>
+                            <h3 class="card-title h4 mb-3">Privaatsus</h3>
+                            <p class="card-text text-muted mb-4">Lugege meie privaatsuspoliitikat ja andmekaitset</p>
+                            <a asp-controller="Home" asp-action="Privacy" class="btn btn-secondary btn-lg w-100">
+                                Privaatsuspoliitika
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info Section -->
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="alert alert-info" role="alert">
+                        <h4 class="alert-heading">ℹ️ Kuidas alustada?</h4>
+                        <hr>
+                        <p class="mb-0">
+                            1. <strong>Vaadake pühasid</strong> - tutvuge kõigi eelseisvate üritustega<br>
+                            2. <strong>Täitke ankeet</strong> - andke oma vastused ja registreerige end<br>
+                            3. <strong>Saate kinnituse</strong> - e-posti teel saate kinnituse oma registreerimise kohta
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<style>
+    .hover-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2) !important;
+    }
+</style>

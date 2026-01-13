@@ -8,6 +8,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 {
     public DbSet<Pyha> Pyhad => Set<Pyha>();
     public DbSet<Kylaline> Kylalised => Set<Kylaline>();
+    public DbSet<Ankeet> Ankeetid => Set<Ankeet>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -17,6 +18,12 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasOne(k => k.Pyha)
             .WithMany(p => p.Kylalised)
             .HasForeignKey(k => k.PyhaId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Ankeet>()
+            .HasOne(a => a.Pyha)
+            .WithMany()
+            .HasForeignKey(a => a.PyhaId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

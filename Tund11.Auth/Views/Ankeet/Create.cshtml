@@ -1,0 +1,52 @@
+@model Ankeet
+
+@{
+    ViewData["Title"] = "Lisa ankeet";
+}
+
+<h1>Lisa ankeet</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="Nimi" class="form-label"></label>
+                <input asp-for="Nimi" class="form-control" />
+                <span asp-validation-for="Nimi" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Epost" class="form-label"></label>
+                <input asp-for="Epost" class="form-control" type="email" />
+                <span asp-validation-for="Epost" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="PyhaId" class="form-label">Üritus</label>
+                <select asp-for="PyhaId" class="form-select" asp-items="@(ViewData["PyhaId"] as SelectList)">
+                    <option value="">-- Vali üritus --</option>
+                </select>
+                <span asp-validation-for="PyhaId" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="OnOsaleb" class="form-label">Kes osaleb</label>
+                <select asp-for="OnOsaleb" class="form-select">
+                    <option value="true">Jah, tulen kindlasti</option>
+                    <option value="false">Ei, kahjuks ei saa tulla</option>
+                </select>
+                <span asp-validation-for="OnOsaleb" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Salvesta</button>
+            <a class="btn btn-secondary" asp-area="" asp-controller="Home" asp-action="Index">Tagasi</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

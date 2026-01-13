@@ -1,9 +1,12 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Tund11.Auth.Data;
 using Tund11.Models;
 
 namespace Tund11.Auth.Controllers;
+
+[Authorize]
 
 public class PyhadController(ApplicationDbContext context) : Controller
 {

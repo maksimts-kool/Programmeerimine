@@ -32,7 +32,9 @@
 
             <div class="mb-3">
                 <label asp-for="PyhaId" class="form-label">Püha</label>
-                <select asp-for="PyhaId" class="form-select" asp-items="@(ViewData["PyhaId"] as SelectList)"></select>
+                <select asp-for="PyhaId" class="form-select" asp-items="@(ViewData["PyhaId"] as SelectList)">
+                    <option value="">-- Vali püha --</option>
+                </select>
                 <span asp-validation-for="PyhaId" class="text-danger"></span>
             </div>
 

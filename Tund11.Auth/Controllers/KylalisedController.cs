@@ -42,6 +42,13 @@ public class KylalisedController(ApplicationDbContext context) : Controller
 
     public async Task<IActionResult> Create()
     {
+        var hasPyhad = await _context.Pyhad.AsNoTracking().AnyAsync();
+        if (!hasPyhad)
+        {
+            TempData["Error"] = "Enne külalise lisamist lisa vähemalt üks püha.";
+            return RedirectToAction(actionName: "Create", controllerName: "Pyhad");
+        }
+
         await PopulatePyhadSelectList();
         return View();
     }
@@ -50,6 +57,12 @@ public class KylalisedController(ApplicationDbContext context) : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([Bind("Id,Nimi,Email,OnKutse,PyhaId")] Kylaline kylaline)
     {
+        var pyhaExists = await _context.Pyhad.AsNoTracking().AnyAsync(p => p.Id == kylaline.PyhaId);
+        if (!pyhaExists)
+        {
+            ModelState.AddModelError(nameof(Kylaline.PyhaId), "Vali püha");
+        }
+
         if (!ModelState.IsValid)
         {
             await PopulatePyhadSelectList(kylaline.PyhaId);
@@ -74,6 +87,13 @@ public class KylalisedController(ApplicationDbContext context) : Controller
             return NotFound();
         }
 
+        var hasPyhad = await _context.Pyhad.AsNoTracking().AnyAsync();
+        if (!hasPyhad)
+        {
+            TempData["Error"] = "Enne külalise muutmist lisa vähemalt üks püha.";
+            return RedirectToAction(actionName: "Create", controllerName: "Pyhad");
+        }
+
         await PopulatePyhadSelectList(kylaline.PyhaId);
         return View(kylaline);
     }
@@ -85,6 +105,12 @@ public class KylalisedController(ApplicationDbContext context) : Controller
         if (id != kylaline.Id)
         {
             return NotFound();
+        }
+
+        var pyhaExists = await _context.Pyhad.AsNoTracking().AnyAsync(p => p.Id == kylaline.PyhaId);
+        if (!pyhaExists)
+        {
+            ModelState.AddModelError(nameof(Kylaline.PyhaId), "Vali püha");
         }
 
         if (!ModelState.IsValid)
