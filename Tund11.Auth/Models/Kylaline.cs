@@ -15,9 +15,6 @@ public class Kylaline
     [StringLength(200, ErrorMessage = "Email on liiga pikk")]
     public string Email { get; set; } = string.Empty;
 
-    [Display(Name = "Kutse")]
-    public bool OnKutse { get; set; }
-
     [Range(1, int.MaxValue, ErrorMessage = "Vali püha")]
     public int PyhaId { get; set; }
 

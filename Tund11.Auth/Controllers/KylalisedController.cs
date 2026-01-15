@@ -10,14 +10,37 @@ public class KylalisedController(ApplicationDbContext context) : Controller
 {
     private readonly ApplicationDbContext _context = context;
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string filter = "all")
     {
         var query = _context.Kylalised
             .AsNoTracking()
             .Include(k => k.Pyha)
-            .OrderBy(k => k.Nimi);
+            .AsQueryable();
 
-        return View(await query.ToListAsync());
+        // Get all ankeet responses
+        var ankeetResponses = await _context.Ankeetid
+            .AsNoTracking()
+            .Select(a => new { a.Epost, a.OnOsaleb })
+            .ToListAsync();
+
+        var kylalised = await query.OrderBy(k => k.Nimi).ToListAsync();
+
+        // Filter based on ankeet responses
+        if (filter == "willbe")
+        {
+            kylalised = kylalised
+                .Where(k => ankeetResponses.Any(a => a.Epost.Equals(k.Email, StringComparison.OrdinalIgnoreCase) && a.OnOsaleb))
+                .ToList();
+        }
+        else if (filter == "wontbe")
+        {
+            kylalised = kylalised
+                .Where(k => ankeetResponses.Any(a => a.Epost.Equals(k.Email, StringComparison.OrdinalIgnoreCase) && !a.OnOsaleb))
+                .ToList();
+        }
+
+        ViewData["CurrentFilter"] = filter;
+        return View(kylalised);
     }
 
     public async Task<IActionResult> Details(int? id)
@@ -37,6 +60,15 @@ public class KylalisedController(ApplicationDbContext context) : Controller
             return NotFound();
         }
 
+        // Get participation status from ankeet
+        var ankeetResponse = await _context.Ankeetid
+            .AsNoTracking()
+            .Where(a => a.Epost.ToLower() == kylaline.Email.ToLower() && a.PyhaId == kylaline.PyhaId)
+            .OrderByDescending(a => a.LoomiseKupaev)
+            .FirstOrDefaultAsync();
+
+        ViewData["ParticipationStatus"] = ankeetResponse?.OnOsaleb;
+
         return View(kylaline);
     }
 
@@ -55,7 +87,7 @@ public class KylalisedController(ApplicationDbContext context) : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,Nimi,Email,OnKutse,PyhaId")] Kylaline kylaline)
+    public async Task<IActionResult> Create([Bind("Id,Nimi,Email,PyhaId")] Kylaline kylaline, string? participationStatus)
     {
         var pyhaExists = await _context.Pyhad.AsNoTracking().AnyAsync(p => p.Id == kylaline.PyhaId);
         if (!pyhaExists)
@@ -71,6 +103,22 @@ public class KylalisedController(ApplicationDbContext context) : Controller
 
         _context.Add(kylaline);
         await _context.SaveChangesAsync();
+
+        // Create ankeet response if participation status was set
+        if (participationStatus != null)
+        {
+            var newAnkeet = new Ankeet
+            {
+                Nimi = kylaline.Nimi,
+                Epost = kylaline.Email,
+                PyhaId = kylaline.PyhaId,
+                OnOsaleb = participationStatus == "willbe",
+                LoomiseKupaev = DateTime.Today
+            };
+            _context.Ankeetid.Add(newAnkeet);
+            await _context.SaveChangesAsync();
+        }
+
         return RedirectToAction(nameof(Index));
     }
 
@@ -94,13 +142,22 @@ public class KylalisedController(ApplicationDbContext context) : Controller
             return RedirectToAction(actionName: "Create", controllerName: "Pyhad");
         }
 
+        // Get participation status from ankeet
+        var ankeetResponse = await _context.Ankeetid
+            .AsNoTracking()
+            .Where(a => a.Epost.ToLower() == kylaline.Email.ToLower() && a.PyhaId == kylaline.PyhaId)
+            .OrderByDescending(a => a.LoomiseKupaev)
+            .FirstOrDefaultAsync();
+
+        ViewData["ParticipationStatus"] = ankeetResponse?.OnOsaleb;
+
         await PopulatePyhadSelectList(kylaline.PyhaId);
         return View(kylaline);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, [Bind("Id,Nimi,Email,OnKutse,PyhaId")] Kylaline kylaline)
+    public async Task<IActionResult> Edit(int id, [Bind("Id,Nimi,Email,PyhaId")] Kylaline kylaline, string? participationStatus)
     {
         if (id != kylaline.Id)
         {
@@ -123,6 +180,37 @@ public class KylalisedController(ApplicationDbContext context) : Controller
         {
             _context.Update(kylaline);
             await _context.SaveChangesAsync();
+
+            // Update or create ankeet response if participation status was set
+            if (participationStatus != null)
+            {
+                var existingAnkeet = await _context.Ankeetid
+                    .Where(a => a.Epost.ToLower() == kylaline.Email.ToLower() && a.PyhaId == kylaline.PyhaId)
+                    .OrderByDescending(a => a.LoomiseKupaev)
+                    .FirstOrDefaultAsync();
+
+                bool onOsaleb = participationStatus == "willbe";
+
+                if (existingAnkeet != null)
+                {
+                    existingAnkeet.OnOsaleb = onOsaleb;
+                    _context.Update(existingAnkeet);
+                }
+                else
+                {
+                    var newAnkeet = new Ankeet
+                    {
+                        Nimi = kylaline.Nimi,
+                        Epost = kylaline.Email,
+                        PyhaId = kylaline.PyhaId,
+                        OnOsaleb = onOsaleb,
+                        LoomiseKupaev = DateTime.Today
+                    };
+                    _context.Ankeetid.Add(newAnkeet);
+                }
+
+                await _context.SaveChangesAsync();
+            }
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -153,6 +241,15 @@ public class KylalisedController(ApplicationDbContext context) : Controller
         {
             return NotFound();
         }
+
+        // Get participation status from ankeet
+        var ankeetResponse = await _context.Ankeetid
+            .AsNoTracking()
+            .Where(a => a.Epost.ToLower() == kylaline.Email.ToLower() && a.PyhaId == kylaline.PyhaId)
+            .OrderByDescending(a => a.LoomiseKupaev)
+            .FirstOrDefaultAsync();
+
+        ViewData["ParticipationStatus"] = ankeetResponse?.OnOsaleb;
 
         return View(kylaline);
     }

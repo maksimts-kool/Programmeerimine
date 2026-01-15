@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Külalised";
+    var currentFilter = ViewData["CurrentFilter"]?.ToString() ?? "all";
 }
 
 <h1>Külalised</h1>
@@ -10,12 +11,22 @@
     <a class="btn btn-primary" asp-action="Create">Lisa külaline</a>
 </p>
 
+<div class="mb-3">
+    <div class="btn-group" role="group" aria-label="Filter">
+        <a asp-action="Index" asp-route-filter="all"
+            class="btn @(currentFilter == "all" ? "btn-primary" : "btn-outline-primary")">Kõik</a>
+        <a asp-action="Index" asp-route-filter="willbe"
+            class="btn @(currentFilter == "willbe" ? "btn-success" : "btn-outline-success")">Tulevad</a>
+        <a asp-action="Index" asp-route-filter="wontbe"
+            class="btn @(currentFilter == "wontbe" ? "btn-danger" : "btn-outline-danger")">Ei tule</a>
+    </div>
+</div>
+
 <table class="table">
     <thead>
         <tr>
             <th>Nimi</th>
             <th>Email</th>
-            <th>Kutse</th>
             <th>Püha</th>
             <th></th>
         </tr>
@@ -26,7 +37,6 @@
             <tr>
                 <td>@item.Nimi</td>
                 <td>@item.Email</td>
-                <td>@(item.OnKutse ? "Jah" : "Ei")</td>
                 <td>@item.Pyha?.Nimetus</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Muuda</a> |

@@ -6,7 +6,7 @@ using Tund11.Models;
 
 namespace Tund11.Auth.Controllers;
 
-[Authorize]
+[Authorize(Roles = "Admin")]
 
 public class PyhadController(ApplicationDbContext context) : Controller
 {

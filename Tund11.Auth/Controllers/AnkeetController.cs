@@ -46,6 +46,23 @@ public class AnkeetController(ApplicationDbContext context, IConfiguration confi
 
         _context.Add(ankeet);
         await _context.SaveChangesAsync();
+
+        // Add to Kylalised if not already there
+        var existingKylaline = await _context.Kylalised
+            .FirstOrDefaultAsync(k => k.Email.ToLower() == ankeet.Epost.ToLower() && k.PyhaId == ankeet.PyhaId);
+
+        if (existingKylaline is null)
+        {
+            var newKylaline = new Kylaline
+            {
+                Nimi = ankeet.Nimi,
+                Email = ankeet.Epost,
+                PyhaId = ankeet.PyhaId
+            };
+            _context.Kylalised.Add(newKylaline);
+            await _context.SaveChangesAsync();
+        }
+
         return RedirectToAction(nameof(Thanks), routeValues: new { id = ankeet.Id });
     }
 

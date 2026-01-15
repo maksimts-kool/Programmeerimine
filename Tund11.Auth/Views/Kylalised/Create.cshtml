@@ -24,17 +24,21 @@
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
-            <div class="form-check mb-3">
-                <input class="form-check-input" asp-for="OnKutse" />
-                <label class="form-check-label" asp-for="OnKutse"></label>
-            </div>
-
             <div class="mb-3">
                 <label asp-for="PyhaId" class="form-label">Püha</label>
                 <select asp-for="PyhaId" class="form-select" asp-items="@(ViewData["PyhaId"] as SelectList)">
                     <option value="">-- Vali püha --</option>
                 </select>
                 <span asp-validation-for="PyhaId" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Osalemine</label>
+                <select name="participationStatus" class="form-select">
+                    <option value="">-- Pole määratud --</option>
+                    <option value="willbe">Tuleb</option>
+                    <option value="wontbe">Ei tule</option>
+                </select>
             </div>
 
             <button type="submit" class="btn btn-primary">Salvesta</button>

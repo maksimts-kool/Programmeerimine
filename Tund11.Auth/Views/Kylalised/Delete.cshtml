@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Kustuta külaline";
+    var participationStatus = ViewData["ParticipationStatus"] as bool?;
 }
 
 <h1>Kustuta külaline</h1>
@@ -16,11 +17,24 @@
         <dt class="col-sm-2">Email</dt>
         <dd class="col-sm-10">@Model.Email</dd>
 
-        <dt class="col-sm-2">Kutse</dt>
-        <dd class="col-sm-10">@(Model.OnKutse ? "Jah" : "Ei")</dd>
-
         <dt class="col-sm-2">Püha</dt>
         <dd class="col-sm-10">@Model.Pyha?.Nimetus</dd>
+
+        <dt class="col-sm-2">Osalemine</dt>
+        <dd class="col-sm-10">
+            @if (participationStatus == true)
+            {
+                <span class="badge bg-success">Tuleb</span>
+            }
+            else if (participationStatus == false)
+            {
+                <span class="badge bg-danger">Ei tule</span>
+            }
+            else
+            {
+                <span class="badge bg-secondary">Pole vastanud</span>
+            }
+        </dd>
     </dl>
 
     <form asp-action="Delete">
