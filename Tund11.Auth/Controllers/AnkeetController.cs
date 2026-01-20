@@ -3,16 +3,19 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using Tund11.Auth.Data;
+using Tund11.Auth;
 using Tund11.Models;
 
 namespace Tund11.Auth.Controllers;
 
 [Authorize]
-public class AnkeetController(ApplicationDbContext context, IConfiguration configuration) : Controller
+public class AnkeetController(ApplicationDbContext context, IConfiguration configuration, IStringLocalizer<SharedResources> localizer) : Controller
 {
     private readonly ApplicationDbContext _context = context;
     private readonly IConfiguration _configuration = configuration;
+    private readonly IStringLocalizer<SharedResources> _localizer = localizer;
 
     public IActionResult Index()
     {
@@ -39,12 +42,26 @@ public class AnkeetController(ApplicationDbContext context, IConfiguration confi
         var emailDomainValid = await HomeController.ValidateEmailDomain(ankeet.Epost);
         if (!emailDomainValid)
         {
-            ModelState.AddModelError("Epost", "E-post ei ole korrektne või domeen ei eksisteeri");
+            ModelState.AddModelError("Epost", _localizer["Validation_EmailDomainInvalid"]);
             await PopulatePyhadSelectList(ankeet.PyhaId);
             return View(ankeet);
         }
 
-        _context.Add(ankeet);
+        // Instead of just _context.Add(ankeet), check if they already responded
+        var existingAnkeet = await _context.Ankeetid
+            .FirstOrDefaultAsync(a => a.Epost.ToLower() == ankeet.Epost.ToLower() && a.PyhaId == ankeet.PyhaId);
+
+        if (existingAnkeet != null)
+        {
+            existingAnkeet.OnOsaleb = ankeet.OnOsaleb;
+            existingAnkeet.Nimi = ankeet.Nimi;
+            existingAnkeet.LoomiseKupaev = DateTime.Today;
+            _context.Update(existingAnkeet);
+        }
+        else
+        {
+            _context.Add(ankeet);
+        }
         await _context.SaveChangesAsync();
 
         // Add to Kylalised if not already there

@@ -1,12 +1,12 @@
 @model Pyha
 
 @{
-    ViewData["Title"] = "Kustuta püha";
+    ViewData["Title"] = Localizer["DeleteHoliday"];
 }
 
-<h1>Kustuta püha</h1>
+<h1>@Localizer["DeleteHoliday"]</h1>
 
-<h3>Kas oled kindel, et tahad kustutada?</h3>
+<h3>@Localizer["AreYouSureDelete"]</h3>
 <div>
     <hr />
     <dl class="row">
@@ -19,7 +19,7 @@
 
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
-        <button type="submit" class="btn btn-danger">Kustuta</button>
-        <a class="btn btn-secondary" asp-action="Index">Tühista</a>
+        <button type="submit" class="btn btn-danger">@Localizer["Delete"]</button>
+        <a class="btn btn-secondary" asp-action="Index">@Localizer["Cancel"]</a>
     </form>
 </div>

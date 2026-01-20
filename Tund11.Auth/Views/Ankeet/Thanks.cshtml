@@ -1,55 +1,56 @@
 @model Ankeet
 
 @{
-    ViewData["Title"] = "Tänan!";
+    ViewData["Title"] = Localizer["ThankYouTitle"];
 }
 
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-8 offset-md-2">
             <div class="alert alert-success" role="alert">
-                <h1>Tänan!</h1>
+                <h1>@Localizer["ThankYouTitle"]</h1>
                 <hr />
-                <p class="lead">Suur aitäh vastamise eest ankeetile <strong>@Model.Nimi</strong>!</p>
-                <p>Sinu vastus on edukalt salvestatud.</p>
+                <p class="lead">@Localizer["ThankYouForSurvey", Model.Nimi]</p>
+                <p>@Localizer["ResponseSaved"]</p>
 
                 @if (Model.OnOsaleb)
                 {
                     <div class="alert alert-info mt-3" role="alert">
-                        <h5>🎉 Õnnitleme!</h5>
-                        <p>Väga tore, et tuled osalema! Näeme sind üritusel!</p>
+                        <h5>🎉 @Localizer["Congrats"]</h5>
+                        <p>@Localizer["HappyYouCome"]</p>
                     </div>
                 }
                 else
                 {
                     <div class="alert alert-warning mt-3" role="alert">
-                        <h5>😢 Kahjuks kuuled!</h5>
-                        <p>Kuid me oleme kurvad, et sa kahjuks tulla ei saa. Võib-olla järgmise korra!</p>
+                        <h5>😢 @Localizer["SorryToHear"]</h5>
+                        <p>@Localizer["SadYouCantCome"]</p>
                     </div>
                 }
 
                 <div class="card mt-4">
                     <div class="card-body">
-                        <h5 class="card-title">Ankeedi detailid</h5>
+                        <h5 class="card-title">@Localizer["SurveyDetails"]</h5>
                         <dl class="row">
-                            <dt class="col-sm-4">Üritus:</dt>
+                            <dt class="col-sm-4">@Localizer["Event"]:</dt>
                             <dd class="col-sm-8">@Model.Pyha?.Nimetus</dd>
 
-                            <dt class="col-sm-4">Ankeedi nimi:</dt>
+                            <dt class="col-sm-4">@Localizer["SurveyName"]:</dt>
                             <dd class="col-sm-8">@Model.Nimi</dd>
 
-                            <dt class="col-sm-4">Sinu vastus:</dt>
-                            <dd class="col-sm-8">@(Model.OnOsaleb == true ? "Jah, tulen kindlasti" : "Ei, kahjuks ei saa                       tulla")</dd>
+                            <dt class="col-sm-4">@Localizer["YourAnswer"]:</dt>
+                            <dd class="col-sm-8">@(Model.OnOsaleb? Localizer["YesWillCome"] : Localizer["NoWontCome"])
+                            </dd>
 
-                            <dt class="col-sm-4">E-post:</dt>
+                            <dt class="col-sm-4">@Localizer["Email"]:</dt>
                             <dd class="col-sm-8">@Model.Epost</dd>
                         </dl>
                     </div>
                 </div>
 
                 <div class="mt-4">
-                    <a class="btn btn-primary" asp-area="" asp-controller="Home" asp-action="Index">Tagasi
-                        kodulehele</a>
+                    <a class="btn btn-primary" asp-area="" asp-controller="Home"
+                        asp-action="Index">@Localizer["BackToHome"]</a>
                 </div>
             </div>
         </div>

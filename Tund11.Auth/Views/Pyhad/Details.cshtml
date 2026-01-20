@@ -1,10 +1,10 @@
 @model Pyha
 
 @{
-    ViewData["Title"] = "Püha detailid";
+    ViewData["Title"] = Localizer["HolidayDetails"];
 }
 
-<h1>Püha detailid</h1>
+<h1>@Localizer["HolidayDetails"]</h1>
 
 <div>
     <hr />
@@ -16,19 +16,19 @@
         <dd class="col-sm-10">@Model.Kuupaev.ToString("yyyy-MM-dd")</dd>
     </dl>
 
-    <h4>Külalised</h4>
+    <h4>@Localizer["Guests"]</h4>
 
     @if (Model.Kylalised is null || !Model.Kylalised.Any())
     {
-        <p>Hetkel külalisi pole.</p>
+        <p>@Localizer["NoGuestsYet"]</p>
     }
     else
     {
         <table class="table">
             <thead>
                 <tr>
-                    <th>Nimi</th>
-                    <th>Email</th>
+                    <th>@Localizer["Name"]</th>
+                    <th>@Localizer["Email"]</th>
                 </tr>
             </thead>
             <tbody>
@@ -45,6 +45,6 @@
 </div>
 
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Muuda</a> |
-    <a asp-action="Index">Tagasi</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id">@Localizer["Edit"]</a> |
+    <a asp-action="Index">@Localizer["Back"]</a>
 </div>

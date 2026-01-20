@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="@System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
 
 <head>
     <meta charset="utf-8" />
@@ -24,25 +24,26 @@
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home"
-                                asp-action="Index">Koduleht</a>
+                                asp-action="Index">@Localizer["HomePage"]</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Pyhad"
-                                asp-action="Index">Pühad</a>
+                                asp-action="Index">@Localizer["Holidays"]</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Kylalised"
-                                asp-action="Index">Külalised</a>
+                                asp-action="Index">@Localizer["Guests"]</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Ankeet"
-                                asp-action="Index">Ankeet</a>
+                                asp-action="Index">@Localizer["Survey"]</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home"
-                                asp-action="Privacy">Privaatsuspoliitika</a>
+                                asp-action="Privacy">@Localizer["PrivacyPolicy"]</a>
                         </li>
                     </ul>
+                    <partial name="_LanguageSwitcher" />
                     <partial name="_LoginPartial" />
                 </div>
             </div>
@@ -57,7 +58,7 @@
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2026 - Maksim Tsikvasvili - <a asp-area="" asp-controller="Home"
-                asp-action="Privacy">Privaatsuspoliitika</a>
+                asp-action="Privacy">@Localizer["PrivacyPolicy"]</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

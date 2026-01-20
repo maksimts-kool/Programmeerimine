@@ -1,0 +1,736 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Home" xml:space="preserve">
+    <value>Avaleht</value>
+  </data>
+  <data name="Privacy" xml:space="preserve">
+    <value>Privaatsus</value>
+  </data>
+  <data name="Welcome" xml:space="preserve">
+    <value>Tere tulemast</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Keel</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Logi sisse</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Registreeri</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Logi välja</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>E-post</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Parool</value>
+  </data>
+  <data name="RememberMe" xml:space="preserve">
+    <value>Mäleta mind</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Kinnita parool</value>
+  </data>
+  <data name="Identity_UseLocalAccountToLogin" xml:space="preserve">
+    <value>Logi sisse kohaliku kontoga.</value>
+  </data>
+  <data name="Identity_ForgotPasswordLink" xml:space="preserve">
+    <value>Unustasid parooli?</value>
+  </data>
+  <data name="Identity_RegisterAsNewUserLink" xml:space="preserve">
+    <value>Registreeru uue kasutajana</value>
+  </data>
+  <data name="Identity_ResendEmailConfirmationLink" xml:space="preserve">
+    <value>Saada e-posti kinnitus uuesti</value>
+  </data>
+  <data name="Identity_UseAnotherServiceToLogin" xml:space="preserve">
+    <value>Logi sisse teise teenuse kaudu.</value>
+  </data>
+  <data name="Identity_NoExternalAuthConfiguredPrefix" xml:space="preserve">
+    <value>Väliseid autentimisteenuseid pole seadistatud. Vaata seda</value>
+  </data>
+  <data name="Identity_NoExternalAuthConfiguredLinkText" xml:space="preserve">
+    <value>artiklit selle ASP.NET rakenduse seadistamise kohta, et toetada sisselogimist väliste teenuste kaudu</value>
+  </data>
+  <data name="Identity_ExternalLoginButtonTitle" xml:space="preserve">
+    <value>Logi sisse oma {0} kontoga</value>
+  </data>
+  <data name="Identity_CreateNewAccount" xml:space="preserve">
+    <value>Loo uus konto.</value>
+  </data>
+  <data name="Identity_UseAnotherServiceToRegister" xml:space="preserve">
+    <value>Registreeru teise teenuse kaudu.</value>
+  </data>
+  <data name="Identity_ForgotPasswordTitle" xml:space="preserve">
+    <value>Unustasid parooli?</value>
+  </data>
+  <data name="Identity_EnterYourEmail" xml:space="preserve">
+    <value>Sisesta oma e-posti aadress.</value>
+  </data>
+  <data name="Identity_ResetPasswordButton" xml:space="preserve">
+    <value>Lähtesta parool</value>
+  </data>
+  <data name="Identity_AccessDeniedTitle" xml:space="preserve">
+    <value>Ligipääs keelatud</value>
+  </data>
+  <data name="Identity_AccessDeniedMessage" xml:space="preserve">
+    <value>Teil ei ole sellele ressursile ligipääsu.</value>
+  </data>
+  <data name="Identity_LockedOutTitle" xml:space="preserve">
+    <value>Konto lukustatud</value>
+  </data>
+  <data name="Identity_LockedOutMessage" xml:space="preserve">
+    <value>See konto on lukustatud. Palun proovige hiljem uuesti.</value>
+  </data>
+  <data name="Identity_LogoutTitle" xml:space="preserve">
+    <value>Logi välja</value>
+  </data>
+  <data name="Identity_ClickHereToLogout" xml:space="preserve">
+    <value>Vajuta siia, et välja logida</value>
+  </data>
+  <data name="Identity_LoggedOutSuccessfully" xml:space="preserve">
+    <value>Olete rakendusest edukalt välja loginud.</value>
+  </data>
+  <data name="Identity_ResetPasswordConfirmationTitle" xml:space="preserve">
+    <value>Parooli lähtestamise kinnitus</value>
+  </data>
+  <data name="Identity_PasswordHasBeenReset" xml:space="preserve">
+    <value>Teie parool on lähtestatud.</value>
+  </data>
+  <data name="Identity_Please" xml:space="preserve">
+    <value>Palun</value>
+  </data>
+  <data name="Identity_ClickHereToLogin" xml:space="preserve">
+    <value>vajuta siia, et sisse logida</value>
+  </data>
+  <data name="Identity_ResendButton" xml:space="preserve">
+    <value>Saada uuesti</value>
+  </data>
+  <data name="Identity_ResetPasswordTitle" xml:space="preserve">
+    <value>Parooli lähtestamine</value>
+  </data>
+  <data name="Identity_ResetYourPassword" xml:space="preserve">
+    <value>Lähtesta oma parool.</value>
+  </data>
+  <data name="Identity_PleaseEnterYourPassword" xml:space="preserve">
+    <value>Palun sisesta parool.</value>
+  </data>
+  <data name="Identity_PleaseConfirmYourPassword" xml:space="preserve">
+    <value>Palun kinnita parool.</value>
+  </data>
+  <data name="Identity_ResetButton" xml:space="preserve">
+    <value>Lähtesta</value>
+  </data>
+  <data name="Identity_ForgotPasswordConfirmationTitle" xml:space="preserve">
+    <value>Parooli lähtestamise kinnitus</value>
+  </data>
+  <data name="Identity_CheckEmailToResetPassword" xml:space="preserve">
+    <value>Parooli lähtestamiseks kontrolli oma e-posti.</value>
+  </data>
+  <data name="Identity_RegisterConfirmationTitle" xml:space="preserve">
+    <value>Registreerimise kinnitus</value>
+  </data>
+  <data name="Identity_NoRealEmailSenderPrefix" xml:space="preserve">
+    <value>Selles rakenduses ei ole praegu seadistatud päris e-kirja saatjat, vaata</value>
+  </data>
+  <data name="Identity_TheseDocsLinkText" xml:space="preserve">
+    <value>neid juhiseid</value>
+  </data>
+  <data name="Identity_NoRealEmailSenderSuffix" xml:space="preserve">
+    <value>kuidas seadistada päris e-kirja saatja.</value>
+  </data>
+  <data name="Identity_NormallyThisWouldBeEmailed" xml:space="preserve">
+    <value>Tavaliselt saadetaks see e-postiga:</value>
+  </data>
+  <data name="Identity_ClickHereToConfirmAccount" xml:space="preserve">
+    <value>Vajuta siia, et kinnitada konto</value>
+  </data>
+  <data name="Identity_CheckEmailToConfirmAccount" xml:space="preserve">
+    <value>Konto kinnitamiseks kontrolli oma e-posti.</value>
+  </data>
+  <data name="Identity_ConfirmEmailTitle" xml:space="preserve">
+    <value>Kinnita e-post</value>
+  </data>
+  <data name="Identity_ManageYourAccount" xml:space="preserve">
+    <value>Konto haldamine</value>
+  </data>
+  <data name="Identity_ChangeAccountSettings" xml:space="preserve">
+    <value>Muuda konto seadeid</value>
+  </data>
+  <data name="Identity_Profile" xml:space="preserve">
+    <value>Profiil</value>
+  </data>
+  <data name="Identity_ExternalLogins" xml:space="preserve">
+    <value>Välised sisselogimised</value>
+  </data>
+  <data name="Identity_TwoFactorAuthentication" xml:space="preserve">
+    <value>Kahefaktoriline autentimine</value>
+  </data>
+  <data name="Identity_PersonalData" xml:space="preserve">
+    <value>Isikuandmed</value>
+  </data>
+  <data name="Identity_ChangePasswordTitle" xml:space="preserve">
+    <value>Muuda parooli</value>
+  </data>
+  <data name="Identity_PleaseEnterOldPassword" xml:space="preserve">
+    <value>Sisesta praegune parool.</value>
+  </data>
+  <data name="Identity_OldPassword" xml:space="preserve">
+    <value>Praegune parool</value>
+  </data>
+  <data name="Identity_PleaseEnterNewPassword" xml:space="preserve">
+    <value>Sisesta uus parool.</value>
+  </data>
+  <data name="Identity_NewPassword" xml:space="preserve">
+    <value>Uus parool</value>
+  </data>
+  <data name="Identity_PleaseConfirmNewPassword" xml:space="preserve">
+    <value>Kinnita uus parool.</value>
+  </data>
+  <data name="Identity_UpdatePasswordButton" xml:space="preserve">
+    <value>Uuenda parooli</value>
+  </data>
+  <data name="Identity_PleaseChooseUsername" xml:space="preserve">
+    <value>Vali kasutajanimi.</value>
+  </data>
+  <data name="Identity_Username" xml:space="preserve">
+    <value>Kasutajanimi</value>
+  </data>
+  <data name="Identity_PleaseEnterPhoneNumber" xml:space="preserve">
+    <value>Sisesta telefoninumber.</value>
+  </data>
+  <data name="Identity_PhoneNumber" xml:space="preserve">
+    <value>Telefoninumber</value>
+  </data>
+  <data name="HomePage" xml:space="preserve">
+    <value>Koduleht</value>
+  </data>
+  <data name="Holidays" xml:space="preserve">
+    <value>Pühad</value>
+  </data>
+  <data name="Guests" xml:space="preserve">
+    <value>Külalised</value>
+  </data>
+  <data name="Survey" xml:space="preserve">
+    <value>Ankeet</value>
+  </data>
+  <data name="PrivacyPolicy" xml:space="preserve">
+    <value>Privaatsuspoliitika</value>
+  </data>
+  <data name="AddHoliday" xml:space="preserve">
+    <value>Lisa püha</value>
+  </data>
+  <data name="AddGuest" xml:space="preserve">
+    <value>Lisa külaline</value>
+  </data>
+  <data name="AddSurvey" xml:space="preserve">
+    <value>Lisa ankeet</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nimi</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Kuupäev</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Muuda</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Detailid</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Kustuta</value>
+  </data>
+  <data name="All" xml:space="preserve">
+    <value>Kõik</value>
+  </data>
+  <data name="WillCome" xml:space="preserve">
+    <value>Tulevad</value>
+  </data>
+  <data name="WontCome" xml:space="preserve">
+    <value>Ei tule</value>
+  </data>
+  <data name="Holiday" xml:space="preserve">
+    <value>Püha</value>
+  </data>
+  <data name="Event" xml:space="preserve">
+    <value>Üritus</value>
+  </data>
+  <data name="SelectEvent" xml:space="preserve">
+    <value>-- Vali üritus --</value>
+  </data>
+  <data name="WhoAttends" xml:space="preserve">
+    <value>Kes osaleb</value>
+  </data>
+  <data name="YesWillCome" xml:space="preserve">
+    <value>Jah, tulen kindlasti</value>
+  </data>
+  <data name="NoWontCome" xml:space="preserve">
+    <value>Ei, kahjuks ei saa tulla</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Salvesta</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Tagasi</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Nimetus</value>
+  </data>
+  <data name="WelcomeToPikookLaad" xml:space="preserve">
+    <value>Tere tulemast Pikook Laad!</value>
+  </data>
+  <data name="HomeSubtitle" xml:space="preserve">
+    <value>Haldage sündmusi, külalisi ja ankeetide vastuseid ühes kohas</value>
+  </data>
+  <data name="HolidaysCardDescription" xml:space="preserve">
+    <value>Vaadake ja hallake kõiki eelseisvaid üritusi ja pühasid</value>
+  </data>
+  <data name="ViewHolidays" xml:space="preserve">
+    <value>Vaata pühasid</value>
+  </data>
+  <data name="SurveyCardDescription" xml:space="preserve">
+    <value>Vastake küsimustele ja registreerige end üritustele</value>
+  </data>
+  <data name="FillSurvey" xml:space="preserve">
+    <value>Täida ankeet</value>
+  </data>
+  <data name="GuestsCardDescription" xml:space="preserve">
+    <value>Hallake külalisi ja nende osalemist üritustel</value>
+  </data>
+  <data name="ViewGuests" xml:space="preserve">
+    <value>Vaata külalisi</value>
+  </data>
+  <data name="PrivacyCardDescription" xml:space="preserve">
+    <value>Lugege meie privaatsuspoliitikat ja andmekaitset</value>
+  </data>
+  <data name="HomeHowToStart" xml:space="preserve">
+    <value>Kuidas alustada?</value>
+  </data>
+  <data name="StartViewHolidaysDesc" xml:space="preserve">
+    <value>tutvuge kõigi eelseisvate üritustega</value>
+  </data>
+  <data name="StartFillSurveyDesc" xml:space="preserve">
+    <value>andke oma vastused ja registreerige end</value>
+  </data>
+  <data name="GetConfirmation" xml:space="preserve">
+    <value>Saate kinnituse</value>
+  </data>
+  <data name="StartGetConfirmationDesc" xml:space="preserve">
+    <value>e-posti teel saate kinnituse oma registreerimise kohta</value>
+  </data>
+  <data name="PrivacyPageText" xml:space="preserve">
+    <value>Kasutage seda lehte oma saidi privaatsuspoliitika kirjeldamiseks.</value>
+  </data>
+  <data name="ThankYouTitle" xml:space="preserve">
+    <value>Tänan!</value>
+  </data>
+  <data name="ThankYouForSurvey" xml:space="preserve">
+    <value>Suur aitäh vastamise eest ankeetile <strong>{0}</strong>!</value>
+  </data>
+  <data name="ResponseSaved" xml:space="preserve">
+    <value>Sinu vastus on edukalt salvestatud.</value>
+  </data>
+  <data name="Congrats" xml:space="preserve">
+    <value>Õnnitleme!</value>
+  </data>
+  <data name="HappyYouCome" xml:space="preserve">
+    <value>Väga tore, et tuled osalema! Näeme sind üritusel!</value>
+  </data>
+  <data name="SorryToHear" xml:space="preserve">
+    <value>Kahju kuulda!</value>
+  </data>
+  <data name="SadYouCantCome" xml:space="preserve">
+    <value>Meil on kahju, et sa tulla ei saa. Võib-olla järgmine kord!</value>
+  </data>
+  <data name="SurveyDetails" xml:space="preserve">
+    <value>Ankeedi detailid</value>
+  </data>
+  <data name="SurveyName" xml:space="preserve">
+    <value>Ankeedi nimi</value>
+  </data>
+  <data name="YourAnswer" xml:space="preserve">
+    <value>Sinu vastus</value>
+  </data>
+  <data name="BackToHome" xml:space="preserve">
+    <value>Tagasi kodulehele</value>
+  </data>
+  <data name="EditGuest" xml:space="preserve">
+    <value>Muuda külalist</value>
+  </data>
+  <data name="GuestDetails" xml:space="preserve">
+    <value>Külalise detailid</value>
+  </data>
+  <data name="DeleteGuest" xml:space="preserve">
+    <value>Kustuta külaline</value>
+  </data>
+  <data name="AreYouSureDelete" xml:space="preserve">
+    <value>Kas oled kindel, et tahad kustutada?</value>
+  </data>
+  <data name="Participation" xml:space="preserve">
+    <value>Osalemine</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>-- Pole määratud --</value>
+  </data>
+  <data name="NoResponse" xml:space="preserve">
+    <value>Pole vastanud</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Tühista</value>
+  </data>
+  <data name="SelectHoliday" xml:space="preserve">
+    <value>-- Vali püha --</value>
+  </data>
+  <data name="EditHoliday" xml:space="preserve">
+    <value>Muuda püha</value>
+  </data>
+  <data name="HolidayDetails" xml:space="preserve">
+    <value>Püha detailid</value>
+  </data>
+  <data name="DeleteHoliday" xml:space="preserve">
+    <value>Kustuta püha</value>
+  </data>
+  <data name="NoGuestsYet" xml:space="preserve">
+    <value>Hetkel külalisi pole.</value>
+  </data>
+  <data name="Manage" xml:space="preserve">
+    <value>Halda</value>
+  </data>
+  <data name="HelloUser" xml:space="preserve">
+    <value>Tere, {0}!</value>
+  </data>
+  <data name="Download" xml:space="preserve">
+    <value>Laadi alla</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Eemalda</value>
+  </data>
+  <data name="Identity_LoginWith2fa_Title" xml:space="preserve">
+    <value>Kahefaktoriline autentimine</value>
+  </data>
+  <data name="Identity_LoginWith2fa_Description" xml:space="preserve">
+    <value>Sinu sisselogimine on kaitstud autentimisrakendusega. Sisesta allpool autentimiskood.</value>
+  </data>
+  <data name="Identity_LoginWith2fa_NoAccessToDevice" xml:space="preserve">
+    <value>Pole ligipääsu oma autentimisseadmele? Sa saad</value>
+  </data>
+  <data name="Identity_LoginWith2fa_LoginWithRecoveryCodeLink" xml:space="preserve">
+    <value>sisse logida taastamiskoodiga</value>
+  </data>
+  <data name="Identity_LoginWithRecoveryCode_Title" xml:space="preserve">
+    <value>Taastamiskoodi kinnitamine</value>
+  </data>
+  <data name="Identity_LoginWithRecoveryCode_Description" xml:space="preserve">
+    <value>Soovisid sisse logida taastamiskoodiga. Seda sisselogimist ei jäeta meelde enne, kui sisestad sisselogimisel autentimisrakenduse koodi või keelad 2FA ja logid uuesti sisse.</value>
+  </data>
+  <data name="Identity_RecoveryCodePlaceholder" xml:space="preserve">
+    <value>Taastamiskood</value>
+  </data>
+  <data name="Identity_ExternalProvider" xml:space="preserve">
+    <value>Väline teenusepakkuja</value>
+  </data>
+  <data name="Identity_ExternalLogin_AssociateTitle" xml:space="preserve">
+    <value>Seosta oma {0} konto.</value>
+  </data>
+  <data name="Identity_ExternalLogin_SuccessfullyAuthenticatedWith" xml:space="preserve">
+    <value>Oled edukalt autentitud teenusega</value>
+  </data>
+  <data name="Identity_ExternalLogin_PleaseEnterEmailToFinish" xml:space="preserve">
+    <value>Palun sisesta allpool selle saidi e-posti aadress ja klõpsa nuppu „Registreeru”, et sisselogimine lõpetada.</value>
+  </data>
+  <data name="Identity_EmailPlaceholder" xml:space="preserve">
+    <value>Palun sisesta oma e-post.</value>
+  </data>
+  <data name="Identity_ConfirmEmailChange_Title" xml:space="preserve">
+    <value>Kinnita e-posti muutmine</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_Title" xml:space="preserve">
+    <value>Kahefaktoriline autentimine (2FA)</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_NoRecoveryCodesLeft" xml:space="preserve">
+    <value>Sul pole enam taastamiskoode.</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_MustGenerateNewRecoveryCodesPrefix" xml:space="preserve">
+    <value>Sa pead</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_GenerateNewRecoveryCodesLink" xml:space="preserve">
+    <value>genereerima uue taastamiskoodide komplekti</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_MustGenerateNewRecoveryCodesSuffix" xml:space="preserve">
+    <value>enne kui saad taastamiskoodiga sisse logida.</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_OneRecoveryCodeLeft" xml:space="preserve">
+    <value>Sul on jäänud 1 taastamiskood.</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_YouCanPrefix" xml:space="preserve">
+    <value>Sa saad</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_RecoveryCodesLeft" xml:space="preserve">
+    <value>Sul on jäänud {0} taastamiskoodi.</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_YouShouldPrefix" xml:space="preserve">
+    <value>Sa peaksid</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_ForgetThisBrowser" xml:space="preserve">
+    <value>Unusta see brauser</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_Disable2FA" xml:space="preserve">
+    <value>Keela 2FA</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_ResetRecoveryCodes" xml:space="preserve">
+    <value>Lähtesta taastamiskoodid</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_AuthenticatorApp" xml:space="preserve">
+    <value>Autentimisrakendus</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_AddAuthenticatorApp" xml:space="preserve">
+    <value>Lisa autentimisrakendus</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_SetUpAuthenticatorApp" xml:space="preserve">
+    <value>Seadista autentimisrakendus</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_ResetAuthenticatorApp" xml:space="preserve">
+    <value>Lähtesta autentimisrakendus</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_PrivacyPolicyNotAccepted" xml:space="preserve">
+    <value>Privaatsus- ja küpsiste poliitikat pole vastu võetud.</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_AcceptPolicyToEnable2FA" xml:space="preserve">
+    <value>Kahefaktorilise autentimise lubamiseks pead poliitika vastu võtma.</value>
+  </data>
+  <data name="Identity_EnableAuthenticator_Title" xml:space="preserve">
+    <value>Seadista autentimisrakendus</value>
+  </data>
+  <data name="Identity_EnableAuthenticator_Intro" xml:space="preserve">
+    <value>Autentimisrakenduse kasutamiseks tee järgmised sammud:</value>
+  </data>
+  <data name="Identity_EnableAuthenticator_DownloadAppPrefix" xml:space="preserve">
+    <value>Laadi alla kahefaktoriline autentimisrakendus, näiteks</value>
+  </data>
+  <data name="Identity_EnableAuthenticator_DownloadAppFor" xml:space="preserve">
+    <value>jaoks</value>
+  </data>
+  <data name="Identity_EnableAuthenticator_ScanQrPrefix" xml:space="preserve">
+    <value>Skanni QR-kood või sisesta see võti</value>
+  </data>
+  <data name="Identity_EnableAuthenticator_ScanQrSuffix" xml:space="preserve">
+    <value>oma autentimisrakendusse. Tühikud ja suur-/väiketähed ei oma tähtsust.</value>
+  </data>
+  <data name="Identity_EnableAuthenticator_LearnHowPrefix" xml:space="preserve">
+    <value>Uuri, kuidas</value>
+  </data>
+  <data name="Identity_EnableAuthenticator_EnableQrCodeGenerationLink" xml:space="preserve">
+    <value>lubada QR-koodi genereerimine</value>
+  </data>
+  <data name="Identity_EnableAuthenticator_AfterScan" xml:space="preserve">
+    <value>Kui oled QR-koodi skanninud või ülaloleva võtme sisestanud, annab autentimisrakendus sulle unikaalse koodi. Sisesta kood allolevasse kinnituskasti.</value>
+  </data>
+  <data name="Identity_VerificationCodePlaceholder" xml:space="preserve">
+    <value>Palun sisesta kood.</value>
+  </data>
+  <data name="Identity_VerificationCode" xml:space="preserve">
+    <value>Kinnituskood</value>
+  </data>
+  <data name="Identity_Verify" xml:space="preserve">
+    <value>Kinnita</value>
+  </data>
+  <data name="Identity_ManageEmail_Title" xml:space="preserve">
+    <value>Halda e-posti</value>
+  </data>
+  <data name="Identity_ManageEmail_SendVerificationEmail" xml:space="preserve">
+    <value>Saada kinnituskiri</value>
+  </data>
+  <data name="Identity_ManageEmail_NewEmailPlaceholder" xml:space="preserve">
+    <value>Palun sisesta uus e-post.</value>
+  </data>
+  <data name="Identity_ManageEmail_ChangeEmail" xml:space="preserve">
+    <value>Muuda e-posti</value>
+  </data>
+  <data name="Identity_ManageExternalLogins_Title" xml:space="preserve">
+    <value>Halda väliseid sisselogimisi</value>
+  </data>
+  <data name="Identity_ManageExternalLogins_RegisteredLogins" xml:space="preserve">
+    <value>Registreeritud sisselogimised</value>
+  </data>
+  <data name="Identity_ManageExternalLogins_RemoveLoginTitle" xml:space="preserve">
+    <value>Eemalda {0} sisselogimine sinu kontolt</value>
+  </data>
+  <data name="Identity_ManageExternalLogins_AddAnotherService" xml:space="preserve">
+    <value>Lisa teine teenus sisselogimiseks.</value>
+  </data>
+  <data name="Identity_ManageExternalLogins_LinkLoginTitle" xml:space="preserve">
+    <value>Logi sisse oma {0} kontoga</value>
+  </data>
+  <data name="Identity_Disable2fa_Title" xml:space="preserve">
+    <value>Keela kahefaktoriline autentimine (2FA)</value>
+  </data>
+  <data name="Identity_Disable2fa_AlertStrong" xml:space="preserve">
+    <value>See tegevus keelab ainult 2FA.</value>
+  </data>
+  <data name="Identity_Disable2fa_DescriptionPrefix" xml:space="preserve">
+    <value>2FA keelamine ei muuda autentimisrakendustes kasutatavaid võtmeid. Kui soovid autentimisrakenduses kasutatavat võtit muuta, peaksid</value>
+  </data>
+  <data name="Identity_Disable2fa_ResetAuthenticatorKeysLink" xml:space="preserve">
+    <value>lähtestama oma autentimisvõtmed.</value>
+  </data>
+  <data name="Identity_Disable2fa_Button" xml:space="preserve">
+    <value>Keela 2FA</value>
+  </data>
+  <data name="Identity_GenerateRecoveryCodes_Title" xml:space="preserve">
+    <value>Genereeri kahefaktorilise autentimise (2FA) taastamiskoodid</value>
+  </data>
+  <data name="Identity_RecoveryCodes_PutInSafePlace" xml:space="preserve">
+    <value>Hoia neid koode turvalises kohas.</value>
+  </data>
+  <data name="Identity_RecoveryCodes_LoseAccessWarning" xml:space="preserve">
+    <value>Kui kaotad seadme ja sul pole taastamiskoode, kaotad ligipääsu oma kontole.</value>
+  </data>
+  <data name="Identity_GenerateRecoveryCodes_DescriptionPrefix" xml:space="preserve">
+    <value>Uute taastamiskoodide genereerimine ei muuda autentimisrakendustes kasutatavaid võtmeid. Kui soovid autentimisrakenduses kasutatavat võtit muuta, peaksid</value>
+  </data>
+  <data name="Identity_GenerateRecoveryCodes_ResetAuthenticatorKeysLink" xml:space="preserve">
+    <value>lähtestama oma autentimisvõtmed.</value>
+  </data>
+  <data name="Identity_GenerateRecoveryCodes_Button" xml:space="preserve">
+    <value>Genereeri taastamiskoodid</value>
+  </data>
+  <data name="Identity_ResetAuthenticator_Title" xml:space="preserve">
+    <value>Lähtesta autentimisvõti</value>
+  </data>
+  <data name="Identity_ResetAuthenticator_WarningStrong" xml:space="preserve">
+    <value>Kui lähtestad autentimisvõtme, ei tööta autentimisrakendus enne, kui seadistad selle uuesti.</value>
+  </data>
+  <data name="Identity_ResetAuthenticator_Description" xml:space="preserve">
+    <value>See protsess keelab 2FA kuni kinnitad autentimisrakenduse. Kui sa seadistamist ei lõpeta, võid kaotada ligipääsu oma kontole.</value>
+  </data>
+  <data name="Identity_ResetAuthenticator_Button" xml:space="preserve">
+    <value>Lähtesta autentimisvõti</value>
+  </data>
+  <data name="Identity_ShowRecoveryCodes_Title" xml:space="preserve">
+    <value>Taastamiskoodid</value>
+  </data>
+  <data name="Identity_PersonalData_Title" xml:space="preserve">
+    <value>Isikuandmed</value>
+  </data>
+  <data name="Identity_PersonalData_Description" xml:space="preserve">
+    <value>Sinu konto sisaldab isikuandmeid, mille oled meile andnud. Sellelt lehelt saad need andmed alla laadida või kustutada.</value>
+  </data>
+  <data name="Identity_PersonalData_DeletePermanentWarning" xml:space="preserve">
+    <value>Nende andmete kustutamine eemaldab sinu konto jäädavalt ning seda ei saa taastada.</value>
+  </data>
+  <data name="Identity_DeletePersonalData_Title" xml:space="preserve">
+    <value>Kustuta isikuandmed</value>
+  </data>
+  <data name="Identity_PasswordPlaceholder" xml:space="preserve">
+    <value>Palun sisesta oma parool.</value>
+  </data>
+  <data name="Identity_DeletePersonalData_Button" xml:space="preserve">
+    <value>Kustuta andmed ja sulge minu konto</value>
+  </data>
+  <data name="Identity_DownloadPersonalData_Title" xml:space="preserve">
+    <value>Laadi alla oma andmed</value>
+  </data>
+  <data name="Identity_SetPassword_Title" xml:space="preserve">
+    <value>Määra parool</value>
+  </data>
+  <data name="Identity_SetPassword_Heading" xml:space="preserve">
+    <value>Määra oma parool</value>
+  </data>
+  <data name="Identity_SetPassword_Info" xml:space="preserve">
+    <value>Sul pole selle saidi jaoks kohalikku kasutajanime/parooli. Lisa kohalik konto, et saaksid sisse logida ilma välise sisselogimiseta.</value>
+  </data>
+  <data name="Identity_NewPasswordPlaceholder" xml:space="preserve">
+    <value>Palun sisesta uus parool.</value>
+  </data>
+  <data name="Identity_ConfirmPasswordPlaceholder" xml:space="preserve">
+    <value>Palun kinnita uus parool.</value>
+  </data>
+  <data name="Identity_SetPassword_Button" xml:space="preserve">
+    <value>Määra parool</value>
+  </data>
+  <data name="CreatedDate" xml:space="preserve">
+    <value>Loomise kuupäev</value>
+  </data>
+  <data name="Error_AddHolidayFirst" xml:space="preserve">
+    <value>Enne külalise lisamist lisa vähemalt üks püha.</value>
+  </data>
+  <data name="Validation_SelectHoliday" xml:space="preserve">
+    <value>Vali püha.</value>
+  </data>
+  <data name="Validation_SelectEvent" xml:space="preserve">
+    <value>Vali üritus.</value>
+  </data>
+  <data name="Validation_EmailDomainInvalid" xml:space="preserve">
+    <value>E-post ei ole korrektne või domeen ei eksisteeri.</value>
+  </data>
+  <data name="The {0} field is required." xml:space="preserve">
+    <value>Väli {0} on kohustuslik.</value>
+  </data>
+  <data name="The field {0} must be a string with a maximum length of {1}." xml:space="preserve">
+    <value>Väli {0} võib sisaldada maksimaalselt {1} märki.</value>
+  </data>
+  <data name="The {0} field is not a valid e-mail address." xml:space="preserve">
+    <value>Väli {0} ei ole korrektne e-posti aadress.</value>
+  </data>
+</root>

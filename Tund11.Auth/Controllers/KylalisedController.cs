@@ -1,14 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using Tund11.Auth.Data;
+using Tund11.Auth;
 using Tund11.Models;
 
 namespace Tund11.Auth.Controllers;
 
-public class KylalisedController(ApplicationDbContext context) : Controller
+public class KylalisedController(ApplicationDbContext context, IStringLocalizer<SharedResources> localizer) : Controller
 {
     private readonly ApplicationDbContext _context = context;
+    private readonly IStringLocalizer<SharedResources> _localizer = localizer;
 
     public async Task<IActionResult> Index(string filter = "all")
     {
@@ -17,27 +20,28 @@ public class KylalisedController(ApplicationDbContext context) : Controller
             .Include(k => k.Pyha)
             .AsQueryable();
 
-        // Get all ankeet responses
-        var ankeetResponses = await _context.Ankeetid
-            .AsNoTracking()
-            .Select(a => new { a.Epost, a.OnOsaleb })
-            .ToListAsync();
-
-        var kylalised = await query.OrderBy(k => k.Nimi).ToListAsync();
-
-        // Filter based on ankeet responses
         if (filter == "willbe")
         {
-            kylalised = kylalised
-                .Where(k => ankeetResponses.Any(a => a.Epost.Equals(k.Email, StringComparison.OrdinalIgnoreCase) && a.OnOsaleb))
-                .ToList();
+            // Check only the LATEST response for this specific email and holiday
+            query = query.Where(k => _context.Ankeetid
+                .Where(a => a.Epost.ToLower() == k.Email.ToLower() && a.PyhaId == k.PyhaId)
+                .OrderByDescending(a => a.LoomiseKupaev)
+                .ThenByDescending(a => a.Id)
+                .Select(a => (bool?)a.OnOsaleb)
+                .FirstOrDefault() == true);
         }
         else if (filter == "wontbe")
         {
-            kylalised = kylalised
-                .Where(k => ankeetResponses.Any(a => a.Epost.Equals(k.Email, StringComparison.OrdinalIgnoreCase) && !a.OnOsaleb))
-                .ToList();
+            // Check only the LATEST response for this specific email and holiday
+            query = query.Where(k => _context.Ankeetid
+                .Where(a => a.Epost.ToLower() == k.Email.ToLower() && a.PyhaId == k.PyhaId)
+                .OrderByDescending(a => a.LoomiseKupaev)
+                .ThenByDescending(a => a.Id)
+                .Select(a => (bool?)a.OnOsaleb)
+                .FirstOrDefault() == false);
         }
+
+        var kylalised = await query.OrderBy(k => k.Nimi).ToListAsync();
 
         ViewData["CurrentFilter"] = filter;
         return View(kylalised);
@@ -77,7 +81,7 @@ public class KylalisedController(ApplicationDbContext context) : Controller
         var hasPyhad = await _context.Pyhad.AsNoTracking().AnyAsync();
         if (!hasPyhad)
         {
-            TempData["Error"] = "Enne külalise lisamist lisa vähemalt üks püha.";
+            TempData["Error"] = _localizer["Error_AddHolidayFirst"];
             return RedirectToAction(actionName: "Create", controllerName: "Pyhad");
         }
 
@@ -92,7 +96,7 @@ public class KylalisedController(ApplicationDbContext context) : Controller
         var pyhaExists = await _context.Pyhad.AsNoTracking().AnyAsync(p => p.Id == kylaline.PyhaId);
         if (!pyhaExists)
         {
-            ModelState.AddModelError(nameof(Kylaline.PyhaId), "Vali püha");
+            ModelState.AddModelError(nameof(Kylaline.PyhaId), _localizer["Validation_SelectHoliday"]);
         }
 
         if (!ModelState.IsValid)
@@ -167,7 +171,7 @@ public class KylalisedController(ApplicationDbContext context) : Controller
         var pyhaExists = await _context.Pyhad.AsNoTracking().AnyAsync(p => p.Id == kylaline.PyhaId);
         if (!pyhaExists)
         {
-            ModelState.AddModelError(nameof(Kylaline.PyhaId), "Vali püha");
+            ModelState.AddModelError(nameof(Kylaline.PyhaId), _localizer["Validation_SelectHoliday"]);
         }
 
         if (!ModelState.IsValid)

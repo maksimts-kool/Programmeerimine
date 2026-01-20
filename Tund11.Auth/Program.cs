@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 using Tund11.Auth.Data;
 using Tund11.Auth.Services;
 
@@ -14,7 +16,31 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
-builder.Services.AddControllersWithViews();
+
+// Add localization services
+builder.Services.AddControllersWithViews()
+    .AddViewLocalization()
+    .AddDataAnnotationsLocalization(options =>
+    {
+        options.DataAnnotationLocalizerProvider = (type, factory) =>
+            factory.Create(typeof(Tund11.Auth.SharedResources));
+    });
+
+// Configure supported cultures
+var supportedCultures = new[]
+{
+    new CultureInfo("en"),
+    new CultureInfo("ru"),
+    new CultureInfo("et")
+};
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.DefaultRequestCulture = new RequestCulture("en");
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+    options.RequestCultureProviders.Insert(0, new CookieRequestCultureProvider());
+});
 
 var app = builder.Build();
 
@@ -31,6 +57,10 @@ else
 }
 
 app.UseHttpsRedirection();
+
+// Add localization middleware
+app.UseRequestLocalization();
+
 app.UseRouting();
 
 app.UseAuthorization();

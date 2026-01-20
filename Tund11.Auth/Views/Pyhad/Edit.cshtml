@@ -1,10 +1,10 @@
 @model Pyha
 
 @{
-    ViewData["Title"] = "Muuda püha";
+    ViewData["Title"] = Localizer["EditHoliday"];
 }
 
-<h1>Muuda püha</h1>
+<h1>@Localizer["EditHoliday"]</h1>
 
 <hr />
 <div class="row">
@@ -25,8 +25,8 @@
                 <span asp-validation-for="Kuupaev" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="btn btn-primary">Salvesta</button>
-            <a class="btn btn-secondary" asp-action="Index">Tagasi</a>
+            <button type="submit" class="btn btn-primary">@Localizer["Save"]</button>
+            <a class="btn btn-secondary" asp-action="Index">@Localizer["Back"]</a>
         </form>
     </div>
 </div>

@@ -1,0 +1,56 @@
+@using Microsoft.AspNetCore.Localization
+
+@{
+    var requestCultureFeature = Context.Features.Get<IRequestCultureFeature>();
+    var currentCulture = requestCultureFeature?.RequestCulture.Culture.TwoLetterISOLanguageName ?? "en";
+}
+
+<div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown"
+        aria-expanded="false">
+        @switch (currentCulture)
+        {
+            case "en":
+                <span>🇬🇧 English</span>
+                break;
+            case "ru":
+                <span>🇷🇺 Русский</span>
+                break;
+            case "et":
+                <span>🇪🇪 Eesti</span>
+                break;
+            default:
+                <span>@Localizer["Language"]</span>
+                break;
+        }
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+        <li>
+            <form asp-controller="Culture" asp-action="SetCulture" method="post" class="dropdown-item">
+                <input type="hidden" name="culture" value="en" />
+                <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                <button type="submit" class="btn btn-link text-decoration-none p-0 text-dark">
+                    🇬🇧 English
+                </button>
+            </form>
+        </li>
+        <li>
+            <form asp-controller="Culture" asp-action="SetCulture" method="post" class="dropdown-item">
+                <input type="hidden" name="culture" value="ru" />
+                <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                <button type="submit" class="btn btn-link text-decoration-none p-0 text-dark">
+                    🇷🇺 Русский
+                </button>
+            </form>
+        </li>
+        <li>
+            <form asp-controller="Culture" asp-action="SetCulture" method="post" class="dropdown-item">
+                <input type="hidden" name="culture" value="et" />
+                <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                <button type="submit" class="btn btn-link text-decoration-none p-0 text-dark">
+                    🇪🇪 Eesti
+                </button>
+            </form>
+        </li>
+    </ul>
+</div>

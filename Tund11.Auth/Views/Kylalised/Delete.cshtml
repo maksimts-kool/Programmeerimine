@@ -1,45 +1,45 @@
 @model Kylaline
 
 @{
-    ViewData["Title"] = "Kustuta külaline";
+    ViewData["Title"] = Localizer["DeleteGuest"];
     var participationStatus = ViewData["ParticipationStatus"] as bool?;
 }
 
-<h1>Kustuta külaline</h1>
+<h1>@Localizer["DeleteGuest"]</h1>
 
-<h3>Kas oled kindel, et tahad kustutada?</h3>
+<h3>@Localizer["AreYouSureDelete"]</h3>
 <div>
     <hr />
     <dl class="row">
-        <dt class="col-sm-2">Nimi</dt>
+        <dt class="col-sm-2">@Localizer["Name"]</dt>
         <dd class="col-sm-10">@Model.Nimi</dd>
 
-        <dt class="col-sm-2">Email</dt>
+        <dt class="col-sm-2">@Localizer["Email"]</dt>
         <dd class="col-sm-10">@Model.Email</dd>
 
-        <dt class="col-sm-2">Püha</dt>
+        <dt class="col-sm-2">@Localizer["Holiday"]</dt>
         <dd class="col-sm-10">@Model.Pyha?.Nimetus</dd>
 
-        <dt class="col-sm-2">Osalemine</dt>
+        <dt class="col-sm-2">@Localizer["Participation"]</dt>
         <dd class="col-sm-10">
             @if (participationStatus == true)
             {
-                <span class="badge bg-success">Tuleb</span>
+                <span class="badge bg-success">@Localizer["WillCome"]</span>
             }
             else if (participationStatus == false)
             {
-                <span class="badge bg-danger">Ei tule</span>
+                <span class="badge bg-danger">@Localizer["WontCome"]</span>
             }
             else
             {
-                <span class="badge bg-secondary">Pole vastanud</span>
+                <span class="badge bg-secondary">@Localizer["NoResponse"]</span>
             }
         </dd>
     </dl>
 
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
-        <button type="submit" class="btn btn-danger">Kustuta</button>
-        <a class="btn btn-secondary" asp-action="Index">Tühista</a>
+        <button type="submit" class="btn btn-danger">@Localizer["Delete"]</button>
+        <a class="btn btn-secondary" asp-action="Index">@Localizer["Cancel"]</a>
     </form>
 </div>

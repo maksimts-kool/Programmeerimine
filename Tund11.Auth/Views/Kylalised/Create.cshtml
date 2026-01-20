@@ -1,10 +1,10 @@
 @model Kylaline
 
 @{
-    ViewData["Title"] = "Lisa külaline";
+    ViewData["Title"] = Localizer["AddGuest"];
 }
 
-<h1>Lisa külaline</h1>
+<h1>@Localizer["AddGuest"]</h1>
 
 <hr />
 <div class="row">
@@ -25,24 +25,24 @@
             </div>
 
             <div class="mb-3">
-                <label asp-for="PyhaId" class="form-label">Püha</label>
+                <label asp-for="PyhaId" class="form-label">@Localizer["Holiday"]</label>
                 <select asp-for="PyhaId" class="form-select" asp-items="@(ViewData["PyhaId"] as SelectList)">
-                    <option value="">-- Vali püha --</option>
+                    <option value="">@Localizer["SelectEvent"]</option>
                 </select>
                 <span asp-validation-for="PyhaId" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Osalemine</label>
+                <label class="form-label">@Localizer["WhoAttends"]</label>
                 <select name="participationStatus" class="form-select">
-                    <option value="">-- Pole määratud --</option>
-                    <option value="willbe">Tuleb</option>
-                    <option value="wontbe">Ei tule</option>
+                    <option value="">@Localizer["NotSet"]</option>
+                    <option value="willbe">@Localizer["WillCome"]</option>
+                    <option value="wontbe">@Localizer["WontCome"]</option>
                 </select>
             </div>
 
-            <button type="submit" class="btn btn-primary">Salvesta</button>
-            <a class="btn btn-secondary" asp-action="Index">Tagasi</a>
+            <button type="submit" class="btn btn-primary">@Localizer["Save"]</button>
+            <a class="btn btn-secondary" asp-action="Index">@Localizer["Back"]</a>
         </form>
     </div>
 </div>

@@ -1,0 +1,736 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Home" xml:space="preserve">
+    <value>Главная</value>
+  </data>
+  <data name="Privacy" xml:space="preserve">
+    <value>Конфиденциальность</value>
+  </data>
+  <data name="Welcome" xml:space="preserve">
+    <value>Добро пожаловать</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Язык</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Войти</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Регистрация</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Выйти</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Эл. почта</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Пароль</value>
+  </data>
+  <data name="RememberMe" xml:space="preserve">
+    <value>Запомнить меня</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Подтвердите пароль</value>
+  </data>
+  <data name="Identity_UseLocalAccountToLogin" xml:space="preserve">
+    <value>Используйте локальную учетную запись для входа.</value>
+  </data>
+  <data name="Identity_ForgotPasswordLink" xml:space="preserve">
+    <value>Забыли пароль?</value>
+  </data>
+  <data name="Identity_RegisterAsNewUserLink" xml:space="preserve">
+    <value>Зарегистрироваться как новый пользователь</value>
+  </data>
+  <data name="Identity_ResendEmailConfirmationLink" xml:space="preserve">
+    <value>Повторно отправить подтверждение email</value>
+  </data>
+  <data name="Identity_UseAnotherServiceToLogin" xml:space="preserve">
+    <value>Войти с помощью другого сервиса.</value>
+  </data>
+  <data name="Identity_NoExternalAuthConfiguredPrefix" xml:space="preserve">
+    <value>Внешние службы аутентификации не настроены. См. эту</value>
+  </data>
+  <data name="Identity_NoExternalAuthConfiguredLinkText" xml:space="preserve">
+    <value>статью о настройке этого приложения ASP.NET для входа через внешние сервисы</value>
+  </data>
+  <data name="Identity_ExternalLoginButtonTitle" xml:space="preserve">
+    <value>Войти, используя вашу учетную запись {0}</value>
+  </data>
+  <data name="Identity_CreateNewAccount" xml:space="preserve">
+    <value>Создать новую учетную запись.</value>
+  </data>
+  <data name="Identity_UseAnotherServiceToRegister" xml:space="preserve">
+    <value>Зарегистрироваться с помощью другого сервиса.</value>
+  </data>
+  <data name="Identity_ForgotPasswordTitle" xml:space="preserve">
+    <value>Забыли пароль?</value>
+  </data>
+  <data name="Identity_EnterYourEmail" xml:space="preserve">
+    <value>Введите ваш email.</value>
+  </data>
+  <data name="Identity_ResetPasswordButton" xml:space="preserve">
+    <value>Сбросить пароль</value>
+  </data>
+  <data name="Identity_AccessDeniedTitle" xml:space="preserve">
+    <value>Доступ запрещён</value>
+  </data>
+  <data name="Identity_AccessDeniedMessage" xml:space="preserve">
+    <value>У вас нет доступа к этому ресурсу.</value>
+  </data>
+  <data name="Identity_LockedOutTitle" xml:space="preserve">
+    <value>Аккаунт заблокирован</value>
+  </data>
+  <data name="Identity_LockedOutMessage" xml:space="preserve">
+    <value>Этот аккаунт заблокирован. Пожалуйста, попробуйте позже.</value>
+  </data>
+  <data name="Identity_LogoutTitle" xml:space="preserve">
+    <value>Выход</value>
+  </data>
+  <data name="Identity_ClickHereToLogout" xml:space="preserve">
+    <value>Нажмите здесь, чтобы выйти</value>
+  </data>
+  <data name="Identity_LoggedOutSuccessfully" xml:space="preserve">
+    <value>Вы успешно вышли из приложения.</value>
+  </data>
+  <data name="Identity_ResetPasswordConfirmationTitle" xml:space="preserve">
+    <value>Подтверждение сброса пароля</value>
+  </data>
+  <data name="Identity_PasswordHasBeenReset" xml:space="preserve">
+    <value>Ваш пароль был сброшен.</value>
+  </data>
+  <data name="Identity_Please" xml:space="preserve">
+    <value>Пожалуйста</value>
+  </data>
+  <data name="Identity_ClickHereToLogin" xml:space="preserve">
+    <value>нажмите здесь, чтобы войти</value>
+  </data>
+  <data name="Identity_ResendButton" xml:space="preserve">
+    <value>Отправить повторно</value>
+  </data>
+  <data name="Identity_ResetPasswordTitle" xml:space="preserve">
+    <value>Сброс пароля</value>
+  </data>
+  <data name="Identity_ResetYourPassword" xml:space="preserve">
+    <value>Сбросьте пароль.</value>
+  </data>
+  <data name="Identity_PleaseEnterYourPassword" xml:space="preserve">
+    <value>Введите пароль.</value>
+  </data>
+  <data name="Identity_PleaseConfirmYourPassword" xml:space="preserve">
+    <value>Подтвердите пароль.</value>
+  </data>
+  <data name="Identity_ResetButton" xml:space="preserve">
+    <value>Сбросить</value>
+  </data>
+  <data name="Identity_ForgotPasswordConfirmationTitle" xml:space="preserve">
+    <value>Подтверждение сброса пароля</value>
+  </data>
+  <data name="Identity_CheckEmailToResetPassword" xml:space="preserve">
+    <value>Проверьте свою почту, чтобы сбросить пароль.</value>
+  </data>
+  <data name="Identity_RegisterConfirmationTitle" xml:space="preserve">
+    <value>Подтверждение регистрации</value>
+  </data>
+  <data name="Identity_NoRealEmailSenderPrefix" xml:space="preserve">
+    <value>В этом приложении не настроен настоящий отправитель email, см.</value>
+  </data>
+  <data name="Identity_TheseDocsLinkText" xml:space="preserve">
+    <value>эти материалы</value>
+  </data>
+  <data name="Identity_NoRealEmailSenderSuffix" xml:space="preserve">
+    <value>чтобы настроить реального отправителя email.</value>
+  </data>
+  <data name="Identity_NormallyThisWouldBeEmailed" xml:space="preserve">
+    <value>Обычно это отправляется по email:</value>
+  </data>
+  <data name="Identity_ClickHereToConfirmAccount" xml:space="preserve">
+    <value>Нажмите здесь, чтобы подтвердить аккаунт</value>
+  </data>
+  <data name="Identity_CheckEmailToConfirmAccount" xml:space="preserve">
+    <value>Проверьте свою почту, чтобы подтвердить аккаунт.</value>
+  </data>
+  <data name="Identity_ConfirmEmailTitle" xml:space="preserve">
+    <value>Подтвердить email</value>
+  </data>
+  <data name="Identity_ManageYourAccount" xml:space="preserve">
+    <value>Управление аккаунтом</value>
+  </data>
+  <data name="Identity_ChangeAccountSettings" xml:space="preserve">
+    <value>Изменение настроек аккаунта</value>
+  </data>
+  <data name="Identity_Profile" xml:space="preserve">
+    <value>Профиль</value>
+  </data>
+  <data name="Identity_ExternalLogins" xml:space="preserve">
+    <value>Внешние входы</value>
+  </data>
+  <data name="Identity_TwoFactorAuthentication" xml:space="preserve">
+    <value>Двухфакторная аутентификация</value>
+  </data>
+  <data name="Identity_PersonalData" xml:space="preserve">
+    <value>Личные данные</value>
+  </data>
+  <data name="Identity_ChangePasswordTitle" xml:space="preserve">
+    <value>Смена пароля</value>
+  </data>
+  <data name="Identity_PleaseEnterOldPassword" xml:space="preserve">
+    <value>Введите текущий пароль.</value>
+  </data>
+  <data name="Identity_OldPassword" xml:space="preserve">
+    <value>Текущий пароль</value>
+  </data>
+  <data name="Identity_PleaseEnterNewPassword" xml:space="preserve">
+    <value>Введите новый пароль.</value>
+  </data>
+  <data name="Identity_NewPassword" xml:space="preserve">
+    <value>Новый пароль</value>
+  </data>
+  <data name="Identity_PleaseConfirmNewPassword" xml:space="preserve">
+    <value>Подтвердите новый пароль.</value>
+  </data>
+  <data name="Identity_UpdatePasswordButton" xml:space="preserve">
+    <value>Обновить пароль</value>
+  </data>
+  <data name="Identity_PleaseChooseUsername" xml:space="preserve">
+    <value>Выберите имя пользователя.</value>
+  </data>
+  <data name="Identity_Username" xml:space="preserve">
+    <value>Имя пользователя</value>
+  </data>
+  <data name="Identity_PleaseEnterPhoneNumber" xml:space="preserve">
+    <value>Введите номер телефона.</value>
+  </data>
+  <data name="Identity_PhoneNumber" xml:space="preserve">
+    <value>Номер телефона</value>
+  </data>
+  <data name="HomePage" xml:space="preserve">
+    <value>Главная страница</value>
+  </data>
+  <data name="Holidays" xml:space="preserve">
+    <value>Праздники</value>
+  </data>
+  <data name="Guests" xml:space="preserve">
+    <value>Гости</value>
+  </data>
+  <data name="Survey" xml:space="preserve">
+    <value>Анкета</value>
+  </data>
+  <data name="PrivacyPolicy" xml:space="preserve">
+    <value>Политика конфиденциальности</value>
+  </data>
+  <data name="AddHoliday" xml:space="preserve">
+    <value>Добавить праздник</value>
+  </data>
+  <data name="AddGuest" xml:space="preserve">
+    <value>Добавить гостя</value>
+  </data>
+  <data name="AddSurvey" xml:space="preserve">
+    <value>Добавить анкету</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Имя</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Дата</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Изменить</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Подробности</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+  <data name="All" xml:space="preserve">
+    <value>Все</value>
+  </data>
+  <data name="WillCome" xml:space="preserve">
+    <value>Придут</value>
+  </data>
+  <data name="WontCome" xml:space="preserve">
+    <value>Не придут</value>
+  </data>
+  <data name="Holiday" xml:space="preserve">
+    <value>Праздник</value>
+  </data>
+  <data name="Event" xml:space="preserve">
+    <value>Мероприятие</value>
+  </data>
+  <data name="SelectEvent" xml:space="preserve">
+    <value>-- Выберите мероприятие --</value>
+  </data>
+  <data name="WhoAttends" xml:space="preserve">
+    <value>Кто присутствует</value>
+  </data>
+  <data name="YesWillCome" xml:space="preserve">
+    <value>Да, я обязательно приду</value>
+  </data>
+  <data name="NoWontCome" xml:space="preserve">
+    <value>Нет, к сожалению не смогу прийти</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Сохранить</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Назад</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Название</value>
+  </data>
+  <data name="WelcomeToPikookLaad" xml:space="preserve">
+    <value>Добро пожаловать в Pikook Laad!</value>
+  </data>
+  <data name="HomeSubtitle" xml:space="preserve">
+    <value>Управляйте событиями, гостями и ответами анкеты в одном месте</value>
+  </data>
+  <data name="HolidaysCardDescription" xml:space="preserve">
+    <value>Просматривайте и управляйте всеми предстоящими событиями и праздниками</value>
+  </data>
+  <data name="ViewHolidays" xml:space="preserve">
+    <value>Смотреть праздники</value>
+  </data>
+  <data name="SurveyCardDescription" xml:space="preserve">
+    <value>Ответьте на вопросы и зарегистрируйтесь на мероприятия</value>
+  </data>
+  <data name="FillSurvey" xml:space="preserve">
+    <value>Заполнить анкету</value>
+  </data>
+  <data name="GuestsCardDescription" xml:space="preserve">
+    <value>Управляйте гостями и их участием в мероприятиях</value>
+  </data>
+  <data name="ViewGuests" xml:space="preserve">
+    <value>Смотреть гостей</value>
+  </data>
+  <data name="PrivacyCardDescription" xml:space="preserve">
+    <value>Прочитайте нашу политику конфиденциальности и защиту данных</value>
+  </data>
+  <data name="HomeHowToStart" xml:space="preserve">
+    <value>Как начать?</value>
+  </data>
+  <data name="StartViewHolidaysDesc" xml:space="preserve">
+    <value>посмотрите все предстоящие события</value>
+  </data>
+  <data name="StartFillSurveyDesc" xml:space="preserve">
+    <value>отправьте ответы и зарегистрируйтесь</value>
+  </data>
+  <data name="GetConfirmation" xml:space="preserve">
+    <value>Получите подтверждение</value>
+  </data>
+  <data name="StartGetConfirmationDesc" xml:space="preserve">
+    <value>вы получите письмо с подтверждением регистрации</value>
+  </data>
+  <data name="PrivacyPageText" xml:space="preserve">
+    <value>На этой странице можно описать политику конфиденциальности вашего сайта.</value>
+  </data>
+  <data name="ThankYouTitle" xml:space="preserve">
+    <value>Спасибо!</value>
+  </data>
+  <data name="ThankYouForSurvey" xml:space="preserve">
+    <value>Спасибо за заполнение анкеты <strong>{0}</strong>!</value>
+  </data>
+  <data name="ResponseSaved" xml:space="preserve">
+    <value>Ваш ответ успешно сохранён.</value>
+  </data>
+  <data name="Congrats" xml:space="preserve">
+    <value>Поздравляем!</value>
+  </data>
+  <data name="HappyYouCome" xml:space="preserve">
+    <value>Отлично, что вы придёте! Увидимся на мероприятии!</value>
+  </data>
+  <data name="SorryToHear" xml:space="preserve">
+    <value>Очень жаль!</value>
+  </data>
+  <data name="SadYouCantCome" xml:space="preserve">
+    <value>Нам грустно, что вы не сможете прийти. Возможно, в следующий раз!</value>
+  </data>
+  <data name="SurveyDetails" xml:space="preserve">
+    <value>Детали анкеты</value>
+  </data>
+  <data name="SurveyName" xml:space="preserve">
+    <value>Название анкеты</value>
+  </data>
+  <data name="YourAnswer" xml:space="preserve">
+    <value>Ваш ответ</value>
+  </data>
+  <data name="BackToHome" xml:space="preserve">
+    <value>На главную</value>
+  </data>
+  <data name="EditGuest" xml:space="preserve">
+    <value>Редактировать гостя</value>
+  </data>
+  <data name="GuestDetails" xml:space="preserve">
+    <value>Детали гостя</value>
+  </data>
+  <data name="DeleteGuest" xml:space="preserve">
+    <value>Удалить гостя</value>
+  </data>
+  <data name="AreYouSureDelete" xml:space="preserve">
+    <value>Вы уверены, что хотите удалить?</value>
+  </data>
+  <data name="Participation" xml:space="preserve">
+    <value>Участие</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>-- Не задано --</value>
+  </data>
+  <data name="NoResponse" xml:space="preserve">
+    <value>Нет ответа</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="SelectHoliday" xml:space="preserve">
+    <value>-- Выберите праздник --</value>
+  </data>
+  <data name="EditHoliday" xml:space="preserve">
+    <value>Редактировать праздник</value>
+  </data>
+  <data name="HolidayDetails" xml:space="preserve">
+    <value>Детали праздника</value>
+  </data>
+  <data name="DeleteHoliday" xml:space="preserve">
+    <value>Удалить праздник</value>
+  </data>
+  <data name="NoGuestsYet" xml:space="preserve">
+    <value>Гостей пока нет.</value>
+  </data>
+  <data name="Manage" xml:space="preserve">
+    <value>Управление</value>
+  </data>
+  <data name="HelloUser" xml:space="preserve">
+    <value>Привет, {0}!</value>
+  </data>
+  <data name="Download" xml:space="preserve">
+    <value>Скачать</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+  <data name="Identity_LoginWith2fa_Title" xml:space="preserve">
+    <value>Двухфакторная аутентификация</value>
+  </data>
+  <data name="Identity_LoginWith2fa_Description" xml:space="preserve">
+    <value>Ваш вход защищён приложением-аутентификатором. Введите код аутентификатора ниже.</value>
+  </data>
+  <data name="Identity_LoginWith2fa_NoAccessToDevice" xml:space="preserve">
+    <value>Нет доступа к устройству с аутентификатором? Вы можете</value>
+  </data>
+  <data name="Identity_LoginWith2fa_LoginWithRecoveryCodeLink" xml:space="preserve">
+    <value>войти с помощью кода восстановления</value>
+  </data>
+  <data name="Identity_LoginWithRecoveryCode_Title" xml:space="preserve">
+    <value>Проверка кода восстановления</value>
+  </data>
+  <data name="Identity_LoginWithRecoveryCode_Description" xml:space="preserve">
+    <value>Вы запросили вход с помощью кода восстановления. Этот вход не будет запомнен, пока вы не введёте код из приложения-аутентификатора при входе или не отключите 2FA и не войдёте снова.</value>
+  </data>
+  <data name="Identity_RecoveryCodePlaceholder" xml:space="preserve">
+    <value>Код восстановления</value>
+  </data>
+  <data name="Identity_ExternalProvider" xml:space="preserve">
+    <value>Внешний провайдер</value>
+  </data>
+  <data name="Identity_ExternalLogin_AssociateTitle" xml:space="preserve">
+    <value>Связать аккаунт {0}.</value>
+  </data>
+  <data name="Identity_ExternalLogin_SuccessfullyAuthenticatedWith" xml:space="preserve">
+    <value>Вы успешно вошли через</value>
+  </data>
+  <data name="Identity_ExternalLogin_PleaseEnterEmailToFinish" xml:space="preserve">
+    <value>Пожалуйста, введите адрес электронной почты для этого сайта ниже и нажмите кнопку «Регистрация», чтобы завершить вход.</value>
+  </data>
+  <data name="Identity_EmailPlaceholder" xml:space="preserve">
+    <value>Введите вашу электронную почту.</value>
+  </data>
+  <data name="Identity_ConfirmEmailChange_Title" xml:space="preserve">
+    <value>Подтвердить смену электронной почты</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_Title" xml:space="preserve">
+    <value>Двухфакторная аутентификация (2FA)</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_NoRecoveryCodesLeft" xml:space="preserve">
+    <value>У вас не осталось кодов восстановления.</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_MustGenerateNewRecoveryCodesPrefix" xml:space="preserve">
+    <value>Вам нужно</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_GenerateNewRecoveryCodesLink" xml:space="preserve">
+    <value>сгенерировать новый набор кодов восстановления</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_MustGenerateNewRecoveryCodesSuffix" xml:space="preserve">
+    <value>прежде чем вы сможете войти с кодом восстановления.</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_OneRecoveryCodeLeft" xml:space="preserve">
+    <value>У вас остался 1 код восстановления.</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_YouCanPrefix" xml:space="preserve">
+    <value>Вы можете</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_RecoveryCodesLeft" xml:space="preserve">
+    <value>У вас осталось кодов восстановления: {0}.</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_YouShouldPrefix" xml:space="preserve">
+    <value>Вам следует</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_ForgetThisBrowser" xml:space="preserve">
+    <value>Забыть этот браузер</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_Disable2FA" xml:space="preserve">
+    <value>Отключить 2FA</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_ResetRecoveryCodes" xml:space="preserve">
+    <value>Сбросить коды восстановления</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_AuthenticatorApp" xml:space="preserve">
+    <value>Приложение-аутентификатор</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_AddAuthenticatorApp" xml:space="preserve">
+    <value>Добавить приложение-аутентификатор</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_SetUpAuthenticatorApp" xml:space="preserve">
+    <value>Настроить приложение-аутентификатор</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_ResetAuthenticatorApp" xml:space="preserve">
+    <value>Сбросить приложение-аутентификатор</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_PrivacyPolicyNotAccepted" xml:space="preserve">
+    <value>Политика конфиденциальности и cookies не принята.</value>
+  </data>
+  <data name="Identity_ManageTwoFactor_AcceptPolicyToEnable2FA" xml:space="preserve">
+    <value>Чтобы включить двухфакторную аутентификацию, необходимо принять политику.</value>
+  </data>
+  <data name="Identity_EnableAuthenticator_Title" xml:space="preserve">
+    <value>Настроить приложение-аутентификатор</value>
+  </data>
+  <data name="Identity_EnableAuthenticator_Intro" xml:space="preserve">
+    <value>Чтобы использовать приложение-аутентификатор, выполните следующие шаги:</value>
+  </data>
+  <data name="Identity_EnableAuthenticator_DownloadAppPrefix" xml:space="preserve">
+    <value>Скачайте приложение-аутентификатор (2FA), например</value>
+  </data>
+  <data name="Identity_EnableAuthenticator_DownloadAppFor" xml:space="preserve">
+    <value>для</value>
+  </data>
+  <data name="Identity_EnableAuthenticator_ScanQrPrefix" xml:space="preserve">
+    <value>Отсканируйте QR-код или введите этот ключ</value>
+  </data>
+  <data name="Identity_EnableAuthenticator_ScanQrSuffix" xml:space="preserve">
+    <value>в своё приложение-аутентификатор. Пробелы и регистр не имеют значения.</value>
+  </data>
+  <data name="Identity_EnableAuthenticator_LearnHowPrefix" xml:space="preserve">
+    <value>Узнайте, как</value>
+  </data>
+  <data name="Identity_EnableAuthenticator_EnableQrCodeGenerationLink" xml:space="preserve">
+    <value>включить генерацию QR-кода</value>
+  </data>
+  <data name="Identity_EnableAuthenticator_AfterScan" xml:space="preserve">
+    <value>После сканирования QR-кода или ввода ключа выше ваше приложение-аутентификатор предоставит уникальный код. Введите код в поле подтверждения ниже.</value>
+  </data>
+  <data name="Identity_VerificationCodePlaceholder" xml:space="preserve">
+    <value>Введите код.</value>
+  </data>
+  <data name="Identity_VerificationCode" xml:space="preserve">
+    <value>Код подтверждения</value>
+  </data>
+  <data name="Identity_Verify" xml:space="preserve">
+    <value>Подтвердить</value>
+  </data>
+  <data name="Identity_ManageEmail_Title" xml:space="preserve">
+    <value>Управление электронной почтой</value>
+  </data>
+  <data name="Identity_ManageEmail_SendVerificationEmail" xml:space="preserve">
+    <value>Отправить письмо для подтверждения</value>
+  </data>
+  <data name="Identity_ManageEmail_NewEmailPlaceholder" xml:space="preserve">
+    <value>Введите новый адрес электронной почты.</value>
+  </data>
+  <data name="Identity_ManageEmail_ChangeEmail" xml:space="preserve">
+    <value>Сменить электронную почту</value>
+  </data>
+  <data name="Identity_ManageExternalLogins_Title" xml:space="preserve">
+    <value>Управление внешними входами</value>
+  </data>
+  <data name="Identity_ManageExternalLogins_RegisteredLogins" xml:space="preserve">
+    <value>Подключённые входы</value>
+  </data>
+  <data name="Identity_ManageExternalLogins_RemoveLoginTitle" xml:space="preserve">
+    <value>Удалить вход {0} из вашей учётной записи</value>
+  </data>
+  <data name="Identity_ManageExternalLogins_AddAnotherService" xml:space="preserve">
+    <value>Добавить другой сервис для входа.</value>
+  </data>
+  <data name="Identity_ManageExternalLogins_LinkLoginTitle" xml:space="preserve">
+    <value>Войти с помощью аккаунта {0}</value>
+  </data>
+  <data name="Identity_Disable2fa_Title" xml:space="preserve">
+    <value>Отключить двухфакторную аутентификацию (2FA)</value>
+  </data>
+  <data name="Identity_Disable2fa_AlertStrong" xml:space="preserve">
+    <value>Это действие только отключает 2FA.</value>
+  </data>
+  <data name="Identity_Disable2fa_DescriptionPrefix" xml:space="preserve">
+    <value>Отключение 2FA не меняет ключи, используемые в приложениях-аутентификаторах. Если вы хотите изменить ключ, используемый в приложении-аутентификаторе, вам следует</value>
+  </data>
+  <data name="Identity_Disable2fa_ResetAuthenticatorKeysLink" xml:space="preserve">
+    <value>сбросить ключи аутентификатора.</value>
+  </data>
+  <data name="Identity_Disable2fa_Button" xml:space="preserve">
+    <value>Отключить 2FA</value>
+  </data>
+  <data name="Identity_GenerateRecoveryCodes_Title" xml:space="preserve">
+    <value>Сгенерировать коды восстановления для двухфакторной аутентификации (2FA)</value>
+  </data>
+  <data name="Identity_RecoveryCodes_PutInSafePlace" xml:space="preserve">
+    <value>Храните эти коды в безопасном месте.</value>
+  </data>
+  <data name="Identity_RecoveryCodes_LoseAccessWarning" xml:space="preserve">
+    <value>Если вы потеряете устройство и у вас не будет кодов восстановления, вы потеряете доступ к своей учётной записи.</value>
+  </data>
+  <data name="Identity_GenerateRecoveryCodes_DescriptionPrefix" xml:space="preserve">
+    <value>Генерация новых кодов восстановления не меняет ключи, используемые в приложениях-аутентификаторах. Если вы хотите изменить ключ, используемый в приложении-аутентификаторе, вам следует</value>
+  </data>
+  <data name="Identity_GenerateRecoveryCodes_ResetAuthenticatorKeysLink" xml:space="preserve">
+    <value>сбросить ключи аутентификатора.</value>
+  </data>
+  <data name="Identity_GenerateRecoveryCodes_Button" xml:space="preserve">
+    <value>Сгенерировать коды восстановления</value>
+  </data>
+  <data name="Identity_ResetAuthenticator_Title" xml:space="preserve">
+    <value>Сбросить ключ аутентификатора</value>
+  </data>
+  <data name="Identity_ResetAuthenticator_WarningStrong" xml:space="preserve">
+    <value>Если вы сбросите ключ аутентификатора, приложение-аутентификатор не будет работать, пока вы не настроите его заново.</value>
+  </data>
+  <data name="Identity_ResetAuthenticator_Description" xml:space="preserve">
+    <value>Этот процесс отключает 2FA до тех пор, пока вы не подтвердите приложение-аутентификатор. Если вы не завершите настройку, вы можете потерять доступ к своей учётной записи.</value>
+  </data>
+  <data name="Identity_ResetAuthenticator_Button" xml:space="preserve">
+    <value>Сбросить ключ аутентификатора</value>
+  </data>
+  <data name="Identity_ShowRecoveryCodes_Title" xml:space="preserve">
+    <value>Коды восстановления</value>
+  </data>
+  <data name="Identity_PersonalData_Title" xml:space="preserve">
+    <value>Личные данные</value>
+  </data>
+  <data name="Identity_PersonalData_Description" xml:space="preserve">
+    <value>В вашей учётной записи содержатся личные данные, которые вы нам предоставили. На этой странице вы можете скачать или удалить эти данные.</value>
+  </data>
+  <data name="Identity_PersonalData_DeletePermanentWarning" xml:space="preserve">
+    <value>Удаление этих данных навсегда удалит вашу учётную запись, и восстановить её будет невозможно.</value>
+  </data>
+  <data name="Identity_DeletePersonalData_Title" xml:space="preserve">
+    <value>Удалить личные данные</value>
+  </data>
+  <data name="Identity_PasswordPlaceholder" xml:space="preserve">
+    <value>Введите ваш пароль.</value>
+  </data>
+  <data name="Identity_DeletePersonalData_Button" xml:space="preserve">
+    <value>Удалить данные и закрыть учётную запись</value>
+  </data>
+  <data name="Identity_DownloadPersonalData_Title" xml:space="preserve">
+    <value>Скачать ваши данные</value>
+  </data>
+  <data name="Identity_SetPassword_Title" xml:space="preserve">
+    <value>Установить пароль</value>
+  </data>
+  <data name="Identity_SetPassword_Heading" xml:space="preserve">
+    <value>Установить пароль</value>
+  </data>
+  <data name="Identity_SetPassword_Info" xml:space="preserve">
+    <value>У вас нет локального имени пользователя/пароля для этого сайта. Добавьте локальную учётную запись, чтобы входить без внешнего входа.</value>
+  </data>
+  <data name="Identity_NewPasswordPlaceholder" xml:space="preserve">
+    <value>Введите новый пароль.</value>
+  </data>
+  <data name="Identity_ConfirmPasswordPlaceholder" xml:space="preserve">
+    <value>Подтвердите новый пароль.</value>
+  </data>
+  <data name="Identity_SetPassword_Button" xml:space="preserve">
+    <value>Установить пароль</value>
+  </data>
+  <data name="CreatedDate" xml:space="preserve">
+    <value>Дата создания</value>
+  </data>
+  <data name="Error_AddHolidayFirst" xml:space="preserve">
+    <value>Перед добавлением гостя добавьте хотя бы один праздник.</value>
+  </data>
+  <data name="Validation_SelectHoliday" xml:space="preserve">
+    <value>Выберите праздник.</value>
+  </data>
+  <data name="Validation_SelectEvent" xml:space="preserve">
+    <value>Выберите мероприятие.</value>
+  </data>
+  <data name="Validation_EmailDomainInvalid" xml:space="preserve">
+    <value>Электронная почта некорректна или домен не существует.</value>
+  </data>
+  <data name="The {0} field is required." xml:space="preserve">
+    <value>Поле «{0}» обязательно.</value>
+  </data>
+  <data name="The field {0} must be a string with a maximum length of {1}." xml:space="preserve">
+    <value>Поле «{0}» должно содержать не более {1} символов.</value>
+  </data>
+  <data name="The {0} field is not a valid e-mail address." xml:space="preserve">
+    <value>Поле «{0}» не является корректным адресом электронной почты.</value>
+  </data>
+</root>

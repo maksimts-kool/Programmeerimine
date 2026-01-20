@@ -1,33 +1,33 @@
 @model IEnumerable<Kylaline>
 
 @{
-    ViewData["Title"] = "Külalised";
+    ViewData["Title"] = Localizer["Guests"];
     var currentFilter = ViewData["CurrentFilter"]?.ToString() ?? "all";
 }
 
-<h1>Külalised</h1>
+<h1>@Localizer["Guests"]</h1>
 
 <p>
-    <a class="btn btn-primary" asp-action="Create">Lisa külaline</a>
+    <a class="btn btn-primary" asp-action="Create">@Localizer["AddGuest"]</a>
 </p>
 
 <div class="mb-3">
-    <div class="btn-group" role="group" aria-label="Filter">
+    <div class="btn-group" role="group">
         <a asp-action="Index" asp-route-filter="all"
-            class="btn @(currentFilter == "all" ? "btn-primary" : "btn-outline-primary")">Kõik</a>
+            class="btn @(currentFilter == "all" ? "btn-primary" : "btn-outline-primary")">@Localizer["All"]</a>
         <a asp-action="Index" asp-route-filter="willbe"
-            class="btn @(currentFilter == "willbe" ? "btn-success" : "btn-outline-success")">Tulevad</a>
+            class="btn @(currentFilter == "willbe" ? "btn-success" : "btn-outline-success")">@Localizer["WillCome"]</a>
         <a asp-action="Index" asp-route-filter="wontbe"
-            class="btn @(currentFilter == "wontbe" ? "btn-danger" : "btn-outline-danger")">Ei tule</a>
+            class="btn @(currentFilter == "wontbe" ? "btn-danger" : "btn-outline-danger")">@Localizer["WontCome"]</a>
     </div>
 </div>
 
 <table class="table">
     <thead>
         <tr>
-            <th>Nimi</th>
-            <th>Email</th>
-            <th>Püha</th>
+            <th>@Localizer["Name"]</th>
+            <th>@Localizer["Email"]</th>
+            <th>@Localizer["Holiday"]</th>
             <th></th>
         </tr>
     </thead>
@@ -39,9 +39,9 @@
                 <td>@item.Email</td>
                 <td>@item.Pyha?.Nimetus</td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Muuda</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Detailid</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Kustuta</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id">@Localizer["Edit"]</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">@Localizer["Details"]</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">@Localizer["Delete"]</a>
                 </td>
             </tr>
         }

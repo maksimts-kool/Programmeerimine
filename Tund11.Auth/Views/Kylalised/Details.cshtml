@@ -1,43 +1,43 @@
 @model Kylaline
 
 @{
-    ViewData["Title"] = "Külalise detailid";
+    ViewData["Title"] = Localizer["GuestDetails"];
     var participationStatus = ViewData["ParticipationStatus"] as bool?;
 }
 
-<h1>Külalise detailid</h1>
+<h1>@Localizer["GuestDetails"]</h1>
 
 <div>
     <hr />
     <dl class="row">
-        <dt class="col-sm-2">Nimi</dt>
+        <dt class="col-sm-2">@Localizer["Name"]</dt>
         <dd class="col-sm-10">@Model.Nimi</dd>
 
-        <dt class="col-sm-2">Email</dt>
+        <dt class="col-sm-2">@Localizer["Email"]</dt>
         <dd class="col-sm-10">@Model.Email</dd>
 
-        <dt class="col-sm-2">Püha</dt>
+        <dt class="col-sm-2">@Localizer["Holiday"]</dt>
         <dd class="col-sm-10">@Model.Pyha?.Nimetus</dd>
 
-        <dt class="col-sm-2">Osalemine</dt>
+        <dt class="col-sm-2">@Localizer["Participation"]</dt>
         <dd class="col-sm-10">
             @if (participationStatus == true)
             {
-                <span class="badge bg-success">Tuleb</span>
+                <span class="badge bg-success">@Localizer["WillCome"]</span>
             }
             else if (participationStatus == false)
             {
-                <span class="badge bg-danger">Ei tule</span>
+                <span class="badge bg-danger">@Localizer["WontCome"]</span>
             }
             else
             {
-                <span class="badge bg-secondary">Pole vastanud</span>
+                <span class="badge bg-secondary">@Localizer["NoResponse"]</span>
             }
         </dd>
     </dl>
 </div>
 
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Muuda</a> |
-    <a asp-action="Index">Tagasi</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id">@Localizer["Edit"]</a> |
+    <a asp-action="Index">@Localizer["Back"]</a>
 </div>
