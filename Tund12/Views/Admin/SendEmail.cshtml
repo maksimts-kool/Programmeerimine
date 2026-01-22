@@ -1,0 +1,95 @@
+﻿@model Tund12.ViewModels.SendEmailViewModel
+
+@{
+    ViewData["Title"] = "Saada e-kiri õpilastele";
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a asp-controller="Admin" asp-action="Index">Admin</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a asp-controller="Admin" asp-action="Trainings">Koolitused</a>
+            </li>
+            <li class="breadcrumb-item active">E-kiri</li>
+        </ol>
+    </nav>
+
+    <h1><i class="bi bi-envelope-fill text-primary"></i> Saada e-kiri õpilastele</h1>
+    <hr />
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">@Model.TrainingName</h5>
+                    <small class="text-muted">
+                        Õpilasi: <strong>@Model.StudentCount</strong>
+                    </small>
+                </div>
+                <div class="card-body">
+                    <form asp-action="SendEmail" asp-route-id="@Model.TrainingId" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Subject" class="form-label">Teema</label>
+                            <input asp-for="Subject" class="form-control"
+                                placeholder="nt: Tunni ärajäämine 10.02.2026" />
+                            <span asp-validation-for="Subject" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Body" class="form-label">Sõnum</label>
+                            <textarea asp-for="Body" class="form-control" rows="10"
+                                placeholder="Kirjuta sõnum õpilastele..."></textarea>
+                            <span asp-validation-for="Body" class="text-danger"></span>
+                            <small class="text-muted d-block mt-2">
+                                <i class="bi bi-info-circle"></i>
+                                HTML vormaatimine on toetatud
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i class="bi bi-send"></i> Saada e-kiri
+                            </button>
+                            <a asp-controller="Admin" asp-action="Trainings" class="btn btn-secondary">
+                                Tühista
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Eelvaade</h5>
+                </div>
+                <div class="card-body">
+                    <p class="small text-muted">E-kiri saadetakse järgmistele õpilastele:</p>
+                    <div class="alert alert-info">
+                        <strong>@Model.StudentCount</strong> kinnitatud õpilast
+                    </div>
+
+                    <h6>Näpunäited:</h6>
+                    <ul class="small">
+                        <li>Olgu teema lühike ja informatsioon</li>
+                        <li>Kirjuta selget keelt</li>
+                        <li>Reavahetus: Enter</li>
+                        <li>Teadaanne saadetakse HTML-na</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

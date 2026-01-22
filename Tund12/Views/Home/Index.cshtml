@@ -1,0 +1,200 @@
+﻿@{
+    ViewData["Title"] = "Avaleht";
+}
+
+<div class="text-center mb-5 py-5" style="background-color: var(--primary-light);">
+    <h1 class="display-4">Tere tulemast keeltekooli!</h1>
+    <p class="lead">Õpi uusi keeli koos meie professionaalsete õpetajatega</p>
+</div>
+
+<div class="container">
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card h-100 text-center shadow-sm">
+                <div class="card-body">
+                    <div class="icon-box text-primary mb-3">
+                        <i class="bi bi-book"></i>
+                    </div>
+                    <h5 class="card-title">Laia valik kursusi</h5>
+                    <p class="card-text">
+                        Saksa, inglise, prantsuse ja teised keeled.
+                        Tasemed A1 kuni C2.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 text-center shadow-sm">
+                <div class="card-body">
+                    <div class="icon-box text-success mb-3">
+                        <i class="bi bi-person-badge"></i>
+                    </div>
+                    <h5 class="card-title">Kvalifitseeritud õpetajad</h5>
+                    <p class="card-text">
+                        Meie õpetajad on kogenud professionaalid
+                        vastava kvalifikatsiooniga.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 text-center shadow-sm">
+                <div class="card-body">
+                    <div class="icon-box text-info mb-3">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+                    <h5 class="card-title">Paindlik graafik</h5>
+                    <p class="card-text">
+                        Vali endale sobiv aeg ja grupp.
+                        Registreerimine on lihtne ja kiire.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kasutaja spetsiifilised teated -->
+    @if (User.Identity?.IsAuthenticated ?? false)
+    {
+        <div class="row mb-5">
+            <div class="col">
+                @if (User.IsInRole("Opilane"))
+                {
+                    <div class="alert alert-info">
+                        <h4><i class="bi bi-info-circle"></i> Tere, @User.Identity?.Name!</h4>
+                        <p class="mb-2">Oled sisse loginud õpilase kontoga.</p>
+                        <div>
+                            <a asp-controller="Trainings" asp-action="MyTrainings" class="btn btn-primary me-2">
+                                <i class="bi bi-bookmark"></i> Minu koolitused
+                            </a>
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary">
+                                <i class="bi bi-search"></i> Sirvi kõiki koolitusi
+                            </a>
+                        </div>
+                    </div>
+                }
+                else if (User.IsInRole("Opetaja"))
+                {
+                    <div class="alert alert-success">
+                        <h4><i class="bi bi-person-check"></i> Tere, @User.Identity?.Name!</h4>
+                        <p class="mb-2">Oled sisse loginud õpetaja kontoga.</p>
+                        <a asp-controller="Teacher" asp-action="Dashboard" class="btn btn-success">
+                            <i class="bi bi-speedometer2"></i> Mine töölauale
+                        </a>
+                    </div>
+                }
+                else if (User.IsInRole("Admin"))
+                {
+                    <div class="alert alert-warning">
+                        <h4><i class="bi bi-gear-fill"></i> Admin režiim</h4>
+                        <p class="mb-2">Oled sisse loginud administraatori kontoga.</p>
+                        <a asp-controller="Admin" asp-action="Index" class="btn btn-warning">
+                            <i class="bi bi-speedometer2"></i> Halduspaneel
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Saadaolevad koolitused -->
+    <div class="mb-5">
+        <h2 class="mb-4">
+            <i class="bi bi-calendar-event text-primary"></i> Saadaolevad koolitused
+        </h2>
+        <p class="lead text-muted">Tulevased koolitused, millele saad registreeruda</p>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">
+        @foreach (var training in ViewBag.PublicTrainings ?? new List<object>())
+        {
+            var isFull = training.Registrations.Count >= training.MaxOsalejaid;
+            var badgeClass = training.Course?.Tase switch
+            {
+                "A1" or "A2" => "bg-success",
+                "B1" or "B2" => "bg-warning text-dark",
+                "C1" or "C2" => "bg-danger",
+                _ => "bg-secondary"
+            };
+
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-2">@training.Course?.Nimetus</h5>
+                        <div>
+                            <span class="badge @badgeClass">@training.Course?.Tase</span>
+                            <span class="badge bg-secondary">@training.Course?.Keel</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-2">
+                            <i class="bi bi-person-fill text-secondary"></i>
+                            <strong>Õpetaja:</strong> @training.Teacher?.Nimi
+                        </p>
+                        <p class="mb-2">
+                            <i class="bi bi-calendar text-secondary"></i>
+                            <strong>Algus:</strong> @training.AlgusKuupaev.ToString("dd.MM.yyyy")
+                        </p>
+                        <p class="mb-2">
+                            <i class="bi bi-currency-euro text-secondary"></i>
+                            <strong>Hind:</strong> @training.Hind.ToString("C")
+                        </p>
+                        <p>
+                            <i class="bi bi-people text-secondary"></i>
+                            <strong>Kohti vabad:</strong> @(training.MaxOsalejaid - training.Registrations.Count) /
+                            @training.MaxOsalejaid
+                        </p>
+                        @if (isFull)
+                        {
+                            <span class="badge bg-danger w-100 mt-2">GRUPP TÄIS</span>
+                        }
+                    </div>
+                    <div class="card-footer">
+                        <a asp-controller="Trainings" asp-action="Details" asp-route-id="@training.Id"
+                            class="btn btn-primary btn-sm w-100">
+                            <i class="bi bi-arrow-right"></i> Vaata detaile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Kõigi koolituste nimekiri -->
+    <div class="row mb-5">
+        <div class="col text-center">
+            <p class="lead text-muted">Vaata kõiki saadaolevaid koolitusi</p>
+            <a asp-controller="Trainings" asp-action="Index" class="btn btn-primary btn-lg">
+                <i class="bi bi-search"></i> Näita kõiki koolitusi
+            </a>
+        </div>
+    </div>
+
+    <!-- Registreerimise kutse -->
+    @if (!User.Identity?.IsAuthenticated ?? true)
+    {
+        <div class="row mb-5">
+            <div class="col">
+                <div class="card" style="background-color: var(--primary-light); border: 2px solid var(--primary-color);">
+                    <div class="card-body text-center py-5">
+                        <h3>Valmis alustamiseks?</h3>
+                        <p class="lead mb-4">
+                            Registreeru ja alusta oma keele õppimise teekonda täna
+                        </p>
+                        <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-primary btn-lg me-3">
+                            <i class="bi bi-person-plus"></i> Registreeru nüüd
+                        </a>
+                        <p class="text-muted mt-3">
+                            Juba kasutaja?
+                            <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-link">
+                                Logi sisse
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

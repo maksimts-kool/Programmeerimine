@@ -1,0 +1,105 @@
+﻿@{
+    ViewData["Title"] = "Admin halduspaneel";
+    var stats = ViewBag.Stats;
+}
+
+<div class="container mt-4">
+    <h1>@ViewData["Title"]</h1>
+    <p class="lead">Ülevaade ja kiirlingid</p>
+    <hr />
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-book"></i> Kursused
+                    </h5>
+                    <h2>@stats.TotalCourses</h2>
+                    <a asp-action="Courses" class="btn btn-light btn-sm mt-2">
+                        Halda kursusi
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card text-white bg-success h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-person-badge"></i> Õpetajad
+                    </h5>
+                    <h2>@stats.TotalTeachers</h2>
+                    <a asp-action="Teachers" class="btn btn-light btn-sm mt-2">
+                        Halda õpetajaid
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card text-white bg-info h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-calendar-event"></i> Koolitused
+                    </h5>
+                    <h2>@stats.TotalTrainings</h2>
+                    <a asp-controller="Trainings" asp-action="Create" class="btn btn-light btn-sm mt-2">
+                        Lisa koolitus
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card text-white bg-warning h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-clock-history"></i> Ootel registreeringud
+                    </h5>
+                    <h2>@stats.PendingRegistrations</h2>
+                    <a asp-action="Registrations" class="btn btn-light btn-sm mt-2">
+                        Kinnita registreeringuid
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card text-white bg-secondary h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-people"></i> Õpilased
+                    </h5>
+                    <h2>@stats.TotalStudents</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col">
+            <h3>Kiirtegevused</h3>
+            <div class="list-group">
+                <a asp-action="CreateTeacher" class="list-group-item list-group-item-action">
+                    <i class="bi bi-person-plus"></i> Lisa uus õpetaja
+                </a>
+                <a asp-action="CreateCourse" class="list-group-item list-group-item-action">
+                    <i class="bi bi-plus-circle"></i> Lisa uus kursus
+                </a>
+                <a asp-controller="Trainings" asp-action="Create" class="list-group-item list-group-item-action">
+                    <i class="bi bi-calendar-plus"></i> Lisa uus koolitus
+                </a>
+                <a asp-action="Registrations" class="list-group-item list-group-item-action">
+                    <i class="bi bi-check2-square"></i> Kinnita registreeringuid
+                    @if (stats.PendingRegistrations > 0)
+                    {
+                        <span class="badge bg-warning text-dark float-end">
+                            @stats.PendingRegistrations
+                        </span>
+                    }
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

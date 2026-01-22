@@ -1,0 +1,107 @@
+﻿@model IEnumerable<Tund12.Models.Training>
+
+@{
+    ViewData["Title"] = "Õpetaja töölaud";
+    var teacherName = ViewBag.TeacherName;
+}
+
+<div class="container mt-4">
+    <h1>Tere, @teacherName!</h1>
+    <p class="lead">Siin on ülevaade Teie koolitustest</p>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Aktiivseid koolitusi</h5>
+                    <h2>@Model.Count(t => t.AlgusKuupaev <= DateTime.Now &&
+                                                t.LoppKuupaev >= DateTime.Now)</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title">Tulevasi koolitusi</h5>
+                    <h2>@Model.Count(t => t.AlgusKuupaev > DateTime.Now)</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <h5 class="card-title">Kokku õpilasi</h5>
+                    <h2>@Model.Sum(t => t.Registrations
+                                                .Count(r => r.Staatus == "Kinnitatud"))</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="mt-4">Minu koolitused</h3>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Kursus</th>
+                    <th>Algus</th>
+                    <th>Lõpp</th>
+                    <th>Osalejaid</th>
+                    <th>Staatus</th>
+                    <th>Tegevused</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var training in Model)
+                {
+                    var status = training.AlgusKuupaev > DateTime.Now ? "Tulemas" :
+                    training.LoppKuupaev < DateTime.Now ? "Lõppenud" : "Aktiivne";
+                    var statusClass = status switch
+                    {
+                        "Tulemas" => "text-success",
+                        "Aktiivne" => "text-primary",
+                        "Lõppenud" => "text-muted",
+                        _ => ""
+                    };
+                    var confirmedCount = training.Registrations
+                    .Count(r => r.Staatus == "Kinnitatud");
+
+                    <tr>
+                        <td>
+                            <strong>@training.Course?.Nimetus</strong><br />
+                            <small class="text-muted">
+                                @training.Course?.Keel - @training.Course?.Tase
+                            </small>
+                        </td>
+                        <td>@training.AlgusKuupaev.ToString("dd.MM.yyyy")</td>
+                        <td>@training.LoppKuupaev.ToString("dd.MM.yyyy")</td>
+                        <td>
+                            <span class="badge bg-info">
+                                @confirmedCount / @training.MaxOsalejaid
+                            </span>
+                        </td>
+                        <td>
+                            <span class="@statusClass">
+                                <strong>@status</strong>
+                            </span>
+                        </td>
+                        <td>
+                            <a asp-action="Students" asp-route-id="@training.Id" class="btn btn-sm btn-primary">
+                                Vaata õpilasi
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            Teil pole hetkel ühtegi koolitust määratud.
+        </div>
+    }
+</div>

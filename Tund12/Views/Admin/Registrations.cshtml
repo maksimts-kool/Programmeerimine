@@ -1,0 +1,61 @@
+﻿@model IEnumerable<Tund12.Models.Registration>
+
+@{
+    ViewData["Title"] = "Registreeringute haldus";
+}
+
+<div class="container mt-4">
+    <h1>@ViewData["Title"]</h1>
+    <hr />
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    <ul class="nav nav-tabs mb-3" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending"
+                type="button" role="tab">
+                Ootel
+                <span class="badge bg-warning text-dark">
+                    @Model.Count(r => r.Staatus == "Ootel")
+                </span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="confirmed-tab" data-bs-toggle="tab" data-bs-target="#confirmed" type="button"
+                role="tab">
+                Kinnitatud
+                <span class="badge bg-success">
+                    @Model.Count(r => r.Staatus == "Kinnitatud")
+                </span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="cancelled-tab" data-bs-toggle="tab" data-bs-target="#cancelled" type="button"
+                role="tab">
+                Tühistatud
+                <span class="badge bg-danger">
+                    @Model.Count(r => r.Staatus == "Tühistatud")
+                </span>
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="pending" role="tabpanel">
+            @await Html.PartialAsync("_RegistrationsList",
+            Model.Where(r => r.Staatus == "Ootel"),
+                        new ViewDataDictionary(ViewData) { { "ShowActions", true } })
+        </div>
+        <div class="tab-pane fade" id="confirmed" role="tabpanel">
+            @await Html.PartialAsync("_RegistrationsList",
+                        Model.Where(r => r.Staatus == "Kinnitatud"))
+        </div>
+        <div class="tab-pane fade" id="cancelled" role="tabpanel">
+            @await Html.PartialAsync("_RegistrationsList",
+                        Model.Where(r => r.Staatus == "Tühistatud"))
+        </div>
+    </div>
+</div>

@@ -1,0 +1,63 @@
+﻿@model IEnumerable<Tund12.Models.Registration>
+
+@{
+    var showActions = ViewData["ShowActions"] as bool? ?? false;
+}
+
+@if (Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Õpilane</th>
+                    <th>E-post</th>
+                    <th>Koolitus</th>
+                    <th>Õpetaja</th>
+                    <th>Reg. aeg</th>
+                    @if (showActions)
+                    {
+                        <th>Tegevused</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@(item.User?.FullName ?? item.User?.UserName)</td>
+                        <td>@item.User?.Email</td>
+                        <td>
+                            <strong>@item.Training?.Course?.Nimetus</strong><br />
+                            <small class="text-muted">
+                                @item.Training?.AlgusKuupaev.ToString("dd.MM.yyyy")
+                            </small>
+                        </td>
+                        <td>@item.Training?.Teacher?.Nimi</td>
+                        <td>@item.RegistreerimisAeg.ToString("dd.MM.yyyy HH:mm")</td>
+                        @if (showActions)
+                        {
+                            <td>
+                                <form asp-action="ConfirmRegistration" asp-route-id="@item.Id" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        <i class="bi bi-check-circle"></i> Kinnita
+                                    </button>
+                                </form>
+                                <form asp-action="RejectRegistration" asp-route-id="@item.Id" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-danger"
+                                        onclick="return confirm('Kas oled kindel?')">
+                                        <i class="bi bi-x-circle"></i> Keeldu
+                                    </button>
+                                </form>
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">Registreeringuid pole.</div>
+}

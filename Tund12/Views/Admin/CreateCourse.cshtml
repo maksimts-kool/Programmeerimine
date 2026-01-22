@@ -1,0 +1,101 @@
+﻿@model Tund12.Models.Course
+
+@{
+    ViewData["Title"] = "Lisa uus kursus";
+}
+
+<div class="container mt-4">
+    <h1>@ViewData["Title"]</h1>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="CreateCourse">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Nimetus" class="form-label"></label>
+                    <input asp-for="Nimetus" class="form-control" placeholder="nt Saksa keel algajatele" />
+                    <span asp-validation-for="Nimetus" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Keel" class="form-label"></label>
+                    <select asp-for="Keel" class="form-select">
+                        <option value="">-- Vali keel --</option>
+                        <option value="Saksa">Saksa</option>
+                        <option value="Inglise">Inglise</option>
+                        <option value="Prantsuse">Prantsuse</option>
+                        <option value="Hispaania">Hispaania</option>
+                        <option value="Itaalia">Itaalia</option>
+                        <option value="Vene">Vene</option>
+                    </select>
+                    <span asp-validation-for="Keel" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Tase" class="form-label"></label>
+                    <select asp-for="Tase" class="form-select">
+                        <option value="">-- Vali tase --</option>
+                        <option value="A1">A1 - Algaja</option>
+                        <option value="A2">A2 - Baastase</option>
+                        <option value="B1">B1 - Kesktase</option>
+                        <option value="B2">B2 - Edasijõudnu</option>
+                        <option value="C1">C1 - Kõrgtase</option>
+                        <option value="C2">C2 - Vilunud</option>
+                    </select>
+                    <span asp-validation-for="Tase" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Kirjeldus" class="form-label"></label>
+                    <textarea asp-for="Kirjeldus" class="form-control" rows="4"
+                        placeholder="Kursuse kirjeldus..."></textarea>
+                    <span asp-validation-for="Kirjeldus" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Salvesta
+                    </button>
+                    <a asp-action="Courses" class="btn btn-secondary">Tühista</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Tasemete selgitus</h5>
+                </div>
+                <div class="card-body">
+                    <dl>
+                        <dt>A1 - Algaja</dt>
+                        <dd>Algtase, põhisõnavara ja fraasid</dd>
+
+                        <dt>A2 - Baastase</dt>
+                        <dd>Suudab suhelda lihtsates olukordades</dd>
+
+                        <dt>B1 - Kesktase</dt>
+                        <dd>Mõistab põhipunkte tuttavatel teemadel</dd>
+
+                        <dt>B2 - Edasijõudnu</dt>
+                        <dd>Suudab suhelda vabalt emakeelsega</dd>
+
+                        <dt>C1 - Kõrgtase</dt>
+                        <dd>Kasutab keelt paindlikult ja tõhusalt</dd>
+
+                        <dt>C2 - Vilunud</dt>
+                        <dd>Valdab keelt peaaegu emakeelse tasemega</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

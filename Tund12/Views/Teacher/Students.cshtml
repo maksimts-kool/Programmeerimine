@@ -1,0 +1,111 @@
+﻿@model Tund12.Models.Training
+
+@{
+    ViewData["Title"] = "Koolituse õpilased";
+    var confirmedStudents = Model.Registrations
+    .Where(r => r.Staatus == "Kinnitatud").ToList();
+    var pendingStudents = Model.Registrations
+    .Where(r => r.Staatus == "Ootel").ToList();
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a asp-action="Dashboard">Töölaud</a>
+            </li>
+            <li class="breadcrumb-item active">Õpilased</li>
+        </ol>
+    </nav>
+
+    <h1>@Model.Course?.Nimetus</h1>
+    <p class="lead">
+        <strong>Periood:</strong>
+        @Model.AlgusKuupaev.ToString("dd.MM.yyyy") -
+        @Model.LoppKuupaev.ToString("dd.MM.yyyy")
+    </p>
+    <hr />
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Kinnitatud õpilased</h5>
+                    <h2 class="text-success">@confirmedStudents.Count</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Ootel registreeringud</h5>
+                    <h2 class="text-warning">@pendingStudents.Count</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3>Kinnitatud õpilased</h3>
+    @if (confirmedStudents.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Nimi</th>
+                        <th>E-post</th>
+                        <th>Registreerimise aeg</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var reg in confirmedStudents)
+                    {
+                        <tr>
+                            <td>@(reg.User?.FullName ?? reg.User?.UserName)</td>
+                            <td>@reg.User?.Email</td>
+                            <td>@reg.RegistreerimisAeg.ToString("dd.MM.yyyy HH:mm")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">Kinnitatud õpilasi pole veel.</div>
+    }
+
+    <h3 class="mt-4">Ootel registreeringud</h3>
+    @if (pendingStudents.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Nimi</th>
+                        <th>E-post</th>
+                        <th>Registreerimise aeg</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var reg in pendingStudents)
+                    {
+                        <tr>
+                            <td>@(reg.User?.FullName ?? reg.User?.UserName)</td>
+                            <td>@reg.User?.Email</td>
+                            <td>@reg.RegistreerimisAeg.ToString("dd.MM.yyyy HH:mm")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">Ootel registreeringuid pole.</div>
+    }
+
+    <a asp-action="Dashboard" class="btn btn-secondary mt-3">
+        Tagasi töölauale
+    </a>
+</div>

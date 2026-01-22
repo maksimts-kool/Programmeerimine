@@ -1,0 +1,79 @@
+﻿@model IEnumerable<Tund12.Models.Registration>
+
+@{
+    ViewData["Title"] = "Minu koolitused";
+}
+
+<div class="container mt-4">
+    <h1>@ViewData["Title"]</h1>
+    <hr />
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Kursus</th>
+                    <th>Õpetaja</th>
+                    <th>Algus</th>
+                    <th>Lõpp</th>
+                    <th>Hind</th>
+                    <th>Staatus</th>
+                    <th>Tegevused</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Training?.Course?.Nimetus</td>
+                        <td>@item.Training?.Teacher?.Nimi</td>
+                        <td>@item.Training?.AlgusKuupaev.ToString("dd.MM.yyyy")</td>
+                        <td>@item.Training?.LoppKuupaev.ToString("dd.MM.yyyy")</td>
+                        <td>@item.Training?.Hind.ToString("C")</td>
+                        <td>
+                            <span class="badge @(item.Staatus switch {
+                                "Kinnitatud" => "bg-success",
+                                "Ootel" => "bg-warning",
+                                "Tühistatud" => "bg-danger",
+                                _ => "bg-secondary"
+                            })">
+                                @item.Staatus
+                            </span>
+                        </td>
+                        <td>
+                            @if (item.Staatus != "Tühistatud")
+                            {
+                                <form asp-action="CancelRegistration" 
+                                      asp-route-id="@item.Id" 
+                                      method="post" 
+                                      class="d-inline"
+                                      onsubmit="return confirm('Kas oled kindel, et soovid tühistada?');">
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        Tühista
+                                    </button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            Sa pole veel ühelegi koolitusele registreerunud.
+            <a asp-action="Index" class="alert-link">Vaata saadaolevaid koolitusi</a>
+        </div>
+    }
+</div>

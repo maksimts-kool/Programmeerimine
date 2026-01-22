@@ -1,0 +1,73 @@
+﻿@model Tund12.Models.Training
+
+@{
+    ViewData["Title"] = "Lisa uus koolitus";
+}
+
+<div class="container mt-4">
+    <h1>@ViewData["Title"]</h1>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-8">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="CourseId" class="form-label">Kursus</label>
+                    <select asp-for="CourseId" class="form-select" asp-items="ViewBag.CourseId">
+                        <option value="">-- Vali kursus --</option>
+                    </select>
+                    <span asp-validation-for="CourseId" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="TeacherId" class="form-label">Õpetaja</label>
+                    <select asp-for="TeacherId" class="form-select" asp-items="ViewBag.TeacherId">
+                        <option value="">-- Vali õpetaja --</option>
+                    </select>
+                    <span asp-validation-for="TeacherId" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="AlgusKuupaev" class="form-label"></label>
+                        <input asp-for="AlgusKuupaev" type="date" class="form-control" />
+                        <span asp-validation-for="AlgusKuupaev" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="LoppKuupaev" class="form-label"></label>
+                        <input asp-for="LoppKuupaev" type="date" class="form-control" />
+                        <span asp-validation-for="LoppKuupaev" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Hind" class="form-label"></label>
+                        <input asp-for="Hind" type="number" step="0.01" class="form-control" />
+                        <span asp-validation-for="Hind" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="MaxOsalejaid" class="form-label"></label>
+                        <input asp-for="MaxOsalejaid" type="number" class="form-control" />
+                        <span asp-validation-for="MaxOsalejaid" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Salvesta</button>
+                    <a asp-action="Index" class="btn btn-secondary">Tühista</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

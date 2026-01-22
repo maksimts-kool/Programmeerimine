@@ -1,0 +1,88 @@
+﻿@model IEnumerable<Tund12.Models.Training>
+
+@{
+    ViewData["Title"] = "Koolitused";
+}
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1>@ViewData["Title"]</h1>
+        </div>
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="col-auto">
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Lisa uus koolitus
+                </a>
+            </div>
+        }
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var item in Model)
+        {
+            var isFull = item.Registrations.Count >= item.MaxOsalejaid;
+            var badgeClass = item.Course?.Tase switch
+            {
+                "A1" or "A2" => "bg-success",
+                "B1" or "B2" => "bg-warning",
+                "C1" or "C2" => "bg-danger",
+                _ => "bg-secondary"
+            };
+
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header">
+                        <h5 class="mb-2">@item.Course?.Nimetus</h5>
+                        <div>
+                            <span class="badge bg-primary" style="font-size: 1.2rem;">
+                                @Html.Raw(FlagHelper.GetFlag(item.Course?.Keel))
+                            </span>
+                            <span class="badge bg-info">@item.Course?.Tase</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            <strong>Õpetaja:</strong> @item.Teacher?.Nimi<br />
+                            <strong>Algus:</strong> @item.AlgusKuupaev.ToString("dd.MM.yyyy")<br />
+                            <strong>Lõpp:</strong> @item.LoppKuupaev.ToString("dd.MM.yyyy")<br />
+                            <strong>Hind:</strong> @item.Hind.ToString("C")<br />
+                            <strong>Kohti vabad:</strong>
+                            @(item.MaxOsalejaid - item.Registrations.Count) / @item.MaxOsalejaid
+                        </p>
+
+                        @if (isFull)
+                        {
+                            <span class="badge bg-danger">GRUPP TÄIS</span>
+                        }
+                    </div>
+                    <div class="card-footer">
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                            Vaata detaile
+                        </a>
+                        <a asp-controller="Admin" asp-action="SendEmail" asp-route-id="@training.Id"
+                            class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-envelope"></i> Saada e-kiri
+                        </a>
+                        @if (User.IsInRole("Opilane") && !isFull)
+                        {
+                            <form asp-action="Register" asp-route-id="@item.Id" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-success">
+                                    Registreeru
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            Koolitusi pole veel lisatud.
+        </div>
+    }
+</div>
