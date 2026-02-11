@@ -95,7 +95,7 @@ namespace Tund12.Controllers
             if (!studentEmails.Any())
             {
                 TempData["Error"] = "Sellel koolitusele pole kinnitatud õpilasi.";
-                return RedirectToAction(nameof(Trainings));
+                return RedirectToAction("Index", "Trainings");
             }
 
             try
@@ -136,7 +136,7 @@ namespace Tund12.Controllers
                     htmlBody);
 
                 TempData["Success"] = $"E-kiri edukalt saadeti {studentEmails.Count} õpilasele!";
-                return RedirectToAction(nameof(Trainings));
+                return RedirectToAction("Index", "Trainings");
             }
             catch (Exception ex)
             {

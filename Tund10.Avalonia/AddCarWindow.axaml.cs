@@ -14,6 +14,13 @@ public partial class AddCarWindow : Window
     private readonly int _ownerId;
     private readonly MainWindow _mainWindow;
 
+    public AddCarWindow()
+    {
+        InitializeComponent();
+        _ownerId = 0;
+        _mainWindow = null!;
+    }
+
     public AddCarWindow(int ownerId, string ownerName, MainWindow mainWindow)
     {
         InitializeComponent();

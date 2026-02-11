@@ -15,6 +15,14 @@ public partial class AddServiceWindow : Window
     private readonly int _carId;
     private readonly MainWindow _mainWindow;
 
+    public AddServiceWindow()
+    {
+        InitializeComponent();
+        _db = null!;
+        _carId = 0;
+        _mainWindow = null!;
+    }
+
     public AddServiceWindow(AutoDbContext db, int carId, Car car, MainWindow mainWindow)
     {
         InitializeComponent();

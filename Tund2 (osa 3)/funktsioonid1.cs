@@ -31,7 +31,7 @@ public class funktsioonid1
     public static double[] TekstisArvud(string tekst)
     {
         Console.WriteLine("Sisesta arvud, eraldatud tühikuga:");
-        string sisend = Console.ReadLine();
+        string sisend = Console.ReadLine() ?? "";
         string[] osad = sisend.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         double[] arvud = new double[osad.Length];
         for (int i = 0; i < osad.Length; i++)
@@ -76,7 +76,7 @@ public class funktsioonid1
         do
         {
             Console.WriteLine("Arva ära");
-            fraas = Console.ReadLine();
+            fraas = Console.ReadLine() ?? "";
         } while (fraas.ToLower() != märksõna.ToLower());
         return fraas;
     }
@@ -87,7 +87,7 @@ public class funktsioonid1
         for (int i = 0; i < maxkatseid; i++)
         {
             Console.WriteLine("Arva ära arv 1-100");
-            int arv = int.Parse(Console.ReadLine());
+            int arv = int.Parse(Console.ReadLine() ?? "0");
             if (arv < oigenumber)
             {
                 Console.WriteLine("Arv on liiga väike");

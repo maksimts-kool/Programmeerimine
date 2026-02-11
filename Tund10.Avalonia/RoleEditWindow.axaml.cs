@@ -13,6 +13,12 @@ public partial class RoleEditWindow : Window
     private readonly AutoDbContext _db;
     private readonly Role? _role;
 
+    public RoleEditWindow()
+    {
+        InitializeComponent();
+        _db = null!;
+    }
+
     public RoleEditWindow(AutoDbContext db, Role? role)
     {
         InitializeComponent();

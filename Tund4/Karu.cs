@@ -4,7 +4,7 @@ namespace Tund4;
 
 public class Karu : Loom
 {
-    public string asukoht;
+    public string asukoht = "";
     public int pikkus;
     public void Info()
     {

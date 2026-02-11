@@ -23,7 +23,7 @@ internal class IseFunktsioonid
     public static double[] TekstisArvud()
     {
         Console.WriteLine("Sisesta arvud, eraldatud tühikuga:");
-        string sisend = Console.ReadLine();
+        string sisend = Console.ReadLine() ?? "";
         string[] osad = sisend.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
         double[] arvud = new double[osad.Length];

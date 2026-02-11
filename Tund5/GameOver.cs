@@ -55,7 +55,7 @@ namespace Tund5
                 Console.Write("Sisesta oma nimi (vähemalt 3 tähte): ");
                 Console.ResetColor();
 
-                nimi = Console.ReadLine();
+                nimi = Console.ReadLine() ?? "";
 
                 if (!string.IsNullOrWhiteSpace(nimi) && nimi.Length >= 3)
                     break;

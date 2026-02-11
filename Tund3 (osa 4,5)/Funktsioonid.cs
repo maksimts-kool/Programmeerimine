@@ -8,7 +8,7 @@ internal class Funktsioonid
         try
         {
             Console.WriteLine("Sisesta faili nimi: ");
-            pathh = Console.ReadLine();
+            pathh = Console.ReadLine() ?? "";
             string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\", pathh);
             if (!File.Exists(path))
             {
@@ -30,7 +30,7 @@ internal class Funktsioonid
             string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\" + pathh); //@"..\..\..\Kuud.txt"
             StreamWriter text = new StreamWriter(path, true); // true = lisa lõppu
             Console.WriteLine("Sisesta mingi tekst: ");
-            string lause = Console.ReadLine();
+            string lause = Console.ReadLine() ?? "";
             text.WriteLine(lause);
             text.Close();
         }
@@ -104,7 +104,7 @@ internal class Funktsioonid
         }
 
         Console.WriteLine("Sisesta kuu nimi, mida otsida:");
-        string otsitav = Console.ReadLine();
+        string otsitav = Console.ReadLine() ?? "";
 
         if (kuude_list.Contains(otsitav))
             Console.WriteLine("Kuu " + otsitav + " on olemas.");
@@ -139,22 +139,22 @@ internal class Funktsioonid
     public static Inimene AndemedInimene()
     {
         Console.Write("Sisesta nimi: ");
-        string nimi = Console.ReadLine();
+        string nimi = Console.ReadLine() ?? "";
 
         Console.Write("Vanus: ");
-        int vanus = int.Parse(Console.ReadLine());
+        int vanus = int.Parse(Console.ReadLine() ?? "0");
 
         Console.Write("Sugu: ");
-        string sugu = Console.ReadLine();
+        string sugu = Console.ReadLine() ?? "";
 
         Console.Write("Pikkus: ");
-        double pikkus = double.Parse(Console.ReadLine());
+        double pikkus = double.Parse(Console.ReadLine() ?? "0");
 
         Console.Write("Kaal: ");
-        double kaal = double.Parse(Console.ReadLine());
+        double kaal = double.Parse(Console.ReadLine() ?? "0");
 
         Console.Write("Aktiivsustase: ");
-        double aktiivsustase = double.Parse(Console.ReadLine());
+        double aktiivsustase = double.Parse(Console.ReadLine() ?? "0");
 
         return new Inimene(nimi, vanus, sugu, pikkus, kaal, aktiivsustase);
     }
@@ -183,8 +183,8 @@ internal class Funktsioonid
         var values = dict.Values.ToList(); // pealinnad
         var keys = dict.Keys.ToList(); // maakonnad
         Console.Write("Sisesta pealinna nimi: ");
-        string linn = Console.ReadLine();
-        int index = values.IndexOf(linn); 
+        string linn = Console.ReadLine() ?? "";
+        int index = values.IndexOf(linn);
 
         if (index != -1) // kui leidis
         {
@@ -194,7 +194,7 @@ internal class Funktsioonid
         {
             Console.WriteLine("Linna ei leitud. Siis lisame.");
             Console.Write("Sisesta maakonna nimi: ");
-            string maakond = Console.ReadLine();
+            string maakond = Console.ReadLine() ?? "";
             dict.Add(maakond, linn);
             FailikirjutamineV2($"{maakond},{linn}");
             Console.WriteLine("Lisatud");
@@ -203,7 +203,7 @@ internal class Funktsioonid
     public static void OtsiPealinn(Dictionary<string, string> dict)
     {
         Console.Write("Sisesta maakonna nimi: ");
-        string maakond = Console.ReadLine();
+        string maakond = Console.ReadLine() ?? "";
 
         if (dict.ContainsKey(maakond))
         {
@@ -213,7 +213,7 @@ internal class Funktsioonid
         {
             Console.WriteLine("Maakonda ei leitud. Siis lisame.");
             Console.Write("Sisesta pealinna nimi: ");
-            string linn = Console.ReadLine();
+            string linn = Console.ReadLine() ?? "";
             dict.Add(maakond, linn);
             FailikirjutamineV2($"{maakond},{linn}");
             Console.WriteLine("Lisatud");
@@ -236,7 +236,7 @@ internal class Funktsioonid
             if (rnd.Next(2) == 0) // 0,1 => 50/50
             {
                 Console.Write($"Mis on maakonna {RKey} pealinn? ");
-                string sisestus = Console.ReadLine();
+                string sisestus = Console.ReadLine() ?? "";
 
                 if (sisestus == "") break;
 
@@ -254,7 +254,7 @@ internal class Funktsioonid
             else
             {
                 Console.Write($"Millises maakonnas asub {RValue}? ");
-                string sisestus = Console.ReadLine();
+                string sisestus = Console.ReadLine() ?? "";
 
                 if (sisestus == "") break;
 

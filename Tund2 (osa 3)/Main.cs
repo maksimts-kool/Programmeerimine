@@ -8,7 +8,7 @@ public class Main
         {
             // execute Tund2/ulesanded.cs
             Ulesanded.Run();
-            return;
+            // return;
             // Massiviid, List, Kordused
             for (int i = 0; i < 10; i++)
             {
@@ -31,7 +31,7 @@ public class Main
             for (int i = 0; i < 10; i++)
             {
                 Console.WriteLine($"{i + 1}. Nimi: ");
-                nimed.Add(Console.ReadLine());
+                nimed.Add(Console.ReadLine() ?? "");
             }
             foreach (string nimi in nimed)
             {
@@ -58,9 +58,9 @@ public class Main
                 Console.WriteLine(j + 1);
                 Isik isik = new Isik();
                 Console.Write("Eesnimi: ");
-                isik.eesnimi = Console.ReadLine();
+                isik.eesnimi = Console.ReadLine() ?? "";
                 Console.Write("Perenimi: ");
-                isik.perenimi = Console.ReadLine();
+                isik.perenimi = Console.ReadLine() ?? "";
                 isikud.Add(isik);
                 j++;
             } while (j < 10);
@@ -72,7 +72,7 @@ public class Main
                 isik.PrindiAndmed();
             }
 
-            
+
         }
     }
 }

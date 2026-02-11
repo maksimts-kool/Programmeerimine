@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tund12.Data;
 using Tund12.Models;
+using Tund12.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

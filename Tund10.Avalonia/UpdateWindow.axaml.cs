@@ -16,6 +16,14 @@ public partial class UpdateWindow : Window
     private Action? _onSave;
     private readonly string _entityType;
 
+    public UpdateWindow()
+    {
+        InitializeComponent();
+        _db = null!;
+        _mainWindow = null!;
+        _entityType = null!;
+    }
+
     public UpdateWindow(AutoDbContext db, object entity, MainWindow mainWindow, string entityType)
     {
         InitializeComponent();

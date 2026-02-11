@@ -4,8 +4,8 @@ namespace Tund4;
 
 public class Loom
 {
-    public string Nimi;
-    public string Tyyp;
+    public string Nimi = "";
+    public string Tyyp = "";
     public int Vanus;
     public Loom() { }
     public Loom(string nimi, string tyyp, int vanus)

@@ -33,8 +33,8 @@ namespace Tund5
 
     class HeliTegija : IDisposable
     {
-        private IWavePlayer bgPlayer;
-        private LoopStream bgLoop;
+        private IWavePlayer? bgPlayer;
+        private LoopStream? bgLoop;
         public HeliTegija()
         {
             try

@@ -45,7 +45,8 @@ internal class StartClass
                 Console.WriteLine("3. Alusta mängu");
                 Console.WriteLine("0. Välju");
                 Console.Write("Valik: ");
-                int valik = int.Parse(Console.ReadLine());
+                string sisend = Console.ReadLine() ?? "0";
+                if (!int.TryParse(sisend, out int valik)) valik = -1;
 
                 switch (valik)
                 {

@@ -4,7 +4,7 @@ namespace Tund4;
 
 public class Inimene
 {
-    public string Nimi;
+    public string Nimi = "";
     public int Vanus;
     public Pank Konto;
     public Inimene() { Konto = new Pank(); }

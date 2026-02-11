@@ -54,8 +54,11 @@ public class Program
 
         try
         {
-            Console.SetWindowSize(80, 25);
-            Console.SetBufferSize(80, 25);
+            if (OperatingSystem.IsWindows())
+            {
+                Console.SetWindowSize(80, 25);
+                Console.SetBufferSize(80, 25);
+            }
         }
         catch { }
 
@@ -102,7 +105,7 @@ public class Program
             if (walls.IsHit(snake) || snake.IsHitTail() || hitObstacle)
                 break;
 
-            FoodItem eaten = null;
+            FoodItem? eaten = null;
             foreach (var f in foods)
             {
                 if (snake.Eat(f.P, f.Value))

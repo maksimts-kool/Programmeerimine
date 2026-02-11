@@ -12,6 +12,13 @@ public partial class ManageRolesWindow : Window
     private readonly AutoDbContext _db;
     private readonly MainWindow _mainWindow;
 
+    public ManageRolesWindow()
+    {
+        InitializeComponent();
+        _db = null!;
+        _mainWindow = null!;
+    }
+
     public ManageRolesWindow(AutoDbContext db, MainWindow mainWindow)
     {
         InitializeComponent();

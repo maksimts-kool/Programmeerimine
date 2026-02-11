@@ -6,6 +6,12 @@ public partial class SearchResultsWindow : Window
 {
     public MainWindow MainRef;
 
+    public SearchResultsWindow()
+    {
+        InitializeComponent();
+        MainRef = null!;
+    }
+
     public SearchResultsWindow(MainWindow parent)
     {
         InitializeComponent();
