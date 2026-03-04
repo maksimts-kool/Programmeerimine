@@ -1,0 +1,81 @@
+@model IEnumerable<Tund13.Models.Koolitus>
+@{
+    ViewData["Title"] = "Töölaud";
+    var profiil = ViewBag.OpetajaProfiil as Tund13.Models.Opetaja;
+}
+
+<div class="row g-4 mb-4 align-items-start">
+    <div class="col-lg-3">
+        <div class="kk-form-card text-center">
+            @if (!string.IsNullOrEmpty(profiil?.FotoPath))
+            {
+                <img src="/uploads/@profiil.FotoPath" class="rounded-circle mb-2"
+                     style="width:72px;height:72px;object-fit:cover" alt="Foto" />
+            }
+            else
+            {
+                <div style="width:72px;height:72px;border-radius:50%;background:var(--kk-blue-light);display:inline-flex;align-items:center;justify-content:center;margin-bottom:.6rem">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+            }
+            <div style="font-weight:700;margin-bottom:.2rem">@profiil?.Nimi</div>
+            <div style="font-size:.8rem;color:var(--kk-muted)">@profiil?.Kvalifikatsioon</div>
+        </div>
+    </div>
+    <div class="col-lg-9">
+        <div class="kk-page-header" style="margin-bottom:1rem">
+            <div>
+                <h1>Minu töölaud</h1>
+                <p>Aktiivsed koolitused ja nende osalejad.</p>
+            </div>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <span class="kk-status kk-status-wait">@Model.Count() koolitust</span>
+            <span class="kk-status kk-status-ok">
+                @Model.Sum(k => k.Registreerimised.Count(r => r.Staatus == RegistreerimiseStaatus.Kinnitatud)) kinnitatud õpilast
+            </span>
+        </div>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Sul pole veel ühtegi koolitust määratud. Võta ühendust direktoriga.</div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 g-3">
+        @foreach (var k in Model)
+        {
+            int kokku = k.Registreerimised.Count(r => r.Staatus != RegistreerimiseStaatus.Tuhistatud);
+            int kinnitatud = k.Registreerimised.Count(r => r.Staatus == RegistreerimiseStaatus.Kinnitatud);
+            int ootel = k.Registreerimised.Count(r => r.Staatus == RegistreerimiseStaatus.Ootel);
+
+            <div class="col">
+                <div class="kk-course-card">
+                    <div class="kk-card-header">
+                        <div class="kk-flag-circle">@ViewHelpers.KeeleFlag(k.Keelekursus?.Keel ?? "")</div>
+                        <div class="flex-grow-1">
+                            <div style="font-weight:600;font-size:.92rem">@k.Keelekursus?.Nimetus</div>
+                            <div style="font-size:.78rem;color:var(--kk-muted)">@k.AlgusKuupaev.ToString("dd.MM.yyyy") – @k.LoppKuupaev.ToString("dd.MM.yyyy")</div>
+                        </div>
+                        <span class="@ViewHelpers.TaseBadgeClass(k.Keelekursus?.Tase ?? KursuseTase.A1)">@k.Keelekursus?.Tase</span>
+                    </div>
+                    <div class="kk-card-body">
+                        <div class="d-flex gap-2 flex-wrap">
+                            <span class="kk-status kk-status-wait">@kokku/@k.MaxOsalejaid kohta</span>
+                            <span class="kk-status kk-status-ok">@kinnitatud kinnitatud</span>
+                            @if (ootel > 0)
+                            {
+                                <span class="kk-status kk-status-cancel">@ootel ootel</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="kk-card-footer">
+                        <a asp-action="Opilased" asp-route-id="@k.Id" class="btn btn-primary btn-sm w-100">Vaata osalejaid</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

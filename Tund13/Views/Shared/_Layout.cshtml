@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Keeltekool</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Tund13.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm kk-navbar mb-4">
+            <div class="container">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                    <span class="brand-icon">
+                        <svg viewBox="0 0 20 20" width="16" height="16"><path d="M10 2a8 8 0 100 16A8 8 0 0010 2zm0 2a6 6 0 110 12A6 6 0 0110 4zm-1 3v2H7v2h2v2h2v-2h2V9h-2V7H9z"/></svg>
+                    </span>
+                    Keeltekool
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target=".navbar-collapse" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1 gap-1">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="Index">Avaleht</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Koolitused" asp-action="Index">Koolitused</a>
+                        </li>
+                        @if (User.IsInRole("Opilane"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Koolitused" asp-action="MinuKoolitused">Minu koolitused</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Opetaja"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Opetaja" asp-action="Index">Töölaud</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Admin</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="Index">Töölaud</a></li>
+                                    <li><hr class="dropdown-divider mx-2 my-1" /></li>
+                                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="Keelekursused">Keelekursused</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="Opetajad">Õpetajad</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="Koolitused">Koolitused</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="Registreerimised">Registreerimised</a></li>
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-5">
+            @RenderBody()
+        </main>
+    </div>
+    <footer class="kk-footer">
+        <div class="container d-flex justify-content-between align-items-center">
+            <span>&copy; 2026 Keeltekool</span>
+            <a asp-controller="Home" asp-action="Privacy" style="color:var(--kk-muted);text-decoration:none">Privaatsus</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
+

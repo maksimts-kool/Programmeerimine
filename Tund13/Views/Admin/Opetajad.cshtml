@@ -1,0 +1,53 @@
+@model IEnumerable<Tund13.Models.Opetaja>
+@{
+    ViewData["Title"] = "Õpetajad";
+}
+
+<div class="kk-page-header">
+    <div><h1>Õpetajad</h1></div>
+    <a asp-action="LisaOpetaja" class="btn btn-primary">+ Lisa õpetaja</a>
+</div>
+
+@if (TempData["Teade"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mb-3">@TempData["Teade"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+}
+
+<div class="row row-cols-1 row-cols-md-3 g-3">
+    @foreach (var o in Model)
+    {
+        <div class="col">
+            <div class="kk-form-card text-center">
+                @if (!string.IsNullOrEmpty(o.FotoPath))
+                {
+                    <img src="/uploads/@o.FotoPath" class="rounded-circle mb-2"
+                         style="width:72px;height:72px;object-fit:cover" alt="Foto" />
+                }
+                else
+                {
+                    <div style="width:64px;height:64px;border-radius:50%;background:var(--kk-blue-light);display:inline-flex;align-items:center;justify-content:center;margin-bottom:.5rem">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </div>
+                }
+                <div style="font-weight:700;margin-bottom:.15rem">@o.Nimi</div>
+                <div style="font-size:.8rem;color:var(--kk-muted);margin-bottom:.4rem">@o.Kvalifikatsioon</div>
+                <span class="kk-status kk-status-wait">@o.Koolitused.Count koolitust</span>
+                @if (o.User != null)
+                {
+                    <div style="font-size:.78rem;color:var(--kk-muted);margin-top:.4rem">@o.User.Email</div>
+                }
+                else
+                {
+                    <div style="margin-top:.4rem"><span class="kk-status kk-status-cancel">Konto puudub</span></div>
+                }
+            </div>
+        </div>
+    }
+    @if (!Model.Any())
+    {
+        <div class="col-12">
+            <div class="alert alert-info">Õpetajaid pole lisatud. <a asp-action="LisaOpetaja">Lisa esimene</a>.</div>
+        </div>
+    }
+</div>
+<a asp-action="Index" class="btn btn-outline-secondary mt-3">← Töölaud</a>
