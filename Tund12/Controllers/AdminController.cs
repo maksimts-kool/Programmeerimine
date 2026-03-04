@@ -5,283 +5,338 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Tund12.Data;
 using Tund12.Models;
-using Tund12.ViewModels;
-using Tund12.Services;
 
-namespace Tund12.Controllers
+namespace Tund12.Controllers;
+
+[Authorize(Roles = "Admin")]
+public class AdminController : Controller
 {
-    [Authorize(Roles = "Admin")]
-    public class AdminController : Controller
+    private readonly ApplicationDbContext _db;
+    private readonly UserManager<ApplicationUser> _userManager;
+
+    public AdminController(ApplicationDbContext db, UserManager<ApplicationUser> userManager)
     {
-        private readonly ApplicationDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IEmailService _emailService;
+        _db = db;
+        _userManager = userManager;
+    }
 
-        public AdminController(
-    ApplicationDbContext context,
-    UserManager<ApplicationUser> userManager,
-    IEmailService emailService)
+    // ═══════════════════════════════════════════════════════
+    // TÖÖLAUD
+    // ═══════════════════════════════════════════════════════
+    public async Task<IActionResult> Index()
+    {
+        ViewBag.KursuseidKokku = await _db.Keelekursused.CountAsync();
+        ViewBag.OpetajaidKokku = await _db.Opetajad.CountAsync();
+        ViewBag.KoolitusidKokku = await _db.Koolitused.CountAsync();
+        ViewBag.RegistreerimisteKokku = await _db.Registreerimised.CountAsync();
+        ViewBag.OotelRegistreerimised = await _db.Registreerimised
+            .CountAsync(r => r.Staatus == RegistreerimiseStaatus.Ootel);
+        return View();
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // KEELEKURSUSED
+    // ═══════════════════════════════════════════════════════
+    public async Task<IActionResult> Keelekursused()
+    {
+        var list = await _db.Keelekursused
+            .Include(k => k.Koolitused)
+            .OrderBy(k => k.Keel).ThenBy(k => k.Tase)
+            .ToListAsync();
+        return View(list);
+    }
+
+    public IActionResult LisaKursus() => View(new Keelekursus());
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> LisaKursus(Keelekursus kursus)
+    {
+        if (!ModelState.IsValid) return View(kursus);
+        _db.Keelekursused.Add(kursus);
+        await _db.SaveChangesAsync();
+        TempData["Teade"] = "Keelekursus lisatud.";
+        return RedirectToAction(nameof(Keelekursused));
+    }
+
+    public async Task<IActionResult> MuudaKursus(int id)
+    {
+        var k = await _db.Keelekursused.FindAsync(id);
+        if (k == null) return NotFound();
+        return View(k);
+    }
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> MuudaKursus(Keelekursus kursus)
+    {
+        if (!ModelState.IsValid) return View(kursus);
+        _db.Keelekursused.Update(kursus);
+        await _db.SaveChangesAsync();
+        TempData["Teade"] = "Keelekursus uuendatud.";
+        return RedirectToAction(nameof(Keelekursused));
+    }
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> KustutaKursus(int id)
+    {
+        var k = await _db.Keelekursused.FindAsync(id);
+        if (k != null) { _db.Keelekursused.Remove(k); await _db.SaveChangesAsync(); }
+        TempData["Teade"] = "Keelekursus kustutatud.";
+        return RedirectToAction(nameof(Keelekursused));
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // ÕPETAJAD
+    // ═══════════════════════════════════════════════════════
+    public async Task<IActionResult> Opetajad()
+    {
+        var list = await _db.Opetajad
+            .Include(o => o.User)
+            .Include(o => o.Koolitused)
+            .OrderBy(o => o.Nimi)
+            .ToListAsync();
+        return View(list);
+    }
+
+    public IActionResult LisaOpetaja() => View();
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> LisaOpetaja(
+        string nimi, string kvalifikatsioon,
+        string email, string parool)
+    {
+        if (string.IsNullOrWhiteSpace(nimi) || string.IsNullOrWhiteSpace(email) ||
+            string.IsNullOrWhiteSpace(parool))
         {
-            _context = context;
-            _userManager = userManager;
-            _emailService = emailService;
-        }
-
-        // GET: Admin
-        public async Task<IActionResult> Index()
-        {
-            var stats = new
-            {
-                TotalCourses = await _context.Courses.CountAsync(),
-                TotalTeachers = await _context.Teachers.CountAsync(),
-                TotalTrainings = await _context.Trainings.CountAsync(),
-                PendingRegistrations = await _context.Registrations
-                    .CountAsync(r => r.Staatus == "Ootel"),
-                TotalStudents = (await _userManager.GetUsersInRoleAsync("Opilane")).Count
-            };
-
-            ViewBag.Stats = stats;
+            ModelState.AddModelError("", "Kõik väljad on kohustuslikud.");
             return View();
         }
 
-        // GET: Admin/SendEmail/5
-        [HttpGet]
-        public async Task<IActionResult> SendEmail(int id)
+        // Loo kasutajakonto
+        var user = new ApplicationUser
         {
-            var training = await _context.Trainings
-                .Include(t => t.Course)
-                .Include(t => t.Registrations)
-                .FirstOrDefaultAsync(t => t.Id == id);
+            UserName = email,
+            Email = email,
+            EmailConfirmed = true
+        };
 
-            if (training == null) return NotFound();
-
-            var studentCount = training.Registrations
-                .Count(r => r.Staatus == "Kinnitatud");
-
-            var model = new SendEmailViewModel
-            {
-                TrainingId = id,
-                TrainingName = training.Course?.Nimetus ?? "Koolitus",
-                StudentCount = studentCount
-            };
-
-            return View(model);
-        }
-
-        // POST: Admin/SendEmail/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SendEmail(int id, SendEmailViewModel model)
+        var result = await _userManager.CreateAsync(user, parool);
+        if (!result.Succeeded)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            var training = await _context.Trainings
-                .Include(t => t.Course)
-                .Include(t => t.Registrations)
-                    .ThenInclude(r => r.User)
-                .FirstOrDefaultAsync(t => t.Id == id);
-
-            if (training == null) return NotFound();
-
-            // Leia kinnitatud õpilaste e-postid
-            var studentEmails = training.Registrations
-                .Where(r => r.Staatus == "Kinnitatud" && r.User != null)
-                .Select(r => r.User.Email!)
-                .ToList();
-
-            if (!studentEmails.Any())
-            {
-                TempData["Error"] = "Sellel koolitusele pole kinnitatud õpilasi.";
-                return RedirectToAction("Index", "Trainings");
-            }
-
-            try
-            {
-                // Loo HTML e-kiri
-                var htmlBody = $@"
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
-        .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
-        .header {{ background-color: #0066cc; color: white; padding: 20px; border-radius: 8px 8px 0 0; }}
-        .content {{ background-color: #f9f9f9; padding: 20px; border-radius: 0 0 8px 8px; }}
-        .footer {{ margin-top: 20px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #666; }}
-    </style>
-</head>
-<body>
-    <div class=""container"">
-        <div class=""header"">
-            <h2>📧 {model.Subject}</h2>
-            <p><strong>Kursus:</strong> {training.Course?.Nimetus}</p>
-        </div>
-        <div class=""content"">
-            {model.Body.Replace("\n", "<br>")}
-        </div>
-        <div class=""footer"">
-            <p>Keelekool | info@keelekool.ee</p>
-            <p>See teade saadeti koolituse õpilastele: <strong>{training.Course?.Nimetus}</strong></p>
-        </div>
-    </div>
-</body>
-</html>";
-
-                await _emailService.SendEmailsAsync(
-                    studentEmails,
-                    model.Subject,
-                    htmlBody);
-
-                TempData["Success"] = $"E-kiri edukalt saadeti {studentEmails.Count} õpilasele!";
-                return RedirectToAction("Index", "Trainings");
-            }
-            catch (Exception ex)
-            {
-                TempData["Error"] = $"Viga e-kirja saatmisel: {ex.Message}";
-                return View(model);
-            }
-        }
-
-        // GET: Admin/Registrations - Kinnita registreeringuid
-        public async Task<IActionResult> Registrations()
-        {
-            var registrations = await _context.Registrations
-                .Include(r => r.Training)
-                    .ThenInclude(t => t.Course)
-                .Include(r => r.Training)
-                    .ThenInclude(t => t.Teacher)
-                .Include(r => r.User)
-                .OrderByDescending(r => r.RegistreerimisAeg)
-                .ToListAsync();
-
-            return View(registrations);
-        }
-
-        // POST: Admin/ConfirmRegistration/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ConfirmRegistration(int id)
-        {
-            var registration = await _context.Registrations.FindAsync(id);
-            if (registration == null) return NotFound();
-
-            registration.Staatus = "Kinnitatud";
-            await _context.SaveChangesAsync();
-
-            TempData["Success"] = "Registreering kinnitatud!";
-            return RedirectToAction(nameof(Registrations));
-        }
-
-        // POST: Admin/RejectRegistration/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RejectRegistration(int id)
-        {
-            var registration = await _context.Registrations.FindAsync(id);
-            if (registration == null) return NotFound();
-
-            registration.Staatus = "Tühistatud";
-            await _context.SaveChangesAsync();
-
-            TempData["Success"] = "Registreering tühistatud!";
-            return RedirectToAction(nameof(Registrations));
-        }
-
-        // GET: Admin/CreateTeacher
-        public IActionResult CreateTeacher()
-        {
+            foreach (var err in result.Errors)
+                ModelState.AddModelError("", err.Description);
             return View();
         }
 
-        // POST: Admin/CreateTeacher
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateTeacher(CreateTeacherViewModel model)
+        await _userManager.AddToRoleAsync(user, "Opetaja");
+
+        // Loo õpetaja profiil
+        _db.Opetajad.Add(new Opetaja
         {
-            if (ModelState.IsValid)
-            {
-                // Loo kasutaja
-                var user = new ApplicationUser
-                {
-                    UserName = model.Email,
-                    Email = model.Email,
-                    EmailConfirmed = true,
-                    FullName = model.Nimi
-                };
+            Nimi = nimi,
+            Kvalifikatsioon = kvalifikatsioon,
+            ApplicationUserId = user.Id
+        });
 
-                var result = await _userManager.CreateAsync(user, model.Password);
+        await _db.SaveChangesAsync();
+        TempData["Teade"] = $"Õpetaja {nimi} lisatud ja konto loodud.";
+        return RedirectToAction(nameof(Opetajad));
+    }
 
-                if (result.Succeeded)
-                {
-                    await _userManager.AddToRoleAsync(user, "Opetaja");
+    public async Task<IActionResult> MuudaOpetaja(int id)
+    {
+        var o = await _db.Opetajad.Include(o => o.User).FirstOrDefaultAsync(x => x.Id == id);
+        if (o == null) return NotFound();
+        return View(o);
+    }
 
-                    // Loo õpetaja profiil
-                    var teacher = new Teacher
-                    {
-                        Nimi = model.Nimi,
-                        Kvalifikatsioon = model.Kvalifikatsioon,
-                        ApplicationUserId = user.Id
-                    };
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> MuudaOpetaja(int id, string nimi, string kvalifikatsioon)
+    {
+        var o = await _db.Opetajad.FindAsync(id);
+        if (o == null) return NotFound();
 
-                    _context.Teachers.Add(teacher);
-                    await _context.SaveChangesAsync();
-
-                    TempData["Success"] = "Õpetaja edukalt loodud!";
-                    return RedirectToAction(nameof(Teachers));
-                }
-
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-            }
-
-            return View(model);
+        if (string.IsNullOrWhiteSpace(nimi))
+        {
+            ModelState.AddModelError("Nimi", "Nimi on kohustuslik.");
+            return View(o);
         }
 
-        // GET: Admin/Teachers
-        public async Task<IActionResult> Teachers()
-        {
-            var teachers = await _context.Teachers
-                .Include(t => t.User)
-                .Include(t => t.Trainings)
-                .ToListAsync();
+        o.Nimi = nimi;
+        o.Kvalifikatsioon = kvalifikatsioon;
 
-            return View(teachers);
+        _db.Opetajad.Update(o);
+        await _db.SaveChangesAsync();
+        TempData["Teade"] = $"Õpetaja {nimi} andmed uuendatud.";
+        return RedirectToAction(nameof(Opetajad));
+    }
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> KustutaOpetaja(int id)
+    {
+        var o = await _db.Opetajad.Include(o => o.Koolitused).FirstOrDefaultAsync(x => x.Id == id);
+        if (o == null) return NotFound();
+
+        if (o.Koolitused != null && o.Koolitused.Any())
+        {
+            TempData["Teade"] = "Viga: Õpetajat ei saa kustutada, sest tal on seotud koolitusi.";
+            return RedirectToAction(nameof(Opetajad));
         }
 
-        // GET: Admin/Courses
-        public async Task<IActionResult> Courses()
-        {
-            var courses = await _context.Courses
-                .Include(c => c.Trainings)
-                .ToListAsync();
+        _db.Opetajad.Remove(o);
+        await _db.SaveChangesAsync();
+        TempData["Teade"] = "Õpetaja profiil kustutatud.";
+        return RedirectToAction(nameof(Opetajad));
+    }
 
-            return View(courses);
+    // ═══════════════════════════════════════════════════════
+    // KOOLITUSED
+    // ═══════════════════════════════════════════════════════
+    public async Task<IActionResult> Koolitused()
+    {
+        var list = await _db.Koolitused
+            .Include(k => k.Keelekursus)
+            .Include(k => k.Opetaja)
+            .Include(k => k.Registreerimised)
+            .OrderBy(k => k.AlgusKuupaev)
+            .ToListAsync();
+        return View(list);
+    }
+
+    public async Task<IActionResult> LisaKoolitus()
+    {
+        await LaadDropdownid();
+        return View(new Koolitus { AlgusKuupaev = DateTime.Today, LoppKuupaev = DateTime.Today.AddMonths(2) });
+    }
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> LisaKoolitus(Koolitus koolitus)
+    {
+        ModelState.Remove("Keelekursus");
+        ModelState.Remove("Opetaja");
+        ModelState.Remove("Registreerimised");
+
+        if (!ModelState.IsValid) { await LaadDropdownid(); return View(koolitus); }
+
+        _db.Koolitused.Add(koolitus);
+        await _db.SaveChangesAsync();
+        TempData["Teade"] = "Koolitus lisatud.";
+        return RedirectToAction(nameof(Koolitused));
+    }
+
+    public async Task<IActionResult> MuudaKoolitus(int id)
+    {
+        var k = await _db.Koolitused.FindAsync(id);
+        if (k == null) return NotFound();
+        await LaadDropdownid(k.KeelekursusId, k.OpetajaId);
+        return View(k);
+    }
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> MuudaKoolitus(Koolitus koolitus)
+    {
+        ModelState.Remove("Keelekursus");
+        ModelState.Remove("Opetaja");
+        ModelState.Remove("Registreerimised");
+
+        if (!ModelState.IsValid) { await LaadDropdownid(koolitus.KeelekursusId, koolitus.OpetajaId); return View(koolitus); }
+
+        _db.Koolitused.Update(koolitus);
+        await _db.SaveChangesAsync();
+        TempData["Teade"] = "Koolitus uuendatud.";
+        return RedirectToAction(nameof(Koolitused));
+    }
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> KustutaKoolitus(int id)
+    {
+        var k = await _db.Koolitused.FindAsync(id);
+        if (k != null) { _db.Koolitused.Remove(k); await _db.SaveChangesAsync(); }
+        TempData["Teade"] = "Koolitus kustutatud.";
+        return RedirectToAction(nameof(Koolitused));
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // REGISTREERIMISED
+    // ═══════════════════════════════════════════════════════
+    public async Task<IActionResult> Registreerimised()
+    {
+        var list = await _db.Registreerimised
+            .Include(r => r.User)
+            .Include(r => r.Koolitus)
+                .ThenInclude(k => k!.Keelekursus)
+            .OrderByDescending(r => r.RegistreerimiseAeg)
+            .ToListAsync();
+        return View(list);
+    }
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> MuudaStaatus(int id, RegistreerimiseStaatus staatus)
+    {
+        var reg = await _db.Registreerimised.FindAsync(id);
+        if (reg != null) { reg.Staatus = staatus; await _db.SaveChangesAsync(); }
+        TempData["Teade"] = $"Staatus muudetud: {staatus}.";
+        return RedirectToAction(nameof(Registreerimised));
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // EMAIL ÕPILASTELE
+    // ═══════════════════════════════════════════════════════
+    public async Task<IActionResult> SaadaEmail(int koolitusId)
+    {
+        var koolitus = await _db.Koolitused
+            .Include(k => k.Keelekursus)
+            .Include(k => k.Registreerimised)
+                .ThenInclude(r => r.User)
+            .FirstOrDefaultAsync(k => k.Id == koolitusId);
+
+        if (koolitus == null) return NotFound();
+
+        ViewBag.Koolitus = koolitus;
+        ViewBag.Opilased = koolitus.Registreerimised
+            .Where(r => r.Staatus == RegistreerimiseStaatus.Kinnitatud)
+            .Select(r => r.User?.Email)
+            .Where(e => e != null)
+            .ToList();
+
+        return View();
+    }
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> SaadaEmail(int koolitusId, string teema, string sisu)
+    {
+        var koolitus = await _db.Koolitused
+            .Include(k => k.Keelekursus)
+            .Include(k => k.Registreerimised)
+                .ThenInclude(r => r.User)
+            .FirstOrDefaultAsync(k => k.Id == koolitusId);
+
+        if (koolitus == null) return NotFound();
+
+        var aadressid = koolitus.Registreerimised
+            .Where(r => r.Staatus == RegistreerimiseStaatus.Kinnitatud)
+            .Select(r => r.User?.Email)
+            .Where(e => e != null)
+            .ToList();
+
+        // Simuleerime saatmist (reaalses süsteemis SmtpClient / MailKit)
+        foreach (var email in aadressid)
+        {
+            Console.WriteLine($"[EMAIL] → {email} | Teema: {teema} | Sisu: {sisu}");
         }
 
-        // GET: Admin/CreateCourse
-        public IActionResult CreateCourse()
-        {
-            return View();
-        }
+        TempData["Teade"] = $"E-kiri saadetud {aadressid.Count} õpilasele.";
+        return RedirectToAction(nameof(Registreerimised));
+    }
 
-        // POST: Admin/CreateCourse
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateCourse(Course course)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(course);
-                await _context.SaveChangesAsync();
-                TempData["Success"] = "Kursus edukalt loodud!";
-                return RedirectToAction(nameof(Courses));
-            }
-            return View(course);
-        }
+    // ─── Abi: lae dropdown-andmed ─────────────────────────────────
+    private async Task LaadDropdownid(int? kursusId = null, int? opetajaId = null)
+    {
+        ViewBag.Keelekursused = new SelectList(
+            await _db.Keelekursused.OrderBy(k => k.Nimetus).ToListAsync(),
+            "Id", "Nimetus", kursusId);
+
+        ViewBag.Opetajad = new SelectList(
+            await _db.Opetajad.OrderBy(o => o.Nimi).ToListAsync(),
+            "Id", "Nimi", opetajaId);
     }
 }

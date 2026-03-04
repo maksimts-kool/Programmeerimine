@@ -1,148 +1,84 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="et">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Keelekool</title>
-    <!-- Modern Bootstrap 5 & Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <title>@ViewData["Title"] - Keeltekool</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Tund12.styles.css" asp-append-version="true" />
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            background-color: #f8f9fa;
-        }
-        main {
-            flex: 1;
-        }
-        .navbar-brand {
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-        .footer {
-            background-color: #343a40;
-            color: rgba(255,255,255,.75);
-        }
-        .footer a {
-            color: rgba(255,255,255,.9);
-            text-decoration: none;
-        }
-        .footer a:hover {
-            color: #fff;
-            text-decoration: underline;
-        }
-    </style>
 </head>
 <body>
-    <header class="sticky-top shadow-sm">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary py-3">
+    <header>
+        <nav class="navbar navbar-expand-sm kk-navbar mb-4">
             <div class="container">
-                <a class="navbar-brand d-flex align-items-center gap-2" asp-area="" asp-controller="Home" asp-action="Index">
-                    <i class="bi bi-globe2 fs-4"></i>
-                    <span>Keelekool</span>
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                    <span class="brand-icon">
+                        <svg viewBox="0 0 20 20" width="16" height="16"><path d="M10 2a8 8 0 100 16A8 8 0 0010 2zm0 2a6 6 0 110 12A6 6 0 0110 4zm-1 3v2H7v2h2v2h2v-2h2V9h-2V7H9z"/></svg>
+                    </span>
+                    Keeltekool
                 </a>
-                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
-                        aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target=".navbar-collapse" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse" id="mainNavbar">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1 gap-1">
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Index">Avaleht</a>
+                            <a class="nav-link" asp-controller="Home" asp-action="Index">Avaleht</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Trainings" ? "active" : "")" asp-area="" asp-controller="Trainings" asp-action="Index">Koolitused</a>
+                            <a class="nav-link" asp-controller="Koolitused" asp-action="Index">Koolitused</a>
                         </li>
-                        
                         @if (User.IsInRole("Opilane"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Trainings" asp-action="MyTrainings">Minu koolitused</a>
+                                <a class="nav-link" asp-controller="Koolitused" asp-action="MinuKoolitused">Minu koolitused</a>
                             </li>
                         }
-                        
                         @if (User.IsInRole("Opetaja"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Teacher" asp-action="Dashboard">Töölaud</a>
+                                <a class="nav-link" asp-controller="Opetaja" asp-action="Index">Töölaud</a>
                             </li>
                         }
-
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="adminMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-shield-lock"></i> Haldus
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="adminMenu">
-                                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="Index"><i class="bi bi-speedometer2 me-2"></i>Halduspaneel</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="CreateTeacher"><i class="bi bi-person-plus me-2"></i>Lisa õpetaja</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="CreateCourse"><i class="bi bi-journal-plus me-2"></i>Lisa kursus</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Trainings" asp-action="Create"><i class="bi bi-calendar-plus me-2"></i>Lisa koolitus</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="Registrations"><i class="bi bi-list-check me-2"></i>Registreeringud</a></li>
+                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Admin</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="Index">Töölaud</a></li>
+                                    <li><hr class="dropdown-divider mx-2 my-1" /></li>
+                                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="Keelekursused">Keelekursused</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="Opetajad">Õpetajad</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="Koolitused">Koolitused</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="Registreerimised">Registreerimised</a></li>
                                 </ul>
                             </li>
                         }
                     </ul>
-                    <div class="d-flex">
-                        <partial name="_LoginPartial" />
-                    </div>
+                    <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>
     </header>
-
-    <main role="main" class="container py-5">
-        @if (TempData["Success"] != null)
-        {
-            <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
-                <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        }
-        @if (TempData["Error"] != null)
-        {
-            <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        }
-
-        <div class="bg-white p-4 p-md-5 rounded shadow-sm">
+    <div class="container">
+        <main role="main" class="pb-5">
             @RenderBody()
-        </div>
-    </main>
-
-    <footer class="footer py-4 mt-auto">
-        <div class="container text-center">
-            <div class="row gy-3">
-                <div class="col-md-4 text-md-start">
-                    <h5 class="text-white fw-bold"><i class="bi bi-globe2 me-2"></i>Keelekool</h5>
-                    <p class="mb-0 small">Avasta maailm läbi uute keelte.</p>
-                </div>
-                <div class="col-md-4">
-                    <ul class="list-inline mb-0">
-                        <li class="list-inline-item"><a href="/" class="small">Avaleht</a></li>
-                        <li class="list-inline-item text-muted">&middot;</li>
-                        <li class="list-inline-item"><a asp-controller="Home" asp-action="Privacy" class="small">Privaatsus</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-4 text-md-end small">
-                    &copy; @DateTime.Now.Year - Keelekooli Infosüsteem
-                </div>
-            </div>
+        </main>
+    </div>
+    <footer class="kk-footer">
+        <div class="container d-flex justify-content-between align-items-center">
+            <span>&copy; 2026 Keeltekool</span>
+            <a asp-controller="Home" asp-action="Privacy" style="color:var(--kk-muted);text-decoration:none">Privaatsus</a>
         </div>
     </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+

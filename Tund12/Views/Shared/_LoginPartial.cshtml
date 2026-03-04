@@ -1,30 +1,22 @@
-﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Identity
 @using Tund12.Models
-
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
-<ul class="navbar-nav">
+<div class="d-flex align-items-center gap-2 kk-nav-auth">
     @if (SignInManager.IsSignedIn(User))
     {
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Tere,
-                @User.Identity?.Name!</a>
-        </li>
-        <li class="nav-item">
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout"
-                asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                <button type="submit" class="nav-link btn btn-link text-dark">Logi välja</button>
-            </form>
-        </li>
+        <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" style="font-size:.83rem;color:var(--kk-muted)">
+            @User.Identity?.Name
+        </a>
+        <form asp-area="Identity" asp-page="/Account/Logout"
+              asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+            <button type="submit" class="btn-auth">Logi välja</button>
+        </form>
     }
     else
     {
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Registreeru</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Logi sisse</a>
-        </li>
+        <a asp-area="Identity" asp-page="/Account/Register" class="btn-auth">Registreeru</a>
+        <a asp-area="Identity" asp-page="/Account/Login" class="btn-auth btn-auth-solid">Logi sisse</a>
     }
-</ul>
+</div>

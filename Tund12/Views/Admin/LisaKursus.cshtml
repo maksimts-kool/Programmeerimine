@@ -1,0 +1,63 @@
+@model Tund12.Models.Keelekursus
+@{
+    ViewData["Title"] = "Lisa keelekursus";
+}
+
+<h1 class="mb-4">+ Lisa keelekursus</h1>
+
+<div class="card shadow-sm" style="max-width:600px">
+    <div class="card-body">
+        <form asp-action="LisaKursus" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="Nimetus" class="form-label"></label>
+                <input asp-for="Nimetus" class="form-control" placeholder="nt. Inglise keel algajatele" />
+                <span asp-validation-for="Nimetus" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Keel" class="form-label"></label>
+                <select asp-for="Keel" class="form-select">
+                    <option value="">-- Vali keel --</option>
+                    <option value="Inglise">🇬🇧 Inglise</option>
+                    <option value="Saksa">🇩🇪 Saksa</option>
+                    <option value="Prantsuse">🇫🇷 Prantsuse</option>
+                    <option value="Hispaania">🇪🇸 Hispaania</option>
+                    <option value="Itaalia">🇮🇹 Itaalia</option>
+                    <option value="Vene">🇷🇺 Vene</option>
+                    <option value="Soome">🇫🇮 Soome</option>
+                    <option value="Eesti">🇪🇪 Eesti</option>
+                    <option value="Hiina">🇨🇳 Hiina</option>
+                    <option value="Jaapani">🇯🇵 Jaapani</option>
+                    <option value="Araabia">🇸🇦 Araabia</option>
+                    <option value="Portugali">🇵🇹 Portugali</option>
+                </select>
+                <span asp-validation-for="Keel" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Tase" class="form-label"></label>
+                <select asp-for="Tase" asp-items="Html.GetEnumSelectList<Tund12.Models.KursuseTase>()"
+                        class="form-select"></select>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Kirjeldus" class="form-label"></label>
+                <textarea asp-for="Kirjeldus" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Salvesta</button>
+                <a asp-action="Keelekursused" class="btn btn-outline-secondary">Tühista</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

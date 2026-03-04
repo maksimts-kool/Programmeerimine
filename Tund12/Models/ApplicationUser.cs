@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace Tund12.Models
+namespace Tund12.Models;
+
+public class ApplicationUser : IdentityUser
 {
-    public class ApplicationUser : IdentityUser
-    {
-        public string? FullName { get; set; }
-    }
+    // Identity (email, password, roles) on juba IdentityUser-is.
+    // Lisaväljad saab siia lisada vajadusel.
 }

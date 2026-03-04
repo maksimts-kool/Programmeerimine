@@ -1,0 +1,52 @@
+@model IEnumerable<Tund12.Models.Keelekursus>
+@{
+    ViewData["Title"] = "Keelekursused";
+}
+
+<div class="kk-page-header">
+    <div>
+        <h1>Keelekursused</h1>
+    </div>
+    <a asp-action="LisaKursus" class="btn btn-primary">+ Lisa uus kursus</a>
+</div>
+
+@if (TempData["Teade"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mb-3">@TempData["Teade"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+}
+
+<div class="kk-table">
+    <table class="table table-hover align-middle mb-0">
+        <thead>
+            <tr>
+                <th>Kursus</th>
+                <th>Keel</th>
+                <th>Tase</th>
+                <th>Kirjeldus</th>
+                <th>Koolitusi</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var k in Model)
+            {
+                <tr>
+                    <td style="font-weight:600">@k.Nimetus</td>
+                    <td>@ViewHelpers.KeeleFlag(k.Keel) @k.Keel</td>
+                    <td><span class="@ViewHelpers.TaseBadgeClass(k.Tase)">@k.Tase</span></td>
+                    <td style="color:var(--kk-muted);font-size:.84rem">@(k.Kirjeldus?.Length > 60 ? k.Kirjeldus[..60] + "…" : k.Kirjeldus)</td>
+                    <td>@k.Koolitused.Count</td>
+                    <td>
+                        <a asp-action="MuudaKursus" asp-route-id="@k.Id" class="btn btn-outline-secondary btn-sm">Muuda</a>
+                        <form asp-action="KustutaKursus" asp-route-id="@k.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-outline-danger btn-sm"
+                                    onclick="return confirm('Kustuta kursus?')">Kustuta</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<a asp-action="Index" class="btn btn-outline-secondary mt-3">← Töölaud</a>

@@ -1,0 +1,55 @@
+@model Tund12.Models.Opetaja
+@{
+    ViewData["Title"] = "Muuda õpetajat";
+}
+
+<div class="kk-page-header">
+    <div>
+        <h1>Muuda õpetajat</h1>
+        <div class="kk-breadcrumb">Halda õpetaja @Model.Nimi andmeid</div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="kk-form-card">
+            <form asp-action="MuudaOpetaja" method="post">
+                <input type="hidden" asp-for="Id" />
+
+                <div class="mb-3">
+                    <label class="form-label">Täisnimi</label>
+                    <input name="nimi" value="@Model.Nimi" class="form-control" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Kvalifikatsioon / Kirjeldus</label>
+                    <textarea name="kvalifikatsioon" class="form-control" rows="3">@Model.Kvalifikatsioon</textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">E-post (kasutajatunnus)</label>
+                    <input class="form-control" value="@Model.User?.Email" disabled />
+                    <div class="form-text">E-posti aadressi muutmiseks kontakteeru süsteemiülemaga.</div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Salvesta muudatused</button>
+                    <a asp-action="Opetajad" class="btn btn-outline-secondary">Tühista</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="kk-dash-card kk-dash-card--alert">
+            <h5 class="text-danger mb-3">Ohtlik tsoon</h5>
+            <p class="small text-muted">Õpetaja kustutamine eemaldab ainult tema profiili. Kasutajakonto säilib
+                turvakaalutlustel Identity süsteemis.</p>
+
+                <form asp-action="KustutaOpetaja" asp-route-id="@Model.Id" method="post"
+                      onsubmit="return confirm('Kas oled kindel, et soovid selle õpetaja profiili kustutada?');">
+                    <button type="submit" class="btn btn-danger">Kustuta õpetaja profiil</button>
+                </form>
+            </div>
+        </div>
+    </div>

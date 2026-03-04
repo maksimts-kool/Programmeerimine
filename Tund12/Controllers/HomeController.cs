@@ -1,58 +1,66 @@
-using Microsoft.AspNetCore.Authorization;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
 using Tund12.Data;
 using Tund12.Models;
-using Tund12.ViewModels;
 
-namespace Tund12.Controllers
+namespace Tund12.Controllers;
+
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    private readonly ApplicationDbContext _db;
+    private readonly UserManager<ApplicationUser> _userManager;
+
+    public HomeController(ApplicationDbContext db, UserManager<ApplicationUser> userManager)
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly ApplicationDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
+        _db = db;
+        _userManager = userManager;
+    }
 
-        public HomeController(
-            ILogger<HomeController> logger,
-            ApplicationDbContext context,
-            UserManager<ApplicationUser> userManager)
-        {
-            _logger = logger;
-            _context = context;
-            _userManager = userManager;
-        }
+    public async Task<IActionResult> Index()
+    {
+        var täna = DateTime.Today;
 
-        public async Task<IActionResult> Index()
+        // Kõik käimasolevad koolitused
+        var käimasolevad = await _db.Koolitused
+            .Include(k => k.Keelekursus)
+            .Include(k => k.Opetaja)
+            .Include(k => k.Registreerimised)
+            .Where(k => k.AlgusKuupaev <= täna && k.LoppKuupaev >= täna)
+            .OrderBy(k => k.LoppKuupaev)
+            .Take(3)
+            .ToListAsync();
+
+        ViewBag.Käimasolevad = käimasolevad;
+
+        // Kui kasutaja on sisse logitud, näita tema koolitusi
+        if (User.Identity?.IsAuthenticated == true)
         {
-            // Kõigile sama avaleht - koolituste nimekiri
-            var publicTrainings = await _context.Trainings
-                .Include(t => t.Course)
-                .Include(t => t.Teacher)
-                .Include(t => t.Registrations)
-                .Where(t => t.AlgusKuupaev > DateTime.Now)
-                .OrderBy(t => t.AlgusKuupaev)
-                .Take(6)
+            var userId = _userManager.GetUserId(User);
+            var omasid = await _db.Registreerimised
+                .Include(r => r.Koolitus)
+                    .ThenInclude(k => k!.Keelekursus)
+                .Where(r => r.ApplicationUserId == userId && r.Staatus == RegistreerimiseStaatus.Kinnitatud)
+                .Select(r => r.Koolitus)
+                .Where(k => k != null)
+                .OrderBy(k => k!.AlgusKuupaev)
                 .ToListAsync();
 
-            ViewBag.PublicTrainings = publicTrainings;
-            return View();
+            ViewBag.MinuKoolitused = omasid;
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+        return View();
+    }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel
-            {
-                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
-            });
-        }
+    public IActionResult Privacy()
+    {
+        return View();
+    }
+
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
+    {
+        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }

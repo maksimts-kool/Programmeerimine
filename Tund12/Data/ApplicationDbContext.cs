@@ -1,55 +1,41 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Tund12.Models;
 
-namespace Tund12.Data
+namespace Tund12.Data;
+
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    : IdentityDbContext<ApplicationUser>(options)
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public DbSet<Keelekursus> Keelekursused { get; set; }
+    public DbSet<Opetaja> Opetajad { get; set; }
+    public DbSet<Koolitus> Koolitused { get; set; }
+    public DbSet<Registreerimine> Registreerimised { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder builder)
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
-        {
-        }
+        base.OnModelCreating(builder);
 
-        public DbSet<Course> Courses { get; set; }
-        public DbSet<Teacher> Teachers { get; set; }
-        public DbSet<Training> Trainings { get; set; }
-        public DbSet<Registration> Registrations { get; set; }
+        // Opetaja → ApplicationUser (optional: one-to-one)
+        builder.Entity<Opetaja>()
+            .HasOne(o => o.User)
+            .WithMany()
+            .HasForeignKey(o => o.ApplicationUserId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.SetNull);
 
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-            base.OnModelCreating(builder);
+        // Registreerimine → ApplicationUser
+        builder.Entity<Registreerimine>()
+            .HasOne(r => r.User)
+            .WithMany()
+            .HasForeignKey(r => r.ApplicationUserId)
+            .IsRequired(true)
+            .OnDelete(DeleteBehavior.Cascade);
 
-            // Täpsusta suhted
-            builder.Entity<Teacher>()
-                .HasOne(t => t.User)
-                .WithMany()
-                .HasForeignKey(t => t.ApplicationUserId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<Training>()
-                .HasOne(t => t.Course)
-                .WithMany(c => c.Trainings)
-                .HasForeignKey(t => t.CourseId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<Training>()
-                .HasOne(t => t.Teacher)
-                .WithMany(te => te.Trainings)
-                .HasForeignKey(t => t.TeacherId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<Registration>()
-                .HasOne(r => r.Training)
-                .WithMany(t => t.Registrations)
-                .HasForeignKey(r => r.TrainingId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder.Entity<Registration>()
-                .HasOne(r => r.User)
-                .WithMany()
-                .HasForeignKey(r => r.ApplicationUserId)
-                .OnDelete(DeleteBehavior.Restrict);
-        }
+        // Üks õpilane ei saa samale koolitusele kaks korda registreeruda
+        builder.Entity<Registreerimine>()
+            .HasIndex(r => new { r.KoolitusId, r.ApplicationUserId })
+            .IsUnique();
     }
 }
+

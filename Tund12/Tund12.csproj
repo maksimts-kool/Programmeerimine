@@ -4,7 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aspnet-Tund12-55e6855d-d42c-4547-9a32-8284d705e3f7</UserSecretsId>
+    <UserSecretsId>aspnet-Tund12-a141d654-e385-4610-9f29-0fa7ae677faa</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,23 +12,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MailKit" Version="4.14.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.0" />
-    <PackageReference Include="MimeKit" Version="4.14.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="10.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas/Identity/Pages/Account/" />
-    <Folder Include="Helpers/" />
-    <Folder Include="Services/" />
-    <Folder Include="ViewModels/" />
-    <Folder Include="Views/Admin/" />
-    <Folder Include="Views/Teacher/" />
-    <Folder Include="Views/Trainings/" />
+    <Folder Include="wwwroot\img\" />
   </ItemGroup>
 
 </Project>
