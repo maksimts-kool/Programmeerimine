@@ -19,14 +19,33 @@ public class KoolitusedController : Controller
     }
 
     // GET /Koolitused – avalik nimekiri
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string? keel, KursuseTase? tase)
     {
-        var koolitused = await _db.Koolitused
+        var query = _db.Koolitused
             .Include(k => k.Keelekursus)
             .Include(k => k.Opetaja)
             .Include(k => k.Registreerimised)
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(keel))
+            query = query.Where(k => k.Keelekursus!.Keel == keel);
+
+        if (tase.HasValue)
+            query = query.Where(k => k.Keelekursus!.Tase == tase.Value);
+
+        var koolitused = await query
             .OrderBy(k => k.AlgusKuupaev)
             .ToListAsync();
+
+        // Distinct languages for the dropdown
+        ViewBag.Keeled = await _db.Keelekursused
+            .Select(k => k.Keel)
+            .Distinct()
+            .OrderBy(k => k)
+            .ToListAsync();
+
+        ViewBag.ValitudKeel = keel;
+        ViewBag.ValitudTase = tase;
 
         return View(koolitused);
     }

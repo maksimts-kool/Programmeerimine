@@ -1,6 +1,11 @@
 @model IEnumerable<Tund12.Models.Koolitus>
+@using Tund12.Models
 @{
     ViewData["Title"] = "Koolitused";
+    var keeled = ViewBag.Keeled as List<string> ?? new List<string>();
+    var valitudKeel = ViewBag.ValitudKeel as string;
+    var valitudTase = ViewBag.ValitudTase as KursuseTase?;
+    var taseValues = Enum.GetValues<KursuseTase>();
 }
 
 <div class="kk-page-header">
@@ -10,73 +15,140 @@
     </div>
 </div>
 
+<form method="get" asp-action="Index" class="mb-4">
+    <div class="d-flex flex-wrap gap-2 align-items-end">
+        <div>
+            <label class="form-label mb-1 fw-semibold" for="keel">Keel</label>
+            <select id="keel" name="keel" class="form-select form-select-sm" style="min-width:140px">
+                <option value="">Kõik keeled</option>
+                @foreach (var k in keeled)
+                {
+                    <option value="@k" selected="@(valitudKeel == k ? "selected" : null)">@k</option>
+                }
+            </select>
+        </div>
+        <div>
+            <label class="form-label mb-1 fw-semibold" for="tase">Tase</label>
+            <select id="tase" name="tase" class="form-select form-select-sm" style="min-width:110px">
+                <option value="">Kõik tasemed</option>
+                @foreach (var t in taseValues)
+                {
+                    <option value="@t" selected="@(valitudTase == t ? "selected" : null)">@t</option>
+                }
+            </select>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary btn-sm">Filtreeri</button>
+            @if (!string.IsNullOrWhiteSpace(valitudKeel) || valitudTase.HasValue)
+            {
+                <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Tühista</a>
+            }
+        </div>
+    </div>
+</form>
+
 @if (TempData["Teade"] != null)
 {
-    <div class="alert alert-success alert-dismissible fade show mb-3">@TempData["Teade"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-}
-@if (TempData["Viga"] != null)
-{
-    <div class="alert alert-danger alert-dismissible fade show mb-3">@TempData["Viga"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-}
-
-<div class="row row-cols-1 row-cols-md-3 g-3">
-    @foreach (var k in Model)
-    {
-        int osavõtjaid = k.Registreerimised.Count(r => r.Staatus != RegistreerimiseStaatus.Tuhistatud);
-        bool grupiTais = osavõtjaid >= k.MaxOsalejaid;
-        int protsent = k.MaxOsalejaid > 0 ? (int)((double)osavõtjaid / k.MaxOsalejaid * 100) : 0;
-        string fillClass = protsent >= 100 ? "high" : protsent >= 70 ? "medium" : "low";
-
-        <div class="col">
-            <div class="kk-course-card @(grupiTais ? "kk-course-card--full" : "")">
-                <div class="kk-card-header">
-                    <div class="kk-flag-circle">@ViewHelpers.KeeleFlag(k.Keelekursus?.Keel ?? "")</div>
-                    <div class="flex-grow-1">
-                        <div class="fw-semibold" style="font-size:.93rem">@k.Keelekursus?.Nimetus</div>
-                        <div style="font-size:.78rem;color:var(--kk-muted)">@k.Keelekursus?.Keel</div>
-                    </div>
-                    <div class="d-flex flex-column align-items-end gap-1">
-                        <span class="@ViewHelpers.TaseBadgeClass(k.Keelekursus?.Tase ?? KursuseTase.A1)">@k.Keelekursus?.Tase</span>
-                        @if (grupiTais) { <span class="kk-status kk-status-cancel">Täis</span> }
-                    </div>
-                </div>
-                <div class="kk-card-body">
-                    @if (!string.IsNullOrWhiteSpace(k.Keelekursus?.Kirjeldus))
-                    {
-                        <p style="font-size:.83rem;color:var(--kk-muted);margin-bottom:.6rem">@k.Keelekursus.Kirjeldus</p>
-                    }
-                    <div class="kk-meta">
-                        <div class="kk-meta-row">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            <span>@k.Opetaja?.Nimi</span>
-                        </div>
-                        <div class="kk-meta-row">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                            <span>@k.AlgusKuupaev.ToString("dd.MM.yyyy") — @k.LoppKuupaev.ToString("dd.MM.yyyy")</span>
-                        </div>
-                        <div class="kk-meta-row">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                            <span>@k.Hind.ToString("0.00") €</span>
-                        </div>
-                        <div class="kk-meta-row">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                            <span>@osavõtjaid / @k.MaxOsalejaid kohta</span>
-                        </div>
-                    </div>
-                    <div class="kk-progress mt-2" title="Täituvus @protsent%">
-                        <div class="kk-progress-fill @fillClass" style="width:@protsent%"></div>
-                    </div>
-                </div>
-                <div class="kk-card-footer">
-                    <a asp-action="Details" asp-route-id="@k.Id" class="btn btn-primary btn-sm w-100">Vaata lähemalt</a>
-                </div>
-            </div>
-        </div>
+    <div class="alert alert-success alert-dismissible fade show mb-3">@TempData["Teade"]<button type="button"
+                                                                                                    class="btn-close" data-bs-dismiss="alert"></button></div>
     }
-    @if (!Model.Any())
+    @if (TempData["Viga"] != null)
     {
-        <div class="col-12">
-            <div class="alert alert-info">Hetkel pole ühtegi koolitust. Tule tagasi varsti!</div>
+        <div class="alert alert-danger alert-dismissible fade show mb-3">@TempData["Viga"]<button type="button"
+                                                                                                      class="btn-close" data-bs-dismiss="alert"></button></div>
+        }
+
+        <div class="row row-cols-1 row-cols-md-3 g-3">
+            @foreach (var k in Model)
+            {
+                int osavõtjaid = k.Registreerimised.Count(r => r.Staatus != RegistreerimiseStaatus.Tuhistatud);
+                bool grupiTais = osavõtjaid >= k.MaxOsalejaid;
+                int protsent = k.MaxOsalejaid > 0 ? (int)((double)osavõtjaid / k.MaxOsalejaid * 100) : 0;
+                string fillClass = protsent >= 100 ? "high" : protsent >= 70 ? "medium" : "low";
+
+                <div class="col">
+                    <div class="kk-course-card @(grupiTais ? "kk-course-card--full" : "")">
+                        <div class="kk-card-header">
+                            <div class="kk-flag-circle">@ViewHelpers.KeeleFlag(k.Keelekursus?.Keel ?? "")</div>
+                            <div class="flex-grow-1">
+                                <div class="fw-semibold" style="font-size:.93rem">@k.Keelekursus?.Nimetus</div>
+                                <div style="font-size:.78rem;color:var(--kk-muted)">@k.Keelekursus?.Keel</div>
+                            </div>
+                            <div class="d-flex flex-column align-items-end gap-1">
+                                <span
+                                class="@ViewHelpers.TaseBadgeClass(k.Keelekursus?.Tase ?? KursuseTase.A1)">@k.Keelekursus?.Tase</span>
+                                @if (grupiTais)
+                                {
+                                    <span class="kk-status kk-status-cancel">Täis</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="kk-card-body">
+                            @if (!string.IsNullOrWhiteSpace(k.Keelekursus?.Kirjeldus))
+                            {
+                                <p style="font-size:.83rem;color:var(--kk-muted);margin-bottom:.6rem">@k.Keelekursus.Kirjeldus</p>
+                            }
+                            <div class="kk-meta">
+                                <div class="kk-meta-row">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                         stroke-width="2">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                        <circle cx="12" cy="7" r="4" />
+                                    </svg>
+                                    <span>@k.Opetaja?.Nimi</span>
+                                </div>
+                                <div class="kk-meta-row">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                         stroke-width="2">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                        <line x1="16" y1="2" x2="16" y2="6" />
+                                        <line x1="8" y1="2" x2="8" y2="6" />
+                                        <line x1="3" y1="10" x2="21" y2="10" />
+                                    </svg>
+                                    <span>@k.AlgusKuupaev.ToString("dd.MM.yyyy") — @k.LoppKuupaev.ToString("dd.MM.yyyy")</span>
+                                </div>
+                                <div class="kk-meta-row">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                         stroke-width="2">
+                                        <line x1="12" y1="1" x2="12" y2="23" />
+                                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                                    </svg>
+                                    <span>@k.Hind.ToString("0.00") €</span>
+                                </div>
+                                <div class="kk-meta-row">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                         stroke-width="2">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                        <circle cx="9" cy="7" r="4" />
+                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                                    </svg>
+                                    <span>@osavõtjaid / @k.MaxOsalejaid kohta</span>
+                                </div>
+                            </div>
+                            <div class="kk-progress mt-2" title="Täituvus @protsent%">
+                                <div class="kk-progress-fill @fillClass" style="width:@protsent%"></div>
+                            </div>
+                        </div>
+                        <div class="kk-card-footer">
+                            <a asp-action="Details" asp-route-id="@k.Id" class="btn btn-primary btn-sm w-100">Vaata lähemalt</a>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (!Model.Any())
+            {
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        @if (!string.IsNullOrWhiteSpace(valitudKeel) || valitudTase.HasValue)
+                        {
+                            <span>Valitud filtritega koolitusi ei leitud. <a asp-action="Index">Tühista filtrid</a></span>
+                        }
+                        else
+                        {
+                            <span>Hetkel pole ühtegi koolitust. Tule tagasi varsti!</span>
+                        }
+                    </div>
+                </div>
+            }
         </div>
-    }
-</div>
