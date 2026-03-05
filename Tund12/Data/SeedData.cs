@@ -40,7 +40,7 @@ public static class SeedData
         {
             db.Opetajad.Add(new Opetaja
             {
-                Nimi = "Mari Maasikas",
+                Nimi = "Mari Speek",
                 Kvalifikatsioon = "Magistrikraad inglise filoloogias, CELTA sertifikaat",
                 FotoPath = null,
                 ApplicationUserId = opetajaUser.Id
